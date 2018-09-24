@@ -101,7 +101,7 @@ switch lower(location)
 end
 
 %rename ROI
-roiOUT.name=strcat(roiIn.name,'_',num2str(refCoord),'_',location);
+roiOUT.name=strcat(roiIN.name,'_',num2str(refCoord),'_',location);
 
 %throw warning for empty ROI
 if isempty(roiOUT.coords)

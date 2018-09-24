@@ -51,7 +51,7 @@ for iInputs=1:length(varargin)/2
 
 %if a plane is input, extract a single coordinate from it.
 if isstruct(varargin{iInputs*2-1})
-    refCoord=[mean(varargin{iInputs*2-1}.coords(:,1)),mean(varargin{iInputs*2-1}.coords(:,2)),mean(varargin{iInputs*2-1}.coords(:,1))];
+    refCoord=[mean(varargin{iInputs*2-1}.coords(:,1)),mean(varargin{iInputs*2-1}.coords(:,2)),mean(varargin{iInputs*2-1}.coords(:,3))];
 else
     %no need to redfine refCoord
 end
@@ -59,7 +59,6 @@ end
 %determine if refcoord is on the left or the right.  Will cause problems
 %if it is right on the 0 line.
 LRflag=refCoord(:,1)<0;
-
 
 %execute switch statement and find coords that meet criteria
 switch lower(varargin{iInputs*2})

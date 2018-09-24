@@ -95,12 +95,12 @@ for leftright= [1,2]
     [~, CerebellarIND]=wma_SegmentFascicleFromConnectome(wbfg, [  {CerebellarROI}], { 'both_endpoints' }, 'Cerebellar');
     
     %Segment between lobe tracts
-    [~, FrontalTemporalInd]=bsc_tractByEndpointROIs(wbfg,[FrontalROI,TemporalROI]);
-    [~, OccipitalTemporalInd]=bsc_tractByEndpointROIs(wbfg,[OccipitalROI,TemporalROI]);
-    [~, ParietalTemporalInd]=bsc_tractByEndpointROIs(wbfg,[ParietalROI,TemporalROI]);
-    [~, OccipitalParietalInd]=bsc_tractByEndpointROIs(wbfg,[OccipitalROI,ParietalROI]);
-    [~, OccipitalFrontalInd]=bsc_tractByEndpointROIs(wbfg,[OccipitalROI,FrontalROI]);
-    [~, FrontalParietalInd]=bsc_tractByEndpointROIs(wbfg,[FrontalROI,ParietalROI]);
+    [~, FrontalTemporalInd]=bsc_tractByEndpointROIs(wbfg,[{FrontalROI},{TemporalROI}]);
+    [~, OccipitalTemporalInd]=bsc_tractByEndpointROIs(wbfg,[{OccipitalROI},{TemporalROI}]);
+    [~, ParietalTemporalInd]=bsc_tractByEndpointROIs(wbfg,[{ParietalROI},{TemporalROI}]);
+    [~, OccipitalParietalInd]=bsc_tractByEndpointROIs(wbfg,[{OccipitalROI},{ParietalROI}]);
+    [~, OccipitalFrontalInd]=bsc_tractByEndpointROIs(wbfg,[{OccipitalROI},{FrontalROI}]);
+    [~, FrontalParietalInd]=bsc_tractByEndpointROIs(wbfg,[{FrontalROI},{ParietalROI}]);
     
     %Assign streamlines to output classification structure
     [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'IntraFrontal'),FrontalIND);

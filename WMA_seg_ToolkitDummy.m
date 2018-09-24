@@ -33,3 +33,7 @@ tractStruc = bsc_makeFGsFromClassification_v2(classification, wbFG,coordScheme)
 [roiOUT]=bsc_modifyROI(fsDir,roiIN, refCoord, location)
 
 wma_SegmentFascicleFromConnectome(fg, rois, operation, fascicleFileName)
+
+[classification] =wma_segLobes_v2(feORwbfg, fsDir)
+
+[classification] =bsc_segmentAslant(wbfg, fsDir)

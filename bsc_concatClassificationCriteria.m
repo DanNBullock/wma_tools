@@ -18,7 +18,7 @@ function [classificationOUT]=bsc_concatClassificationCriteria(classificationIN,n
 %
 % -varargin= a series of boolean vectors corresponding to various criteria
 % checks (i.e. output from wma_SegmentFascicleFromConnectome,
-% bsc_tractByEndpointROIs, etc. 
+% bsc_tractByEndpointROIs, etc.
 %
 %
 % OUTPUTS:
@@ -35,36 +35,47 @@ orientationSet=find(size(omnibusCriteria)==max(size(omnibusCriteria)));
 
 %set it now so that it will comply with classification orientation
 if ~orientationSet==1
-        omnibusCriteria=rot90(omnibusCriteria);
-        orientationSet=1;
+    omnibusCriteria=rot90(omnibusCriteria);
+    orientationSet=1;
 end
 
 if length(varargin)>1
-for iCriteria=2:length(varargin)
-    %determine current criteria 
-    curCriteriaOrientation=find(size(varargin{iCriteria})==max(size(varargin{iCriteria})));
-    %rotate if necessary
-    if ~curCriteriaOrientation==orientationSet
-        varargin{iCriteria}=rot90(varargin{iCriteria});
-    else
-        %no action necessary if not
+    for iCriteria=2:length(varargin)
+        %determine current criteria
+        curCriteriaOrientation=find(size(varargin{iCriteria})==max(size(varargin{iCriteria})));
+        %rotate if necessary
+        if curCriteriaOrientation~=orientationSet
+            varargin{iCriteria}=rot90(varargin{iCriteria});
+        else
+            %no action necessary if not
+        end
+        omnibusCriteria=and(omnibusCriteria,varargin{iCriteria});
     end
-    omnibusCriteria=and(omnibusCriteria,varargin{iCriteria});
-end
 else
-        %no conjunction necessary if only one criteria passed in
+    %no conjunction necessary if only one criteria passed in
 end
 
 %determine streamline number of source tractogram
-sourceLength=length(classificationIN.index);
-
-%create new classification structure just for this tract
-newClassification=[];
-newClassification.names{1}=name;
-newClassification.index=zeros(sourceLength,1);
-newClassification.index(omnibusCriteria)=true;
-
-%run the reconciliation
-classificationOUT=bsc_reconcileClassifications(classificationIN,newClassification);
+if ~isempty(classificationIN)
+    sourceLength=length(classificationIN.index);
+    
+    %create new classification structure just for this tract
+    newClassification=[];
+    newClassification.names{1}=name;
+    newClassification.index=zeros(sourceLength,1);
+    newClassification.index(omnibusCriteria)=true;
+    
+    %run the reconciliation
+    classificationOUT=bsc_reconcileClassifications(classificationIN,newClassification);
+    
+else
+    %if there is no input classification structure, just infer its
+    %properties from the input booleans.
+    sourceLength=length(omnibusCriteria);
+    classificationOUT=[];
+    classificationOUT.names{1}=name;
+    classificationOUT.index=zeros(sourceLength,1);
+    classificationOUT.index(omnibusCriteria)=true;
+end
 
 end
