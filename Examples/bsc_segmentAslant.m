@@ -38,7 +38,7 @@ for leftright= [1,2]
     %sidenum is basically a way of switching  between the left and right
     %hemispheres of the brain in accordance with freesurfer's ROI
     %numbering scheme for Destrieux 2009. left = 1, right = 2.  This will cause an
-    %issue with the parietal ROI as we will see
+    %issue with the lateral ROI as we will see
     sidenum=10000+leftright*1000;
     
     %superior frontal ROI:
