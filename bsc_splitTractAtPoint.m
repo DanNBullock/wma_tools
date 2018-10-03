@@ -68,10 +68,10 @@ if isstruct(coordinate) & isstruct(location)
             refCoord=[mean(coordinate.coords(:,1)),0,0];
             planeDim=1;
         case 2
-            refCoord=[0,mean(coordinate.coords(:,1)),0];
+            refCoord=[0,mean(coordinate.coords(:,2)),0];
             planeDim=2;
         case 3
-            refCoord=[0,0,mean(coordinate.coords(:,1))];
+            refCoord=[0,0,mean(coordinate.coords(:,3))];
             planeDim=3;
     end
     
@@ -182,47 +182,47 @@ switch splitDim
             wholeFGIndexes=find(classification.index);
             if LRflag==1
                 %medial
-                classificationOut.name{1}=strcat('medial_',fg.name);
+                classificationOut.names{1}=strcat('medial_',fg.name);
                 classificationOut.index(wholeFGIndexes(streamsGreater))=1;
                 %lateral
-                classificationOut.name{2}=strcat('lateral_',fg.name);
+                classificationOut.names{2}=strcat('lateral_',fg.name);
                 classificationOut.index(wholeFGIndexes(streamsLess))=2;
             elseif LRflag==0
                 %lateral
-                classificationOut.name{1}=strcat('lateral_',fg.name);
+                classificationOut.names{1}=strcat('lateral_',fg.name);
                 classificationOut.index(wholeFGIndexes(streamsGreater))=1;
                 %medial
-                classificationOut.name{2}=strcat('medial_',fg.name);
+                classificationOut.names{2}=strcat('medial_',fg.name);
                 classificationOut.index(wholeFGIndexes(streamsLess))=2;
             elseif isnan(LRflag)
                 %Right
-                classificationOut.name{1}=strcat('right_',fg.name);
+                classificationOut.names{1}=strcat('right_',fg.name);
                 classificationOut.index(wholeFGIndexes(streamsGreater))=1;
                 %Left
-                classificationOut.name{2}=strcat('left_',fg.name);
+                classificationOut.names{2}=strcat('left_',fg.name);
                 classificationOut.index(wholeFGIndexes(streamsLess))=2;
             end
         else
             if LRflag==1
                 %medial
-                classificationOut.name{1}=strcat('medial_',fg.name);
+                classificationOut.names{1}=strcat('medial_',fg.name);
                 classificationOut.index(streamsGreater)=1;
                 %lateral
-                classificationOut.name{2}=strcat('lateral_',fg.name);
+                classificationOut.names{2}=strcat('lateral_',fg.name);
                 classificationOut.index(streamsLess)=2;
             elseif LRflag==0
                 %lateral
-                classificationOut.name{1}=strcat('lateral_',fg.name);
+                classificationOut.names{1}=strcat('lateral_',fg.name);
                 classificationOut.index(streamsGreater)=1;
                 %medial
-                classificationOut.name{2}=strcat('medial_',fg.name);
+                classificationOut.names{2}=strcat('medial_',fg.name);
                 classificationOut.index(streamsLess)=2;
             elseif isnan(LRflag)
                 %Right
-                classificationOut.name{1}=strcat('right_',fg.name);
+                classificationOut.names{1}=strcat('right_',fg.name);
                 classificationOut.index(streamsGreater)=1;
                 %Left
-                classificationOut.name{2}=strcat('left_',fg.name);
+                classificationOut.names{2}=strcat('left_',fg.name);
                 classificationOut.index(streamsLess)=2;
             end
         end
@@ -230,34 +230,34 @@ switch splitDim
         if exist('classification')
             wholeFGIndexes=find(classification.index);
             %anterior
-            classificationOut.name{1}=strcat('anterior_',fg.name);
+            classificationOut.names{1}=strcat('anterior_',fg.name);
             classificationOut.index(wholeFGIndexes(streamsGreater))=1;
             %posterior
-            classificationOut.name{2}=strcat('posterior_',fg.name);
+            classificationOut.names{2}=strcat('posterior_',fg.name);
             classificationOut.index(wholeFGIndexes(streamsLess))=2;
         else
             %anterior
-            classificationOut.name{1}=strcat('anterior_',fg.name);
+            classificationOut.names{1}=strcat('anterior_',fg.name);
             classificationOut.index(streamsGreater)=1;
             %posterior
-            classificationOut.name{2}=strcat('posterior_',fg.name);
+            classificationOut.names{2}=strcat('posterior_',fg.name);
             classificationOut.index(streamsLess)=2;
         end
     case 3
         if exist('classification')
             wholeFGIndexes=find(classification.index);
             %superior
-            classificationOut.name{1}=strcat('superior_',fg.name);
+            classificationOut.names{1}=strcat('superior_',fg.name);
             classificationOut.index(wholeFGIndexes(streamsGreater))=1;
             %inferior
-            classificationOut.name{2}=strcat('inferior_',fg.name);
+            classificationOut.names{2}=strcat('inferior_',fg.name);
             classificationOut.index(wholeFGIndexes(streamsLess))=2;
         else
             %anterior
-            classificationOut.name{1}=strcat('superior_',fg.name);
+            classificationOut.names{1}=strcat('superior_',fg.name);
             classificationOut.index(streamsGreater)=1;
             %posterior
-            classificationOut.name{2}=strcat('inferior_',fg.name);
+            classificationOut.names{2}=strcat('inferior_',fg.name);
             classificationOut.index(streamsLess)=2;
         end
 end

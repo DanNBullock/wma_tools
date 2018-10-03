@@ -25,22 +25,11 @@ function [roiOUT]=bsc_modifyROI(fsDir,roiIN, refCoord, location)
 % -roiOUT: the roi structure of the modified ROI
 %
 %  (C) Daniel Bullock 2017 Bloomington
-%% Remnant
-% if isstruct(refCoord)
-%     uniqueXcount=length(unique(refCoord.coords(:,1)));
-%     uniqueYcount=length(unique(refCoord.coords(:,2)));
-%     uniqueZcount=length(unique(refCoord.coords(:,3)));
-%     refCoordDim=min([uniqueXcount,uniqueYcount,uniqueZcount]);
-%     % will cause a problem if there are somehow multiple outputs from
-%     % subsequent uniques.  Possible if nonplanar ROI.
-%     refCoordSingle=unique(refCoord.coords(:,refCoordDim));
-%
-% else
 %%  Begin Code
 
 % redefine refCoord if plane
 if isstruct(refCoord)
-    refCoord=[mean(refCoord.coords(:,1)),mean(refCoord.coords(:,2)),mean(refCoord.coords(:,1))];
+    refCoord=[mean(refCoord.coords(:,1)),mean(refCoord.coords(:,2)),mean(refCoord.coords(:,3))];
 else
     %no need to redfine refCoord
 end

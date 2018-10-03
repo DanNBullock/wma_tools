@@ -37,3 +37,7 @@ wma_SegmentFascicleFromConnectome(fg, rois, operation, fascicleFileName)
 [classification] =wma_segLobes_v2(feORwbfg, fsDir)
 
 [classification] =bsc_segmentAslant(wbfg, fsDir)
+
+[classificationOut] =bsc_segmentMdLF_ILF_v3(wbfg, fsDir)
+
+[classificationOut] = bsc_segpArcTPC(wbfg, fsDir)

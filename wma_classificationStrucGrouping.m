@@ -11,6 +11,7 @@ removalVec={'left','left ','l_','l ','right','right ','r_','r '};
 flagMatrix=zeros(length(removalVec),length(tractNames));
 
 %presumes that side indexing comes at front of name
+%FIX THIS FOR TRACTS WITHOUT SUCH A NAME
 for iRemoveLabels=1:length(removalVec)
     tempNames=cellfun(@(x) x(1:length(removalVec{iRemoveLabels})),tractNames,'UniformOutput',false);
     flagMatrix(iRemoveLabels,:)=~cellfun(@isempty,(strfind(lower(tempNames),removalVec{iRemoveLabels})));

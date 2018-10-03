@@ -51,7 +51,12 @@ end
 
 %find left and right tracts and assign them the same color.
 classificationGrouping = wma_classificationStrucGrouping(classification);
+if exist( 'distinguishable_colors')==2
 colorMapping = distinguishable_colors(length(classificationGrouping.names),'k');
+else
+colorMapping = rand(length(classificationGrouping.names),5);
+end
+
 
 % for each name in the classification.names structure finds the
 % corresponding streamlines associated with that classification and creates
@@ -61,7 +66,7 @@ if strcmpi(coordScheme,'acpc')
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
             colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
         else
-            warning('\n Color assignment for tract %s skipped', classification.index{itracts});
+            warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
         
         tractStruc{itracts} = dtiNewFiberGroup(classification.names{itracts});
@@ -74,7 +79,7 @@ elseif strcmpi(coordScheme,'img')
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
             colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
         else
-            warning('\n Color assignment for tract %s skipped', classification.index{itracts});
+            warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
         
         tractStruc{itracts} = dtiNewFiberGroup(classification.names{itracts});
