@@ -6,7 +6,7 @@ function [classification] =wma_segLobes_v2(feORwbfg, fsDir)
 % Inputs:
 % -wbfg: a whole brain fiber group structure
 % -fsDir: path to THIS SUBJECT'S freesurfer directory
-
+%
 % Outputs:
 % classification:  a classification structure with .name and .indexes
 % fields

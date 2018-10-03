@@ -41,6 +41,7 @@ sideLabel={'left','right'};
 
 %indexes for the putamen
 putInd=[12,51];
+ventInd=[4,43];
 
 %% actual segmentation
 
@@ -104,10 +105,10 @@ for leftright= [1,2]
     %lobule
     tpcWM=bsc_intersectROIs(tpcMid,tpcLat);
     
-    %find top of fusiform gyrus
+    %find top of lingual sulcus
     fusTop=bsc_planeFromROI(162+sidenum,'superior',fsDir);
     %find posterior of ventricles
-    ventPost=bsc_planeFromROI(43,'posterior',fsDir);
+    ventPost=bsc_planeFromROI(ventInd(leftright),'posterior',fsDir);
     %modify the plane at the top of the fusiform gyrus to ensure it only
     %proceeds posteriorly from the ventricle.  This is to prevent some
     %errant/spurrous tracts in the pArc
