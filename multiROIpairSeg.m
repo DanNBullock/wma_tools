@@ -37,5 +37,5 @@ for iPairs=1:length(varargin)/2
     % do standard segmentation
     [~, keep]=  bsc_tractByEndpointROIs(wbFG, [roi1,roi2]);
     %use output boolean to add to classification structure
-    [classificationOUT]=bsc_concatClassificationCriteria(classificationOUT,strcat('tract_',num2str(iPairs),keep));
+    [classificationOUT]=bsc_concatClassificationCriteria(classificationOUT,strcat('tract_',num2str(iPairs)),keep);
 end
