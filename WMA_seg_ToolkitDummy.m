@@ -41,3 +41,5 @@ wma_SegmentFascicleFromConnectome(fg, rois, operation, fascicleFileName)
 [classificationOut] =bsc_segmentMdLF_ILF_v3(wbfg, fsDir)
 
 [classificationOut] = bsc_segpArcTPC(wbfg, fsDir)
+
+[classificationOUT]=multiROIpairSeg(feORwbfg,varargin)

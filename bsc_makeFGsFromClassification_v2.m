@@ -54,7 +54,7 @@ classificationGrouping = wma_classificationStrucGrouping(classification);
 if exist( 'distinguishable_colors')==2
 colorMapping = distinguishable_colors(length(classificationGrouping.names),'k');
 else
-colorMapping = rand(length(classificationGrouping.names),5);
+colorMapping = rand(length(classificationGrouping.names),3);
 end
 
 
