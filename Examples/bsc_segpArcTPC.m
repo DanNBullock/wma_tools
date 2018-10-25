@@ -121,8 +121,8 @@ for leftright= [1,2]
     [~, postRemove] =wma_SegmentFascicleFromConnectome(wbfg, [{fusTopPost}], {'not',}, 'postNot');
     
     %apply various criteria to get classification structure
-    [classificationpArc]=bsc_concatClassificationCriteria(classificationpArc,strcat(sideLabel,'pArc'),endPointInd,vertInd,~splInd,postRemove);
-    [classificationTPC]=bsc_concatClassificationCriteria(classificationTPC,strcat(sideLabel,'TPC'),endPointInd,vertInd,splInd);
+    [classificationpArc]=bsc_concatClassificationCriteria(classificationpArc,strcat(sideLabel(leftright),'pArc'),endPointInd,vertInd,~splInd,postRemove);
+    [classificationTPC]=bsc_concatClassificationCriteria(classificationTPC,strcat(sideLabel(leftright),'TPC'),endPointInd,vertInd,splInd);
 end
 
 %merge classification structures
