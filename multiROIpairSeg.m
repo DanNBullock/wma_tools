@@ -32,10 +32,10 @@ function [classificationOUT]=multiROIpairSeg(feORwbfg,varargin)
 classificationOUT=[];
 for iPairs=1:length(varargin)/2
     %obtain and load ROIs
-    roi1= bsc_loadAndParseROI(ROIorNiftivarargin(iPairs*2-1));
-    roi2=bsc_loadAndParseROI(ROIorNiftivarargin(iPairs*2));
+    roi1= bsc_loadAndParseROI(ROIorNiftivarargin{iPairs*2-1});
+    roi2=bsc_loadAndParseROI(ROIorNiftivarargin{iPairs*2});
     % do standard segmentation
     [~, keep]=  bsc_tractByEndpointROIs(wbFG, [roi1,roi2]);
     %use output boolean to add to classification structure
-    [classificationOUT]=bsc_concatClassificationCriteria(classificationOUT,strcat('tract_',num2str(iPairs),keep));
+    [classificationOUT]=bsc_concatClassificationCriteria(classificationOUT,strcat('tract_',num2str(iPairs)),keep);
 end
