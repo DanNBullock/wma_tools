@@ -21,21 +21,23 @@ function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 
 
 %% set up aparcAsegFile
-
 if or(isstring(atlas),ischar(atlas))
-    if ~exist(atlas,'file')
-    %apaprently necessary for matlab?
-    spaceChar={' '};
-    %I dont know why this is necessary
-    quoteString=strcat('mri_convert',spaceChar, fsDir,'/mri/',mgzfile ,spaceChar, niiPath);
-    quoteString=quoteString{:};
-    [status result] = system(quoteString, '-echo');
-    if status~=0
-        warning('/n Error generating aseg nifti file.  There may be a problem finding the file. Output: %s ',result)
-        
+    [fpath,fname,EXT] = fileparts(atlas);
+    if strcmp(EXT,'.mgz')
+        fprintf('\n .mgz file entered.  Creating .nii.gz using mri_convert')
+        %apaprently necessary for matlab?
+        spaceChar={' '};
+        %I dont know why this is necessary
+        quoteString=strcat('mri_convert',spaceChar, atlas ,spaceChar, fullfile(fpath,fname,'.nii.gz'));
+        quoteString=quoteString{:};
+        [status result] = system(quoteString, '-echo');
+        if status~=0
+            warning('/n Error generating aseg nifti file.  There may be a problem finding the file. Output: %s ',result)
+            
+        end
     end
-end
     atlas=niftiRead(atlas);
+    fprintf('\n atlas loaded')
 else
     %do nothing
 end
@@ -45,6 +47,7 @@ end
 
 
 %% begin loop
+fprintf('\n Generating composite roi from region(s) %i', ROInums)
 
 %get size of atlasNifti.data and make a blank matrix mask for it
 atlasDataSize=size(atlas.data);
