@@ -68,9 +68,15 @@ for iROIs=1:length(stringCells)
     if isdefined('atlas')
         mergedROIs{iROIs} =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel);
     elseif isdefined('ROIdir')
-        mergedROIs{iROIs}=niftiRead(strcat('/roi/ROI',num2str(iROIs)));
+        if length(ROInums)>1
+            for iROInums=1:length(ROInums)
+                niiPaths{iROInums}=strcat('/roi/ROI',num2str(ROInums(iROInums)));
+            end
+            mergedROIs{iROIs} = niftiMerge(niiPaths, niiMergedName);
+        else
+            mergedROIs{iROIs}=niftiRead(strcat('/roi/ROI',ROInums));
+        end
     end
     [classification]=multiROIpairSeg(feORwbfg,mergedROIs);
-    
     wma_formatForBrainLife()
 end
