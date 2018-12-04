@@ -47,3 +47,5 @@ wma_SegmentFascicleFromConnectome(fg, rois, operation, fascicleFileName)
 [figHandle, results]= bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
 
 wma_formatForBrainLife()
+
+bsc_SegROIfromPairStringList_BL()
