@@ -43,3 +43,7 @@ wma_SegmentFascicleFromConnectome(fg, rois, operation, fascicleFileName)
 [classificationOut] = bsc_segpArcTPC(wbfg, fsDir)
 
 [classificationOUT]=multiROIpairSeg(feORwbfg,varargin)
+
+[figHandle, results]= bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
+
+wma_formatForBrainLife()
