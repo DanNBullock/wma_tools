@@ -29,7 +29,7 @@ if  isstring (ROIorNifti)
         %UI prompt in lack of input cases.
         ROI=dtiReadRoi(ROIorNifti);
     end
-elseif isstruc(ROIorNifti)
+elseif isstruct(ROIorNifti)
     if ~isfield(ROIorNifti,'coords')
         ROI=dtiRoiFromNifti(ROIorNifti,0,'ROI','mat',true,false);
     elseif isfield(ROIorNifti,'coords')

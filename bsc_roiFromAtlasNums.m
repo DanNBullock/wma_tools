@@ -21,6 +21,7 @@ function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 
 
 %% set up aparcAsegFile
+
 if or(isstring(atlas),ischar(atlas))
     [fpath,fname,EXT] = fileparts(atlas);
     if strcmp(EXT,'.mgz')
@@ -48,7 +49,6 @@ end
 
 %% begin loop
 fprintf('\n Generating composite roi from region(s) %i', ROInums)
-
 %get size of atlasNifti.data and make a blank matrix mask for it
 atlasDataSize=size(atlas.data);
 blankLabelNifti(1:atlasDataSize(1),1:atlasDataSize(2),1:atlasDataSize(3))=false;

@@ -8,7 +8,7 @@ function  wma_formatForBrainLife()
 %   formats them for use on the brainlife platform
 
 if ~isdeployed
-    disp('adding paths');
+    disp('\n adding paths');
     addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
     addpath(genpath('/N/u/brlife/git/encode'))
     addpath(genpath('/N/u/brlife/git/jsonlab'))
@@ -23,29 +23,40 @@ if isfield(config,'track')
     fg = dtiImportFibersMrtrix(config.track, .5);
 end
 
-load('classification.m')
+load('classification.mat')
 
-tracts = bsc_makeFGsFromClassification_v2(classification, fg);
+tracts = bsc_makeFGsFromClassification_v3(classification, fg);
 
 %  We should migrate away from this format as soon as possible.  The
 %  fg_classified structure was a mistake on my part and contains redundant
 %  information.  The fg_classified .name field is the same as the
 %  fg_classified.fg.name field.
-fg_classified = bsc_makeFGsFromClassification(classification, fg);
+%fg_classified = bsc_makeFGsFromClassification(classification, fg);
+%tracts=fg2Array(fg_classified);
+%in the case of no source tractography, make an output
+
+if ~isfield(config,'track')
+    alltracks= fgCreate();
+   for itracts=1:length(classification.names)
+       alltracks = fgMerge(alltracks,tracts{itracts},'alltracts');
+       %tck unused
+       tck = dtiExportFibersMrtrix(alltracks, 'track.tck');
+   end
+end
 
 mkdir('tracts');
 
 % Make colors for the tracts
 cm = parula(length(tracts));
 for it = 1:length(tracts)
-    tract.name   = tracts{it}.name;
+    tract.name   = tracts(it).name;
     tract.color  = cm(it,:);
     
     %pick randomly up to 1000 fibers (pick all if there are less than 1000)
-    fiber_count = min(1000, numel(tracts{it}.fibers));
-    tract.coords = tracts{it}.fibers(randperm(fiber_count));
+    fiber_count = min(1000, numel(tracts(it).fibers));
+    tract.coords = tracts(it).fibers(randperm(fiber_count));
     
-    all_tracts(it).name = tracts{it}.name;
+    all_tracts(it).name = tracts(it).name;
     all_tracts(it).color = cm(it,:);
     savejson('', tract, fullfile('tracts',sprintf('%i.json',it)));
     all_tracts(it).filename = sprintf('%i.json',it);
@@ -55,18 +66,18 @@ end
 savejson('', all_tracts, fullfile('tracts/tracts.json'));
 
 % Save the results to disk
-save('output.mat','fg_classified','classification');
+save('output.mat','tracts','classification');
 
 % save product.json information
-tract_info = cell(length(fg_classified), 2);
-fibercounts = zeros(1, length(fg_classified));
+tract_info = cell(length(tracts), 2);
+fibercounts = zeros(1, length(tracts));
 possible_error = 0;
 num_left_tracts = 0;
 num_right_tracts = 0;
 
-for i = 1 : length(fg_classified)
-    name = fg_classified(i).name;
-    num_fibers = length(fg_classified(i).fibers);
+for i = 1 : length(tracts)
+    name = tracts(i).name;
+    num_fibers = length(tracts(i).fibers);
     
     fibercounts(i) = num_fibers;
     tract_info{i,1} = name;
@@ -92,9 +103,9 @@ right_tract_ys = zeros([1, num_right_tracts]);
 left_tract_idx = 1;
 right_tract_idx = 1;
 
-for i = 1 : length(fg_classified)
-    name = fg_classified(i).name;
-    num_fibers = length(fg_classified(i).fibers);
+for i = 1 : length(tracts)
+    name = tracts(i).name;
+    num_fibers = length(tracts(i).fibers);
     basename = name;
     
     if startsWith(basename, 'Right ')

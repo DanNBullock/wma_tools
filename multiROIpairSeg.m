@@ -1,5 +1,5 @@
-function [classificationOUT]=multiROIpairSeg(feORwbfg,varargin)
-% function [classificationOUT]=multiROIpairSeg(feORwbfg,varargin)
+function [classificationOUT]=multiROIpairSeg(feORwbfg,ROIList)
+% function [classificationOUT]=multiROIpairSeg(feORwbfg,ROIList)
 %
 %  Purpose:  This function segments tracts from an input wbfg by
 %  iteratively segmenting between input ROI pairs.  In theory, input ROIs
@@ -11,7 +11,7 @@ function [classificationOUT]=multiROIpairSeg(feORwbfg,varargin)
 %  feORwbfg:  either a whole brain fiber group / tractogram
 %  path/object or an fe path / object.
 %
-%  varargin:  a series of either .mat rois or niftis, either as strings or
+%  ROIList:  a series of either .mat rois or niftis, either as strings or
 %  as objects.  Inputs are interpreted such that the first input is the
 %  first item  of the pair pairing while the second input is the second
 %  item of the pair.  Thus odds are ROI1 and evens are ROI2
@@ -30,12 +30,14 @@ function [classificationOUT]=multiROIpairSeg(feORwbfg,varargin)
 [wbFG, ~] = bsc_LoadAndParseFiberStructure(feORwbfg);
 %initialize fg structure
 classificationOUT=[];
-for iPairs=1:length(varargin)/2
+
+
+for iPairs=1:length(ROIList)/2
     %obtain and load ROIs
-    roi1= bsc_loadAndParseROI(ROIorNiftivarargin(iPairs*2-1));
-    roi2=bsc_loadAndParseROI(ROIorNiftivarargin(iPairs*2));
+    roi1= bsc_loadAndParseROI(ROIList{iPairs*2-1});
+    roi2=bsc_loadAndParseROI(ROIList{iPairs*2});
     % do standard segmentation
-    [~, keep]=  bsc_tractByEndpointROIs(wbFG, [roi1,roi2]);
+    [~, keep]=  bsc_tractByEndpointROIs(wbFG, [{roi1} {roi2}]);
     %use output boolean to add to classification structure
-    [classificationOUT]=bsc_concatClassificationCriteria(classificationOUT,strcat('tract_',num2str(iPairs),keep));
+    [classificationOUT]=bsc_concatClassificationCriteria(classificationOUT,strcat('tract_',num2str(iPairs)),keep);
 end
