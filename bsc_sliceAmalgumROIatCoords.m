@@ -21,7 +21,7 @@ function [ROIs] =bsc_sliceAmalgumROIatCoords(atlasNifti,coords,space)
 % % (C) Daniel Bullock 2018 Bloomington, Indiana
 %% Preliminaries 
 
-if isempty(space)
+if notDefined('space')
     space='acpc'
 end
 
@@ -50,41 +50,94 @@ for icoords=1:chkSize(2)-1
     distances(3,icoords)=coords(3,icoords)-coords(3,icoords+1);
 end
 
+%check for monotonicity
+monoTonicDim=or(sum(distances>0,2)==length(distances),sum(distances<0,2)==length(distances));
+candidateDim=find(monoTonicDim);
+
+if length(candidateDim>1)
+    fprintf('\n More than one monotonic dimension found. Inferring segmentation dimension from maximal span covered.')
+    DistancesSum=[sum(distances(1,:)),sum(distances(2,:)),sum(distances(3,:))]';
+    segDim=find(DistancesSum==max(DistancesSum(candidateDim)));
+elseif length(candidateDim==1)
+    segDim=candidateDim;
+elseif length(candidateDim==0)
+    error('no clear monotonic direction in input coordinate scheme.  Please consider reordering input coordinates.')
+end
+
 %find the dimension along which the coordinates are arranged
-DistancesSum=[sum(distances(1,:)),sum(distances(2,:)),sum(distances(3,:))]';
-maxDim=find(DistancesSum==max(DistancesSum));
 
 % assumes they are sequential in order to segment
 
 %get the ROIs that are associated with the coordinates
-[ROInums] =bsc_atlasROINumsFromCoords(atlasNifti,coords,space);
 
+
+%check for unknown or white matter.  IT WOULD SEEM THAT IN THE CURRENT
+%FORM, THE MAT APPLICATION DOES NOT PROVIDE LABELS FOR EMPTY SPACE OR FOR
+%WHITE MATTER.  THIS LEADS TO ALL NON CORTICAL AREAS BEING LABELED 0.
+%GIVEN THAT WE DO NOT WANT TO CREATE GIANT ROIS THAT COVER THE ENTIRE
+%IMAGE, WE WILL NEED TO EXCLUDE THEM.  Conceivably one solution to this
+%would be to determine closest label from point. Will consider this update
+%later.
+
+[ROInums] =bsc_atlasROINumsFromCoords(atlasNifti,coords,space);
+if ~ isempty(find(ROInums==0))
+    troubleCoords=[coords(:,find(ROInums==0))']
+    warning('coordinate %i has returned an unlabeled index.  Excluding from amalgum creation.',find(ROInums==0))
+    fprintf('\nRemaining ROIs will still be sliced with ALL coordinates (including trouble coordinate)')
+    ROInums=ROInums(~ROInums==0);
+end
+    
 %obtain merged ROI from the obtained numbers
 [mergedROI]  =bsc_roiFromAtlasNums(atlasNifti,ROInums, []);
 
 %set key anatomical relations for subsegmentation
-if maxDim==1
-    firstWord='lateral';
-    lastWord='medial';
-elseif maxDim==2
-    firstWord='anterior';
-    lastWord='posterior';
-elseif maxDim==3
-    firstWord='superior';
-    lastWord='inferior';
+if segDim==1
+    if coords(segDim,1)>coords(segDim,end) & coords(segDim,1)>0
+        firstWord='lateral';
+        lastWord='medial';
+    else
+        firstWord='medial';
+        lastWord='lateral';
+    end
+    if coords(segDim,1)>coords(segDim,end)& coords(segDim,1)<0
+        firstWord='medial';
+        lastWord='lateral';
+    else
+        firstWord='lateral';
+        lastWord='medial';
+    end
+elseif segDim==2
+    if coords(segDim,1)>coords(segDim,end)
+        firstWord='anterior';
+        lastWord='posterior';
+    else
+        firstWord='posterior';
+        lastWord='anterior';
+    end
+elseif segDim==3
+    if coords(segDim,1)>coords(segDim,end)
+        firstWord='superior';
+        lastWord='inferior';
+    else
+        firstWord='inferior';
+        lastWord='superior';
+    end
 end
 
 % set midpoint and total size
 totalSlice=chkSize(2)+1;
-HalfPoint=(totalSlice/2)+.5;
+HalfPoint=(totalSlice/2);
 
 %initiate roi to keep track of what has been completed (i.e. the 'other'
 %boundary of the operation, other than the coordinate)
 completedROI=mergedROI;
 completedROI.coords=[];
 
+
+
 %iterate slicing
 for icoords=1:chkSize(2)
+    
     %subtract what has been done from the amalgum ROI
     [remainderROI] = bsc_subtractROIs(completedROI, mergedROI);
     
@@ -92,15 +145,23 @@ for icoords=1:chkSize(2)
     ROIs{icoords}=bsc_modifyROI(atlasNifti,remainderROI, coords(:,icoords), firstWord);
     
     %name ROI appropriately
-    if icoords<HalfPoint
-        ROIs{icoords}.name=strcat(firstWord,num2str(icoords));
+    if (ceil(HalfPoint)==icoords & ~(HalfPoint==icoords))
+        mergedROI.name
+        ROIs{icoords}.name=strcat(mergedROI.name,'_','middle');
+    elseif icoords<=HalfPoint
+        ROIs{icoords}.name=strcat(mergedROI.name,'_',firstWord,num2str(icoords));
     elseif icoords>HalfPoint
-        ROIs{icoords}.name=strcat(lastWord,num2str(icoords));
-    elseif icoords>HalfPoint
-        ROIs{icoords}.name='middle';
+        ROIs{icoords}.name=strcat(mergedROI.name,'_',lastWord,num2str(icoords));
+        
     end
 
     %amalgamate the remainder ROI
     [completedROI] = bsc_mergeROIs(ROIs{icoords}, completedROI);
-    
+
+end
+
+[lastROI] = bsc_subtractROIs(completedROI, mergedROI);
+ROIs{icoords+1}=lastROI;
+ROIs{icoords+1}.name=strcat(mergedROI.name,'_',lastWord,num2str(icoords+1));
+
 end

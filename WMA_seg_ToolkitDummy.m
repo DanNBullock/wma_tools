@@ -49,3 +49,5 @@ wma_SegmentFascicleFromConnectome(fg, rois, operation, fascicleFileName)
 wma_formatForBrainLife()
 
 bsc_SegROIfromPairStringList_BL()
+
+wma_multiSliceAmalgumROIatCoords_BL()

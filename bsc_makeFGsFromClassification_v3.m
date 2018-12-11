@@ -69,7 +69,7 @@ if strcmpi(coordScheme,'acpc')
         else
             warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
-        
+        fprintf('\n creating tract %i with %i streamlines', itracts,sum(classification.index==itracts) );
         tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
         tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
         tractStruc(itracts).fibers=wbFG.fibers(classification.index==itracts);

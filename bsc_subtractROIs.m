@@ -7,6 +7,8 @@ function  [newROI] = bsc_subtractROIs(ROI1, ROI2)
 % -ROI1:  a vistasoft format ROI 
 % -ROI2:  a vistasoft format ROI 
 %
+%  SUBTRACTS ROI 1 FROM ROI 2
+%
 % Outputs:
 % -roiIntersection:  a vistasoft format ROI, with the coords field
 % corresponding to the overlap of the two rois.
@@ -21,7 +23,8 @@ intersectionCoords=intersect(ROI1.coords,ROI2.coords,'rows');
 roiIntersection.coords=intersectionCoords;
 newROI.coords=setdiff(ROI2.coords,roiIntersection.coords,'rows');
 else
-    warning('ROI1 is empty')
+    fprintf(newline)
+    warning('%s is empty', ROI1.name)
     newROI=ROI2;
 end
 end

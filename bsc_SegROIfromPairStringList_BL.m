@@ -1,4 +1,4 @@
-function bsc_SegROIfromPairStringList_BL()
+function bsc_multiSliceAmalgumROIatCoords()
 % bsc_genNiftiROIfromStringList(feORwbfg,atlas,ROIstring, smoothKernel)
 %
 % Given a string list of rois (in the specified format) loops over

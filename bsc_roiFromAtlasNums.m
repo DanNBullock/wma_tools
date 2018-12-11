@@ -48,7 +48,7 @@ end
 
 
 %% begin loop
-fprintf('\n Generating composite roi from region(s) %i', ROInums)
+fprintf('\n Generating composite roi from region(s) %s', num2str(ROInums))
 %get size of atlasNifti.data and make a blank matrix mask for it
 atlasDataSize=size(atlas.data);
 blankLabelNifti(1:atlasDataSize(1),1:atlasDataSize(2),1:atlasDataSize(3))=false;
