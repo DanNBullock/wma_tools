@@ -94,7 +94,7 @@ roiOUT.name=strcat(roiIN.name,'_',num2str(refCoord),'_',location);
 
 %throw warning for empty ROI
 if isempty(roiOUT.coords)
-    warning('\n Empty Output for %s relative to %s of %i',roiIN.name,location,refCoord)
+    warning('\n Empty Output for %s relative to %s of %i',roiIN.name,location,num2str(refCoord))
 else
     %no problem
 end

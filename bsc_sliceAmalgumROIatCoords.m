@@ -22,7 +22,7 @@ function [ROIs] =bsc_sliceAmalgumROIatCoords(atlasNifti,coords,space)
 %% Preliminaries 
 
 if notDefined('space')
-    space='acpc'
+    space='acpc';
 end
 
 %load atlas if necessary
@@ -82,7 +82,7 @@ end
 [ROInums] =bsc_atlasROINumsFromCoords(atlasNifti,coords,space);
 if ~ isempty(find(ROInums==0))
     troubleCoords=[coords(:,find(ROInums==0))']
-    warning('coordinate %i has returned an unlabeled index.  Excluding from amalgum creation.',find(ROInums==0))
+    warning('coordinate %s has returned an unlabeled index.  Excluding from amalgum creation.',num2str(find(ROInums==0)))
     fprintf('\nRemaining ROIs will still be sliced with ALL coordinates (including trouble coordinate)')
     ROInums=ROInums(~ROInums==0);
 end
