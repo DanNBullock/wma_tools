@@ -1,4 +1,4 @@
-function bsc_multiSliceAmalgumROIatCoords()
+function bsc_SegROIfromPairStringList_BL()
 % bsc_genNiftiROIfromStringList(feORwbfg,atlas,ROIstring, smoothKernel)
 %
 % Given a string list of rois (in the specified format) loops over
@@ -46,7 +46,6 @@ feORwbfg = dtiImportFibersMrtrix(config.track, .5);
 ROIstring=config.roiPairs;
 smoothKernel=config.smoothKernel;
 
-
 if isfield(config,'atlas')
       atlas=fullfile(config.atlas,'parc.nii.gz');
 end
@@ -63,7 +62,6 @@ ROIstring=strrep(ROIstring,';',newline);
 stringCells = splitlines(ROIstring);
 mkdir('roi/')
 
-
 for iROIs=1:length(stringCells)
     ROInums=str2num(stringCells{iROIs});
     %% run the merge roi function
@@ -72,7 +70,7 @@ for iROIs=1:length(stringCells)
     elseif ~notDefined('ROIdir')
         if length(ROInums)>1
             for iROInums=1:length(ROInums)
-                niiPaths{iROInums}=strcat('/roi/ROI',num2str(ROInums(iROInums)));
+                niiPaths{iROInums}=strcat(ROIdir,'/ROI',num2str(ROInums(iROInums)));
             end
             mergedROIs{iROIs} = niftiMerge(niiPaths, niiMergedName);
         else
@@ -83,6 +81,6 @@ end
     [classification]=multiROIpairSeg(feORwbfg,mergedROIs);
     save('classification.mat','classification')
     fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
-        sum(classification.index>0),length(classification.names))
+    sum(classification.index>0),length(classification.names))
     wma_formatForBrainLife()
 end
