@@ -18,12 +18,13 @@ function [ROI] = bsc_loadAndParseROI(ROIorNifti)
 %
 %% Begin code
 
-if  isstring (ROIorNifti)
+if  or(isstring(ROIorNifti),ischar(ROIorNifti))
     %decomposes file path
     [fpath,fname,fext]=fileparts(ROIorNifti);
+    %why was this necessary?
     if or(strcmp(fext,'.gz'),strcmp(fext,'.nii'))
-        niftiIn=niftiRead(ROIorNifti);
-        ROI=dtiRoiFromNifti(niftiIn,0,'ROI','mat',true,false);
+        %niftiIn=niftiRead();
+        ROI=dtiRoiFromNifti(ROIorNifti,0,'ROI','mat',true,false);
     else
         %could cause a problem due to how old vistasoft tends to throw up a
         %UI prompt in lack of input cases.

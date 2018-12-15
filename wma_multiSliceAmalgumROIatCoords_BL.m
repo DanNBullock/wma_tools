@@ -70,11 +70,11 @@ for Ilines=1:length(coordSets)
         if Ilines==1
             indexLabel=iROIS;
             fprintf('\n Saving %s as %s',ROIs{iROIS}.name,strcat('ROI',num2str(indexLabel)))
-            [~,~]=dtiRoiNiftiFromMat(ROIs{iROIS},atlas,strcat('rois/ROI',num2str(indexLabel)),1);
+            [~,~]=dtiRoiNiftiFromMat(ROIs{iROIS},atlas,strcat('rois/ROI',num2str(indexLabel),'.nii.gz'),1);
         else
             indexLabel=iROIS+sum(roiCount(1:Ilines-1));
             fprintf('\n Saving %s as %s',ROIs{iROIS}.name,strcat('ROI',num2str(indexLabel)))
-            [~,~]=dtiRoiNiftiFromMat(ROIs{iROIS},atlas,strcat('rois/ROI',num2str(indexLabel)),1);
+            [~,~]=dtiRoiNiftiFromMat(ROIs{iROIS},atlas,strcat('rois/ROI',num2str(indexLabel),'.nii.gz'),1);
         end
   fprintf(fid,'%i,%s \n',indexLabel,ROIs{iROIS}.name);
     end

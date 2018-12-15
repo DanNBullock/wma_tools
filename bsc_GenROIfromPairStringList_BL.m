@@ -1,4 +1,4 @@
-function bsc_SegROIfromPairStringList_BL()
+function bsc_GenROIfromPairStringList_BL()
 % bsc_genNiftiROIfromStringList(feORwbfg,atlas,ROIstring, smoothKernel)
 %
 % Given a string list of rois (in the specified format) loops over
@@ -31,17 +31,15 @@ function bsc_SegROIfromPairStringList_BL()
 %% Begin code
 
  if ~isdeployed
-    disp('adding paths');
+     disp('adding paths');
      addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
      addpath(genpath('/N/u/brlife/git/jsonlab'))
      addpath(genpath('/N/u/brlife/git/vistasoft'))
-     addpath(genpath('/N/u/brlife/git/wma_tools'))
+     %addpath(genpath('/N/u/brlife/git/wma_tools'))
  end
 
 %config = loadjson('/N/dc2/projects/lifebid/HCP/Dan/GitStoreDir/ROIs2ROIsSegment/config.json');
 config = loadjson('config.json');
-
-feORwbfg = dtiImportFibersMrtrix(config.track, .5);
 
 ROIstring=config.roiPairs;
 smoothKernel=config.smoothKernel;
@@ -62,14 +60,24 @@ ROIstring=strrep(ROIstring,';',newline);
 stringCells = splitlines(ROIstring);
 mkdir('roi/')
 
-bsc_GenROIfromPairStringList_BL()
-
 for iROIs=1:length(stringCells)
- mergedROIs{iROIs}=fullfile(pwd,'roi',strcat('ROI',num2str(iROIs),'.nii.gz'));
+    ROInums=str2num(stringCells{iROIs});
+    %% run the merge roi function
+    if ~notDefined('atlas')
+        mergedROI =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel);
+               currROIName=fullfile(pwd,strcat('/roi/ROI',num2str(iROIs),'.nii.gz'));
+        [~, ~]=dtiRoiNiftiFromMat (mergedROI,atlas,currROIName,1);
+    elseif ~notDefined('ROIdir')
+        for iROInums=1:length(ROInums)
+            niiPaths{iROInums}=strcat(ROIdir,'ROI',num2str(ROInums(iROInums)),'.nii.gz');
+        end
+        if length(ROInums)>1
+            
+            mergedROI = niftiMerge(niiPaths, strcat('rois/ROI',strrep(num2str(ROInums),'  ','_'),'.nii.gz'));
+        end
+        currROIName=fullfile(pwd,strcat('/roi/ROI',num2str(iROIs),'.nii.gz'));
+        fprintf('\n saving %s',currROIName)
+        niftiWrite(mergedROI,currROIName)
+    end
 end
-    [classification]=multiROIpairSeg(feORwbfg,mergedROIs);
-    save('classification.mat','classification')
-    fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
-    sum(classification.index>0),length(classification.names))
-    wma_formatForBrainLife()
 end

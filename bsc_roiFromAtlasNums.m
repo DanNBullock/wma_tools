@@ -66,10 +66,12 @@ end
 
 %% converts nifti formatting to roi formatting
 %smooth if you want to
+initROIsize=length(find(ROImask));
 if ~isempty(smoothKernel) & ~smoothKernel==0
 ROImask=~(smooth3(ROImask,'box', smoothKernel))==0;
 end
-
+increasePct=((length(find(ROImask))/initROIsize)-1)*100;
+fprintf('\nROI size increased by %4.2f percent',increasePct)
 %get index coordinates from nifti mask volume
 Roi = find(ROImask);
 [x1,y1,z1] = ind2sub(size(atlas.data), Roi);

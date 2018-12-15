@@ -51,3 +51,5 @@ wma_formatForBrainLife()
 bsc_SegROIfromPairStringList_BL()
 
 wma_multiSliceAmalgumROIatCoords_BL()
+
+bsc_GenROIfromPairStringList_BL()
