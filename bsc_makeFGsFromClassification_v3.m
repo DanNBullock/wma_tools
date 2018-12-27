@@ -52,11 +52,11 @@ end
 
 %find left and right tracts and assign them the same color.
 classificationGrouping = wma_classificationStrucGrouping(classification);
-if exist( 'distinguishable_colors')==2
-colorMapping = distinguishable_colors(length(classificationGrouping.names),'k');
-else
+% if exist( 'distinguishable_colors')==2
+% colorMapping = distinguishable_colors(length(classificationGrouping.names),'k');
+% else
 colorMapping = rand(length(classificationGrouping.names),3);
-end
+% end
 
 
 % for each name in the classification.names structure finds the
@@ -66,12 +66,13 @@ if strcmpi(coordScheme,'acpc')
     for itracts=1:length(classification.names)
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
             colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
+          tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
         else
             warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
         fprintf('\n creating tract %i with %i streamlines', itracts,sum(classification.index==itracts) );
         tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
-        tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
+      
         tractStruc(itracts).fibers=wbFG.fibers(classification.index==itracts);
     end
 elseif strcmpi(coordScheme,'img')
@@ -79,12 +80,13 @@ elseif strcmpi(coordScheme,'img')
         
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
             colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
+         tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
         else
             warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
         
         tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
-        tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
+       
         tractStruc(itracts).fibers=fe.fg.fibers(classification.index==itracts);
     end
 else

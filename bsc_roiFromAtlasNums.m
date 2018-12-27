@@ -1,10 +1,17 @@
 function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 %
 %  INPUTS:
-%  -fsDir:  path to THIS SUBJECT'S freesurfer rectory.
+%  -atlas:  path to the atlas nii.gz that you would like to use.
 %
-%  -fsROInums:  a list of region ID numbers from freesurfer that you would
+%  -ROInums:  a list of region ID numbers from the parcellation that you would
 %  like merged into a single ROI.  i.e. [ 3, 4 , ... 41,42]
+%
+%  -smoothKernel:  a smoothing kernel applied to each coordinate of an roi.
+%   Results in an inflation.  NOTE: uses the matlab function smooth3, which
+%   places smooths via a box gaussian kernel of edge size [smoothKernel],
+%   also, must be an odd integer value, as the inflation occurs evenly in
+%   all directions (and thus is odd, due to the inclusion of the origin
+%   point).
 %
 %  OUTPUTS:
 %  -mergedROI: a merged ROI which has coordinates corresponding to each of
