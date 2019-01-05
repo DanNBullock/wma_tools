@@ -1,4 +1,4 @@
-function [ROIs] =bsc_sliceAmalgumROIatCoords(atlasNifti,coords,space)
+function [ROIs] =bsc_sliceAmalgumROIatCoords(atlasNifti,coords,space,interpolateFlag)
 % [ROIs] =bsc_sliceAmalgumROIatCoords(atlasNifti,coords,space)
 %
 %  Purpose:  given a series of coordinates, find the atlas ROIs that
@@ -13,6 +13,9 @@ function [ROIs] =bsc_sliceAmalgumROIatCoords(atlasNifti,coords,space)
 %  you would like to know the atlas ROI numbers for.
 %
 %  -space:  the space that the coordinates are in, either 'img' or 'acpc'.
+%
+%  -interpolateFlag:  if is 1 or 'true' will interpolate to nearest
+%  non-background ROI.  Else, no interpolation
 %
 %  OUTPUTS:
 %
@@ -79,7 +82,7 @@ end
 %would be to determine closest label from point. Will consider this update
 %later.
 
-[ROInums] =bsc_atlasROINumsFromCoords(atlasNifti,coords,space);
+[ROInums] =bsc_atlasROINumsFromCoordsInterp(atlasNifti,coords,space,interpolateFlag);
 if ~ isempty(find(ROInums==0))
     troubleCoords=[coords(:,find(ROInums==0))']
     warning('coordinate %s has returned an unlabeled index.  Excluding from amalgum creation.',num2str(find(ROInums==0)))

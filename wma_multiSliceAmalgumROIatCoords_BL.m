@@ -32,6 +32,7 @@ end
 
 config = loadjson('config.json');
 coordSets=splitlines(config.coords);
+interpolateFlag=config.interpolateFlag;
 %outRoiTotalNumlength=length(coordSets);
 for Ilines=1:length(coordSets)
     coordCount(Ilines)=length(strfind(coordSets{Ilines},','))+1;
@@ -64,7 +65,8 @@ for Ilines=1:length(coordSets)
     coordsHold
     fprintf('corresponding to these coordinates in mni space')
     str2num(strrep(coordSets{Ilines},',',newline))'
-    [ROIs] =bsc_sliceAmalgumROIatCoords(atlas,coordsHold);
+    
+    [ROIs] =bsc_sliceAmalgumROIatCoords(atlas,coordsHold,'acpc',interpolateFlag)
     for iROIS=1:roiCount(Ilines)
         
         if Ilines==1
