@@ -65,17 +65,19 @@ colorMapping = rand(length(classificationGrouping.names),3);
 if strcmpi(coordScheme,'acpc')
     for itracts=1:length(classification.names)
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
+              tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
             colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
           tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
         else
             warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
         fprintf('\n creating tract %i with %i streamlines', itracts,sum(classification.index==itracts) );
-        tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
+        %tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
       
         tractStruc(itracts).fibers=wbFG.fibers(classification.index==itracts);
     end
 elseif strcmpi(coordScheme,'img')
+    %fix this later
     for itracts=1:length(classification.names)
         
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
