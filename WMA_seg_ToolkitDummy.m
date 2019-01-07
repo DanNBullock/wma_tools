@@ -53,3 +53,5 @@ bsc_SegROIfromPairStringList_BL()
 wma_multiSliceAmalgumROIatCoords_BL()
 
 bsc_GenROIfromPairStringList_BL()
+
+ bsc_feAndSegQualityCheck_BL()
