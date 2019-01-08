@@ -63,6 +63,7 @@ else
     [results]= wma_quantWBFG(feORwbfg);
 end
 
+keyboard
 
 %% huge set of conditionals for plotting
 % if both fe and class are present
@@ -170,17 +171,17 @@ if ~notDefined('fe') & ~notDefined('classification')
     
     %% computation for seg bar plots
     %count plot
-          classificationGrouping = wma_classificationStrucGrouping(classification);
-countPlotInput=zeros(2,(length(classificationGrouping.names)));
-      volPlotInput=zeros(2,(length(classificationGrouping.names)));
+    classificationGrouping = wma_classificationStrucGrouping(classification);
+    countPlotInput=zeros(2,(length(classificationGrouping.names)));
+    volPlotInput=zeros(2,(length(classificationGrouping.names)));
     
     for itracts=1:length(classificationGrouping.names)
-      fprintf('\n %s',classificationGrouping.names{itracts})  
-      tractIndexes=unique(classification.index(classificationGrouping.index==itracts));
-      for iVariants=1:length(tractIndexes)
-      countPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.countProp;
-      volPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.volumeProp;
-      end  
+        fprintf('\n %s',classificationGrouping.names{itracts})
+        tractIndexes=unique(classification.index(classificationGrouping.index==itracts));
+        for iVariants=1:length(tractIndexes)
+            countPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.countProp;
+            volPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.volumeProp;
+        end
     end
     
     bottomPlot1=subplot(2,5,[4,5]);
@@ -206,10 +207,13 @@ countPlotInput=zeros(2,(length(classificationGrouping.names)));
     set(gca,'xtick',[1:1:length(classificationGrouping.names)])
     set(gca,'XTickLabel',classificationGrouping.names, 'FontSize',8,'FontName','Times')
     bottomPlot2.XTickLabelRotation=-45;
-
+    
+    fig = gcf;
+    fig.Position = [100 50 2200 1250];
+    
     % if only fe is passed
 elseif ~notDefined('fe') & notDefined('classification')
-          textBoxHandle=subplot(3,2,[1 3 5]);
+    textBoxHandle=subplot(3,2,[1 3 5]);
     textBoxPos=get(textBoxHandle,'position');
     annotation('textbox',...
         [textBoxPos(1) textBoxPos(2) textBoxPos(3) textBoxPos(4)],...
@@ -287,9 +291,12 @@ elseif ~notDefined('fe') & notDefined('classification')
     xlabel('Streamline Length (mm)')
     ylabel('Portion of tracts less than or equal to length')
     
+    fig = gcf;
+    fig.Position = [100 100 1200 1000];
+    
     %% no life, but with classification
-    elseif notDefined('fe') & ~notDefined('classification')
-        %readout stats
+elseif notDefined('fe') & ~notDefined('classification')
+    %readout stats
     textBoxHandle=subplot(3,4,[1 5 9]);
     textBoxPos=get(textBoxHandle,'position');
     annotation('textbox',...
@@ -330,7 +337,7 @@ elseif ~notDefined('fe') & notDefined('classification')
     legend('WBFG','WBFG Fit')
     xlabel('Streamline Length (mm)')
     ylabel('Whole Brain proportion')
-       
+    
     %plot looking at cumulative fiber length proportions
     cumValid=zeros(1,length(results.WBFG.lengthProps));
     cumWBFG=cumValid;
@@ -365,17 +372,17 @@ elseif ~notDefined('fe') & notDefined('classification')
     
     %% computation for seg bar plots
     %count plot
-          classificationGrouping = wma_classificationStrucGrouping(classification);
-countPlotInput=zeros(2,(length(classificationGrouping.names)));
-      volPlotInput=zeros(2,(length(classificationGrouping.names)));
+    classificationGrouping = wma_classificationStrucGrouping(classification);
+    countPlotInput=zeros(2,(length(classificationGrouping.names)));
+    volPlotInput=zeros(2,(length(classificationGrouping.names)));
     
     for itracts=1:length(classificationGrouping.names)
-      fprintf('\n %s',classificationGrouping.names{itracts})  
-      tractIndexes=unique(classification.index(classificationGrouping.index==itracts));
-      for iVariants=1:length(tractIndexes)
-      countPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.countProp;
-      volPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.volumeProp;
-      end  
+        fprintf('\n %s',classificationGrouping.names{itracts})
+        tractIndexes=unique(classification.index(classificationGrouping.index==itracts));
+        for iVariants=1:length(tractIndexes)
+            countPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.countProp;
+            volPlotInput(iVariants,itracts)=results.WBFG.tractStats{tractIndexes(iVariants)}.norms.volumeProp;
+        end
     end
     
     bottomPlot1=subplot(3,4,[6 7 8]);
@@ -400,10 +407,13 @@ countPlotInput=zeros(2,(length(classificationGrouping.names)));
     ylim([-0 max(max(volPlotInput))*133])
     set(gca,'xtick',[1:1:length(classificationGrouping.names)])
     set(gca,'XTickLabel',classificationGrouping.names, 'FontSize',8,'FontName','Times')
-    bottomPlot2.XTickLabelRotation=-45;    
+    bottomPlot2.XTickLabelRotation=-45;
+    
+    fig = gcf;
+    fig.Position = [100 100 1600 1000];
     %% no classification no fe
-        elseif notDefined('fe') & notDefined('classification')
-            %readout stats
+elseif notDefined('fe') & notDefined('classification')
+    %readout stats
     textBoxHandle=subplot(2,2,[1 3]);
     textBoxPos=get(textBoxHandle,'position');
     annotation('textbox',...
@@ -442,7 +452,7 @@ countPlotInput=zeros(2,(length(classificationGrouping.names)));
     legend('WBFG','WBFG Fit')
     xlabel('Streamline Length (mm)')
     ylabel('Whole Brain proportion')
-       
+    
     %plot looking at cumulative fiber length proportions
     cumValid=zeros(1,length(results.WBFG.lengthProps));
     cumWBFG=cumValid;
@@ -457,6 +467,9 @@ countPlotInput=zeros(2,(length(classificationGrouping.names)));
     legend('WBFG')
     xlabel('Streamline Length (mm)')
     ylabel('Portion of tracts less than or equal to length')
+    
+    fig = gcf;
+    fig.Position = [100 100 1400 600];
 end
 
 %gets figure handle
@@ -468,5 +481,3 @@ if ~notDefined('saveDir')
 end
 
 end
-
-
