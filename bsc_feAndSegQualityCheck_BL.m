@@ -7,6 +7,7 @@ function bsc_feAndSegQualityCheck_BL()
 
  if ~isdeployed
     disp('adding paths');
+     addpath(genpath('/N/u/brlife/git/encode'))
      addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
      addpath(genpath('/N/u/brlife/git/jsonlab'))
      addpath(genpath('/N/u/brlife/git/vistasoft'))
