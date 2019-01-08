@@ -47,8 +47,6 @@ end
 
 [wbFG, fe] = bsc_LoadAndParseFiberStructure(feORwbfg);
 
-
-
 %a test for the
 % if isempty(find(isnan(fe.life.fit.weights),1))>0
 %     nanNum=length(find(isnan(fe.life.fit.weights)));
@@ -62,8 +60,6 @@ if ~notDefined('classification')
 else
     [results]= wma_quantWBFG(feORwbfg);
 end
-
-keyboard
 
 %% huge set of conditionals for plotting
 % if both fe and class are present
@@ -476,7 +472,7 @@ end
 figHandle=gcf;
 
 if ~notDefined('saveDir')
-    saveas(gcf,strcat(saveDir,'/tractomeStatPlot.eps'));
+    saveas(gcf,strcat(saveDir,'/tractomeStatPlot.epsc'));
     save(strcat(saveDir,'/tractomeResultStruc.mat'),'results')
 end
 
