@@ -463,8 +463,8 @@ end
 figHandle=gcf;
 
 if ~notDefined('saveDir')
-    saveas(gcf,strcat(saveDir,'/fe_AFQ_StatPlot.eps'));
-    save(strcat(saveDir,'/fe_AFQ_resultStruc.mat'),'results')
+    saveas(gcf,strcat(saveDir,'/tractomeStatPlot.eps'));
+    save(strcat(saveDir,'/tractomeResultStruc.mat'),'results')
 end
 
 end
