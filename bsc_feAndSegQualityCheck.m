@@ -63,8 +63,6 @@ else
     [results]= wma_quantWBFG(feORwbfg);
 end
 
-keyboard
-
 %% huge set of conditionals for plotting
 % if both fe and class are present
 figure
