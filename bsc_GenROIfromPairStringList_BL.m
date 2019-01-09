@@ -35,7 +35,7 @@ function bsc_GenROIfromPairStringList_BL()
      addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
      addpath(genpath('/N/u/brlife/git/jsonlab'))
      addpath(genpath('/N/u/brlife/git/vistasoft'))
-     %addpath(genpath('/N/u/brlife/git/wma_tools'))
+     addpath(genpath('/N/u/brlife/git/wma_tools'))
  end
 
 %config = loadjson('/N/dc2/projects/lifebid/HCP/Dan/GitStoreDir/ROIs2ROIsSegment/config.json');
@@ -45,7 +45,7 @@ ROIstring=config.roiPairs;
 smoothKernel=config.smoothKernel;
 
 if isfield(config,'atlas')
-      atlas=fullfile(config.atlas,'parc.nii.gz');
+       atlas=config.atlas;
 end
 
 if isfield(config,'ROI')

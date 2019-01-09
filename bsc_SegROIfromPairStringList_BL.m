@@ -47,7 +47,7 @@ ROIstring=config.roiPairs;
 smoothKernel=config.smoothKernel;
 
 if isfield(config,'atlas')
-      atlas=fullfile(config.atlas,'parc.nii.gz');
+    atlas=fullfile(config.atlas,'parc.nii.gz');
 end
 
 if isfield(config,'ROI')
