@@ -35,10 +35,10 @@ fsDir=config.freesurfer;
 
 wbfg = dtiImportFibersMrtrix(config.track, .5);
 
-[classificationOut] =bsc_streamlineCategoryPriors_v3(wbfg, fsDir,inflateITer);
-save('classification.mat','classificationOut')
+[classification] =bsc_streamlineCategoryPriors_v3(wbfg, fsDir,inflateITer);
+save('classification.mat','classification')
 
 fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
-    sum(classificationOut.index>0),length(classificationOut.names))
+    sum(classification.index>0),length(classification.names))
 wma_formatForBrainLife()
 end
