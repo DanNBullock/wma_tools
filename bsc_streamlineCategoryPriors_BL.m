@@ -39,6 +39,6 @@ wbfg = dtiImportFibersMrtrix(config.track, .5);
 save('classification.mat','classificationOut')
 
 fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
-    sum(classification.index>0),length(classification.names))
+    sum(classificationOut.index>0),length(classificationOut.names))
 wma_formatForBrainLife()
 end
