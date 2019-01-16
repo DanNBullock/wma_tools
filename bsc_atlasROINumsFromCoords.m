@@ -1,4 +1,4 @@
-function [ROInums] =bsc_atlasROINumsFromCoords(atlasNifti,coords,space)
+function [ROInums] =bsc_atlasROINumsFromCoords(atlasNifti,coords,space,interpolateBool)
 %[ROInums] =bsc_atlasROINumsFromCoords(atlasNifti,coords,space)
 %
 %  Purpose:  find the label number associated with a particular coordinate

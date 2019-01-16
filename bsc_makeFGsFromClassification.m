@@ -1,4 +1,4 @@
-function tractStruc = bsc_makeFGsFromClassification_v2(classification, wbFG,coordScheme)
+function tractStruc = bsc_makeFGsFromClassification(classification, wbFG,coordScheme)
 %
 %    tractStruc = bsc_makeFGsFromClassification(classification, wbFG)
 %

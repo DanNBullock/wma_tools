@@ -55,3 +55,5 @@ wma_multiSliceAmalgumROIatCoords_BL()
 bsc_GenROIfromPairStringList_BL()
 
  bsc_feAndSegQualityCheck_BL()
+ 
+bsc_streamlineCategoryPriors_BL()
