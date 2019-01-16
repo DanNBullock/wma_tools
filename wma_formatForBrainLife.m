@@ -66,7 +66,7 @@ end
 savejson('', all_tracts, fullfile('tracts/tracts.json'));
 
 % Save the results to disk
-save('output.mat','tracts','classification');
+save('output.mat','tracts','classification','-v7.3');
 
 % save product.json information
 tract_info = cell(length(tracts), 2);
