@@ -54,13 +54,14 @@ for icoords=1:chkSize(2)-1
 end
 
 %check for monotonicity
-monoTonicDim=or(sum(distances>0,2)==length(distances),sum(distances<0,2)==length(distances));
+distSize=size(distances);
+monoTonicDim=or(sum(distances>0,2)==distSize(2),sum(distances<0,2)==distSize(2));
 candidateDim=find(monoTonicDim);
 
 if length(candidateDim>1)
     fprintf('\n More than one monotonic dimension found. Inferring segmentation dimension from maximal span covered.')
     DistancesSum=[sum(distances(1,:)),sum(distances(2,:)),sum(distances(3,:))]';
-    segDim=find(DistancesSum==max(DistancesSum(candidateDim)));
+    segDim=find(abs(DistancesSum)==max(abs(DistancesSum(candidateDim))));
 elseif length(candidateDim==1)
     segDim=candidateDim;
 elseif length(candidateDim==0)

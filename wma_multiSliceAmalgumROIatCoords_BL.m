@@ -23,10 +23,10 @@ function wma_multiSliceAmalgumROIatCoords_BL()
 
 if ~isdeployed
     disp('adding paths');
-    addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
-    addpath(genpath('/N/u/brlife/git/jsonlab'))
-    addpath(genpath('/N/u/brlife/git/vistasoft'))
-    addpath(genpath('/N/u/brlife/git/wma_tools'))
+     addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
+     addpath(genpath('/N/u/brlife/git/jsonlab'))
+     addpath(genpath('/N/u/brlife/git/vistasoft'))
+     addpath(genpath('/N/u/brlife/git/wma_tools'))
 end
 
 
@@ -40,7 +40,7 @@ end
 coordsIn=dlmread('sub_wrp_coords.csv',',',1,0);
 coordsIn=coordsIn(1:end,1:3);
 
-atlas=fullfile(config.atlas,'parc.nii.gz');
+atlas=config.atlas;
 
 %% gen ROI
 %fprintf('Generating sliced ROIs for the following coordinates: \n %s',num2str(coordsIn));
