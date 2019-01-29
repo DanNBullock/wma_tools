@@ -65,16 +65,16 @@ colorMapping = rand(length(classificationGrouping.names),3);
 if strcmpi(coordScheme,'acpc')
     for itracts=1:length(classification.names)
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
-              tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
+              tractStruc{itracts} = dtiNewFiberGroup(classification.names{itracts});
             colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
-          tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
+          tractStruc{itracts}.colorRgb=colorMapping(colorIndex,:);
         else
             warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
         fprintf('\n creating tract %i with %i streamlines', itracts,sum(classification.index==itracts) );
         %tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
       
-        tractStruc(itracts).fibers=wbFG.fibers(classification.index==itracts);
+        tractStruc{itracts}.fibers=wbFG.fibers(classification.index==itracts);
     end
 elseif strcmpi(coordScheme,'img')
     %fix this later
@@ -82,14 +82,14 @@ elseif strcmpi(coordScheme,'img')
         
         if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))));
             colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
-         tractStruc(itracts).colorRgb=colorMapping(colorIndex,:);
+         tractStruc{itracts}.colorRgb=colorMapping(colorIndex,:);
         else
             warning('\n Color assignment for tract %s skipped', classification.names{itracts});
         end
         
-        tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
+        tractStruc{itracts} = dtiNewFiberGroup(classification.names{itracts});
        
-        tractStruc(itracts).fibers=fe.fg.fibers(classification.index==itracts);
+        tractStruc{itracts}.fibers=fe.fg.fibers(classification.index==itracts);
     end
 else
     fprintf('coordScheme input not understood')

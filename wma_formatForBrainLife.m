@@ -49,14 +49,14 @@ mkdir('tracts');
 % Make colors for the tracts
 cm = parula(length(tracts));
 for it = 1:length(tracts)
-    tract.name   = tracts(it).name;
+    tract.name   = tracts{it}.name;
     tract.color  = cm(it,:);
     
     %pick randomly up to 1000 fibers (pick all if there are less than 1000)
-    fiber_count = min(1000, numel(tracts(it).fibers));
-    tract.coords = tracts(it).fibers(randperm(fiber_count));
+    fiber_count = min(1000, numel(tracts{it}.fibers));
+    tract.coords = tracts{it}.fibers(randperm(fiber_count));
     
-    all_tracts(it).name = tracts(it).name;
+    all_tracts(it).name = tracts{it}.name;
     all_tracts(it).color = cm(it,:);
     savejson('', tract, fullfile('tracts',sprintf('%i.json',it)));
     all_tracts(it).filename = sprintf('%i.json',it);
@@ -76,8 +76,8 @@ num_left_tracts = 0;
 num_right_tracts = 0;
 
 for i = 1 : length(tracts)
-    name = tracts(i).name;
-    num_fibers = length(tracts(i).fibers);
+    name = tracts{i}.name;
+    num_fibers = length(tracts{i}.fibers);
     
     fibercounts(i) = num_fibers;
     tract_info{i,1} = name;
@@ -104,8 +104,8 @@ left_tract_idx = 1;
 right_tract_idx = 1;
 
 for i = 1 : length(tracts)
-    name = tracts(i).name;
-    num_fibers = length(tracts(i).fibers);
+    name = tracts{i}.name;
+    num_fibers = length(tracts{i}.fibers);
     basename = name;
     
     if startsWith(basename, 'Right ')
