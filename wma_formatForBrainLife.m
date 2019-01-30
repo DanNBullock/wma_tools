@@ -25,7 +25,7 @@ end
 
 load('classification.mat')
 
-tracts = bsc_makeFGsFromClassification_v3(classification, fg);
+tracts = bsc_makeFGsFromClassification_v4(classification, fg);
 
 %  We should migrate away from this format as soon as possible.  The
 %  fg_classified structure was a mistake on my part and contains redundant
