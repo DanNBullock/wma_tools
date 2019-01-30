@@ -28,9 +28,11 @@ subCortIDs=[5 12 13 17 18 ;44 51 52 53 54];
 sideLabel={'left','right'};
 
 % obtain midpoints
-for iFibers=1:length(wbfg.fibers)
-    fiberNodeNum=round(length(wbfg.fibers{iFibers})/2);
-    curStreamline=wbfg.fibers{iFibers};
+allStreams=wbfg.fibers;
+% obtain midpoints
+for iFibers=1:length(allStreams)
+    fiberNodeNum=round(length(allStreams{iFibers})/2);
+    curStreamline=allStreams{iFibers};
     midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
 end
 

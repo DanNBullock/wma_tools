@@ -30,9 +30,11 @@ function [booleanOut]=bsc_applyMidpointCriteria(midpointsIn, varargin)
 %%  Begin Code
 % if an fg structure is input, extract the midpoints
 if isstruct(midpointsIn)
-    for iFibers=1:length(midpointsIn.fibers)
-        fiberNodeNum=round(length(midpointsIn.fibers{iFibers})/2);
-        curStreamline=midpointsIn.fibers{iFibers};
+    allStreams=midpointsIn.fibers;
+    midpoints=zeros(length(allStreams,3));
+    for iFibers=1:length(allStreams)
+        fiberNodeNum=round(length(allStreams{iFibers})/2);
+        curStreamline=allStreams{iFibers};
         midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
     end
     % if a coordinate vectore is input, make sure it is rotated correctly.

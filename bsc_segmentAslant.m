@@ -1,4 +1,4 @@
-function [classification] =bsc_segmentAslant(wbfg, fsDir)
+function [classification] =bsc_segmentAslant(wbfg, fsDir,varargin)
 %
 %[classification] =bsc_segmentAslant(wbfg, fsDir)
 %
@@ -16,13 +16,7 @@ function [classification] =bsc_segmentAslant(wbfg, fsDir)
 
 % (C) Daniel Bullock, 2018, Indiana University
 %% Begin code
-
-% find midpoints
-for iFibers=1:length(wbfg.fibers)
-    fiberNodeNum=round(length(wbfg.fibers{iFibers})/2);
-    curStreamline=wbfg.fibers{iFibers};
-    midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
-end
+categoryPrior=varargin{1}
 
 %initialize classification structure
 classification=[];
@@ -85,7 +79,7 @@ for leftright= [1,2]
     
     %use the positive and negative criteria to make a classification
     %structure
-    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel,'Aslant'),keep,boundedInd);
+    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel,'Aslant'),keep,boundedInd,categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal')));
 end
 
 end
