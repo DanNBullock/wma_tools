@@ -35,7 +35,7 @@ fsDir=config.freesurfer;
 
 wbfg = dtiImportFibersMrtrix(config.track, .5);
 
-[classification] =bsc_streamlineCategoryPriors_v3(wbfg, fsDir,inflateITer);
+[classification] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,inflateITer);
 save('classification.mat','classification')
 
 fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...

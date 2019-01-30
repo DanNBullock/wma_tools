@@ -26,6 +26,8 @@ classification.index=zeros(length(wbfg.fibers),1);
 %establish side labels for later name use
 sideLabel={'left','right'};
 
+atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
+
 %iterates through left and right sides
 for leftright= [1,2]
     
@@ -38,7 +40,7 @@ for leftright= [1,2]
     %superior frontal ROI:
     %generates the roi for the superior frontal termination of the aslant.
     %We inflate in order to be fairly generous with terminations
-    [superiorROI] =bsc_roiFromFSnums(fsDir,[116]+sidenum,1,7);
+    [superiorROI] =bsc_roiFromAtlasNums(atlasPath,[116]+sidenum,7);
     superiorROI.name='superior';
     
     % lateral frontal roi
@@ -48,28 +50,28 @@ for leftright= [1,2]
     %to the 2006 DK atlas.  This is because we want the
     %frontal_inf-Triangular_part ROI in order to be in keeping with the
     %litterature on the Aslant
-    [lateralROI] =bsc_roiFromFSnums(fsDir,[18]+sidenum-10000,1,5);
+    [lateralROI] =bsc_roiFromAtlasNums(atlasPath,[18]+sidenum-10000,5);
     lateralROI.name='lateral';
     
     %the inflated lateralROI includes some areas near the insula that
     %shouldn't be included.  This border is used to demarcate those regions
-    latBorder = bsc_planeFromROI([104]+sidenum, 'medial',fsDir);
+    latBorder = bsc_planeFromROI_v2([104]+sidenum, 'medial',atlasPath);
     
     %here we modify the lateralROI to remove those parts that are medial to
     %this border
-    [lateralROI]=bsc_modifyROI(fsDir,lateralROI, latBorder, 'lateral');
+    [lateralROI]=bsc_modifyROI_v2(atlasPath,lateralROI, latBorder, 'lateral');
     
     %segment those streamlines with endpoints in the aforemenitoned ROIs
     [~, keep]=bsc_tractByEndpointROIs(wbfg,[{superiorROI}, {lateralROI}]);
     
     %create a not ROI to prevent crossing streamlines
-    [notHemi]=bsc_makePlanarROI_v2(fsDir,[0,0,0], 'x');
+    [notHemi]=bsc_makePlanarROI_v2(atlasPath,[0,0,0], 'x');
     
     %institute an anterior border based on the pericallosal sulcus
-    antPeriCall = bsc_planeFromROI([167]+sidenum, 'anterior',fsDir);
+    antPeriCall = bsc_planeFromROI_v2([167]+sidenum, 'anterior',atlasPath);
     
     %institute a posterior border based on the paracentral gyrus/sulcus
-    antParSup=bsc_planeFromROI([103]+sidenum, 'anterior',fsDir);
+    antParSup=bsc_planeFromROI_v2([103]+sidenum, 'anterior',atlasPath);
     
     %find those streamlines which run afoul of one of the three criteria.
     %This is, in essence a set of additional exclusion criteria for

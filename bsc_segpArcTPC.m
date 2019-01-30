@@ -24,6 +24,8 @@ function  [classificationOut] = bsc_segpArcTPC(wbfg, fsDir)
 parietalROIs3=[157, 127, 168, 136, 126, 125];
 temporalROIs3=[121, 161, 137, 162, 138, 173];
 
+atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
+
 %maybe play with this if something isn't to your liking, it corresponds to
 %the smoothing kernel used for the parietal and temporal ROIs
 
@@ -61,35 +63,35 @@ for leftright= [1,2]
     %generates the roi for the parietal regions corresponding to the pArc
     %and TPC
     
-    [mergedParietalROI] =bsc_roiFromFSnums(fsDir,parietalROIs3+sidenum,1,smoothParameter);
+    [mergedParietalROI] =bsc_roiFromAtlasNums(atlasPath,parietalROIs3+sidenum,1,smoothParameter);
     mergedParietalROI.name='parietalROI';
     
     %% temporal ROI
     %generates the roi for the temporal regions corresponding to the pArc
     %and TPC
-    [mergedTemporalROI] =bsc_roiFromFSnums(fsDir,temporalROIs3+sidenum,1,smoothParameter);
+    [mergedTemporalROI] =bsc_roiFromAtlasNums(atlasPath,temporalROIs3+sidenum,1,smoothParameter);
     mergedTemporalROI.name='temporalROI';
     
     %create a demarcation based on the posterior putamen
-    [postPut] = bsc_planeFromROI(putInd(leftright), 'posterior',fsDir);
+    [postPut] = bsc_planeFromROI_v2(putInd(leftright), 'posterior',atlasPath);
     
     %limit temporal ROI to those areas posterior to the putamen
-    [mergedTemporalROI]=bsc_modifyROI(fsDir,mergedTemporalROI, postPut, 'posterior');
+    [mergedTemporalROI]=bsc_modifyROI_v2(atlasPath,mergedTemporalROI, postPut, 'posterior');
     
     %% Additional Requirements
     %Require that it pass through a plane at the bottom of the ips (156
     %isn't the ips itself but is reliably slightly lower than it
-    [supPlane] = bsc_planeFromROI(156+sidenum, 'inferior',fsDir);
+    [supPlane] = bsc_planeFromROI_v2(156+sidenum, 'inferior',atlasPath);
     
     %Require that it pass through a plane at the slightly inferior to
     %the temporoparietal junction
-    [infPlane] = bsc_planeFromROI(136+sidenum, 'inferior',fsDir);
+    [infPlane] = bsc_planeFromROI_v2(136+sidenum, 'inferior',atlasPath);
     
     %create a plane at the posterior of the frontal lobe, to prevent
     %streamlines from proceeding too far anterior
-    frontPost=   bsc_planeFromROI(116+sidenum, 'posterior',fsDir);
+    frontPost=   bsc_planeFromROI_v2(116+sidenum, 'posterior',atlasPath);
     %ensure it only impacts the superior terminations
-    frontPost=bsc_modifyROI(fsDir,frontPost, supPlane, 'superior');
+    frontPost=bsc_modifyROI_v2(atlasPath,frontPost, supPlane, 'superior');
     %apply it to get boolean output
     [~, vertInd] =wma_SegmentFascicleFromConnectome(wbfg, [{supPlane},{infPlane},{frontPost}], {'and','and','not'}, 'verticalTraverse');
     
@@ -98,21 +100,21 @@ for leftright= [1,2]
     [~, endPointInd]=  bsc_tractByEndpointROIs(wbfg, [{mergedParietalROI},{mergedTemporalROI}]);
     
     %extreme inflation of precuneus
-    tpcMid=bsc_roiFromFSnums(fsDir,130+sidenum,1,27);
+    tpcMid=bsc_roiFromAtlasNums(atlasPath,130+sidenum,1,27);
     %extreme inflation of IPS
-    tpcLat=bsc_roiFromFSnums(fsDir,157+sidenum,1,27);
+    tpcLat=bsc_roiFromAtlasNums(atlasPath,157+sidenum,1,27);
     %find out where the intersect to get white matter of superior parietal
     %lobule
     tpcWM=bsc_intersectROIs(tpcMid,tpcLat);
     
     %find top of lingual sulcus
-    fusTop=bsc_planeFromROI(162+sidenum,'superior',fsDir);
+    fusTop=bsc_planeFromROI_v2(162+sidenum,'superior',atlasPath);
     %find posterior of ventricles
-    ventPost=bsc_planeFromROI(ventInd(leftright),'posterior',fsDir);
+    ventPost=bsc_planeFromROI_v2(ventInd(leftright),'posterior',atlasPath);
     %modify the plane at the top of the fusiform gyrus to ensure it only
     %proceeds posteriorly from the ventricle.  This is to prevent some
     %errant/spurrous tracts in the pArc
-    fusTopPost=bsc_modifyROI(fsDir,fusTop, ventPost, 'posterior');
+    fusTopPost=bsc_modifyROI_v2(atlasPath,fusTop, ventPost, 'posterior');
     
     %find the streamlines that intersect with the SPL
     [~, splInd] =wma_SegmentFascicleFromConnectome(wbfg, [{tpcWM}], {'and',}, 'spl');
