@@ -31,7 +31,7 @@ else
      inflateITer=0;
 end
 
-fsDir=config.freesurfer;
+fsDir='freesurfer/mri/';
 
 wbfg = dtiImportFibersMrtrix(config.track, .5);
 
