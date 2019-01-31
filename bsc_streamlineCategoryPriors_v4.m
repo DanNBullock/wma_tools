@@ -24,7 +24,7 @@ classificationOut.index=zeros(length(wbfg.fibers),1);
 
 classificationMid=classificationOut;
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz')
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 subcorticalROIS=[10:13 17:20 26 58 27 49:56 59 ];

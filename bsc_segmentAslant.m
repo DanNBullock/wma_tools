@@ -16,7 +16,7 @@ function [classification] =bsc_segmentAslant(wbfg, fsDir,varargin)
 
 % (C) Daniel Bullock, 2018, Indiana University
 %% Begin code
-categoryPrior=varargin{1}
+categoryPrior=varargin{1};
 
 %initialize classification structure
 classification=[];
@@ -50,7 +50,7 @@ for leftright= [1,2]
     %to the 2006 DK atlas.  This is because we want the
     %frontal_inf-Triangular_part ROI in order to be in keeping with the
     %litterature on the Aslant
-    [lateralROI] =bsc_roiFromAtlasNums(atlasPath,[18]+sidenum-10000,5);
+    [lateralROI] =bsc_roiFromAtlasNums(atlasPath,[114]+sidenum,5);
     lateralROI.name='lateral';
     
     %the inflated lateralROI includes some areas near the insula that
@@ -65,7 +65,8 @@ for leftright= [1,2]
     [~, keep]=bsc_tractByEndpointROIs(wbfg,[{superiorROI}, {lateralROI}]);
     
     %create a not ROI to prevent crossing streamlines
-    [notHemi]=bsc_makePlanarROI_v2(atlasPath,[0,0,0], 'x');
+    [notHemi]=bsc_makePlanarROI(atlasPath,0, 'x');
+ 
     
     %institute an anterior border based on the pericallosal sulcus
     antPeriCall = bsc_planeFromROI_v2([167]+sidenum, 'anterior',atlasPath);
@@ -81,7 +82,7 @@ for leftright= [1,2]
     
     %use the positive and negative criteria to make a classification
     %structure
-    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel,'Aslant'),keep,boundedInd,categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal')));
+    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal')));
 end
 
 end

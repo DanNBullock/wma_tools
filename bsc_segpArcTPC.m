@@ -63,13 +63,13 @@ for leftright= [1,2]
     %generates the roi for the parietal regions corresponding to the pArc
     %and TPC
     
-    [mergedParietalROI] =bsc_roiFromAtlasNums(atlasPath,parietalROIs3+sidenum,1,smoothParameter);
+    [mergedParietalROI] =bsc_roiFromAtlasNums(atlasPath,parietalROIs3+sidenum,smoothParameter);
     mergedParietalROI.name='parietalROI';
     
     %% temporal ROI
     %generates the roi for the temporal regions corresponding to the pArc
     %and TPC
-    [mergedTemporalROI] =bsc_roiFromAtlasNums(atlasPath,temporalROIs3+sidenum,1,smoothParameter);
+    [mergedTemporalROI] =bsc_roiFromAtlasNums(atlasPath,temporalROIs3+sidenum,smoothParameter);
     mergedTemporalROI.name='temporalROI';
     
     %create a demarcation based on the posterior putamen
@@ -100,9 +100,9 @@ for leftright= [1,2]
     [~, endPointInd]=  bsc_tractByEndpointROIs(wbfg, [{mergedParietalROI},{mergedTemporalROI}]);
     
     %extreme inflation of precuneus
-    tpcMid=bsc_roiFromAtlasNums(atlasPath,130+sidenum,1,27);
+    tpcMid=bsc_roiFromAtlasNums(atlasPath,130+sidenum,27);
     %extreme inflation of IPS
-    tpcLat=bsc_roiFromAtlasNums(atlasPath,157+sidenum,1,27);
+    tpcLat=bsc_roiFromAtlasNums(atlasPath,157+sidenum,27);
     %find out where the intersect to get white matter of superior parietal
     %lobule
     tpcWM=bsc_intersectROIs(tpcMid,tpcLat);

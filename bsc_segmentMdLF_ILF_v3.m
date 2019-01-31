@@ -58,7 +58,7 @@ for leftright= [1,2]
     %% occipito roi
     %generates the roi for the occipito-parietal regions corresponding to
     %MdLF --no 145
-    [mergedOCTROI] =bsc_roiFromAtlasNums(atlasPath,[120,111,166, 143,119,158,122,102,119,159]+sidenum,1,5);
+    [mergedOCTROI] =bsc_roiFromAtlasNums(atlasPath,[120,111,166, 143,119,158,122,102,119,159]+sidenum,5);
     
     %curtail somewhat; provide anterior limit, here we use anterior of IPS
     %as limit
@@ -67,7 +67,7 @@ for leftright= [1,2]
     
     %% parietal roi
     %creates ROI just for the Parietal area
-    [mergedParietalROI] =bsc_roiFromAtlasNums(atlasPath,[157, 127, 168, 136, 126, 125]+sidenum,1,5);
+    [mergedParietalROI] =bsc_roiFromAtlasNums(atlasPath,[157, 127, 168, 136, 126, 125]+sidenum,5);
     
     %% lateral temporal roi
     %generates the roi for the lateral-temporal regions corresponding to
@@ -109,7 +109,7 @@ for leftright= [1,2]
     
     %Make ROI for subcortical areas, later to be used to exclude
     %streamlines passing through these areas
-    [subCortROI] = bsc_roiFromAtlasNums(atlasPath,subCortIDs(leftright,:));
+    [subCortROI] = bsc_roiFromAtlasNums(atlasPath,subCortIDs(leftright,:),1);
     
     %Create an exclusion plane somewhat similar to tempOutRemAntMod, but
     %slightly posterior for the purposes of removing streamlines that curve
@@ -124,9 +124,9 @@ for leftright= [1,2]
    
     %Find WM for spl
     %extreme inflation of precuneus
-    splMid=bsc_roiFromAtlasNums(atlasPath,130+sidenum,1,27);
+    splMid=bsc_roiFromAtlasNums(atlasPath,130+sidenum,27);
     %extreme inflation of IPS
-    splLat=bsc_roiFromAtlasNums(atlasPath,157+sidenum,1,27);
+    splLat=bsc_roiFromAtlasNums(atlasPath,157+sidenum,27);
     %find out where they intersect to get white matter of superior parietal
     %lobule
     splWM=bsc_intersectROIs(splMid,splLat);
