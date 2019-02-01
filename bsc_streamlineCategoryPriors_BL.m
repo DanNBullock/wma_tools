@@ -20,13 +20,13 @@ if ~isdeployed
     addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
     addpath(genpath('/N/u/brlife/git/jsonlab'))
     addpath(genpath('/N/u/brlife/git/vistasoft'))
-    addpath(genpath('/N/u/brlife/git/wma_tools'))
+   % addpath(genpath('/N/u/brlife/git/wma_tools'))
 end
 
 config = loadjson('config.json');
 
 if isfield(config,'inflateITer')
-    inflateITer=config.inflateITer;
+   inflateITer=config.inflateITer;
 else
      inflateITer=0;
 end

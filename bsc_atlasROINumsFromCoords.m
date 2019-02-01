@@ -39,7 +39,7 @@ switch space
             ROILibrary(iCoords)=ROIIND;
             thisCoord=num2str([coords(1,iCoords),coords(2,iCoords),coords(3,iCoords)]);
             imgSpaceCoord=num2str([imgCoords(1,iCoords),imgCoords(2,iCoords),imgCoords(3,iCoords)]);
-            fprintf('\n %s (%s) corresponds to number %i in %s',thisCoord,imgSpaceCoord,ROIIND,path2);
+            %fprintf('\n %s (%s) corresponds to number %i in %s',thisCoord,imgSpaceCoord,ROIIND,path2);
         end
     case 'img'
         imgCoords=floor(coords);
@@ -48,7 +48,7 @@ switch space
             ROIIND=atlasNifti.data(imgCoords(1,iCoords),imgCoords(2,iCoords),imgCoords(3,iCoords));
             ROILibrary(iCoords)=ROIIND;
             imgSpaceCoord=num2str([imgCoords(1,iCoords),imgCoords(2,iCoords),imgCoords(3,iCoords)]);
-             fprintf('\n %s corresponds to number %i in %s',imgSpaceCoord,ROIIND,path2);
+            % fprintf('\n %s corresponds to number %i in %s',imgSpaceCoord,ROIIND,path2);
         end
 end
 

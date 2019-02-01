@@ -23,7 +23,7 @@ end
 
 config = loadjson('config.json');
 
-wbfg = dtiImportFibersMrtrix(config.wbfg, .5);
+wbfg = dtiImportFibersMrtrix(config.track, .5);
 
 fsDir='freesurfer';
 
