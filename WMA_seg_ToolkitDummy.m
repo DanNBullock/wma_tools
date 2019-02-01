@@ -57,3 +57,5 @@ bsc_GenROIfromPairStringList_BL()
  bsc_feAndSegQualityCheck_BL()
  
 bsc_streamlineCategoryPriors_BL()
+
+wma_segMajTracks_BL()
