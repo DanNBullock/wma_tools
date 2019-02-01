@@ -194,5 +194,5 @@ if possible_error == 1
     product = {barplot, boxplot, message};
 end
 savejson('brainlife', product, 'product.json');
-keyboard
+
 end
