@@ -13,6 +13,14 @@ function [classificationOut] =wma_segMajTracks_BL()
 % classificaton: a standardly organized classification structure
 % (C) Daniel Bullock, Indiana University
 %% Begin Code
+if ~isdeployed
+    disp('adding paths');
+    addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
+    addpath(genpath('/N/u/brlife/git/jsonlab'))
+    addpath(genpath('/N/u/brlife/git/vistasoft'))
+    addpath(genpath('/N/u/brlife/git/wma_tools'))
+end
+
 config = loadjson('config.json');
 
 wbfg = dtiImportFibersMrtrix(config.track, .5);
