@@ -37,7 +37,7 @@ wbfg = dtiImportFibersMrtrix(config.track, .5)
 
 [classification] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,inflateITer);
 save('classification.mat','classification')
-
+ls
 fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
     sum(classification.index>0),length(classification.names))
 wma_formatForBrainLife()

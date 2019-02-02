@@ -59,14 +59,14 @@ else
         
         if ~isempty(baseNameIndex)
             baseIndexes=find(baseClassification.index==baseNameIndex);
-            unique(baseClassification.index)
+            unique(baseClassification.index);
         else
             baseIndexes=[];
         end
         
         if ~isempty(addNameIndex)
             addIndexes=find(classificationAdd.index==addNameIndex);
-            unique(classificationAdd.index)
+            unique(classificationAdd.index);
         else
             addIndexes=[];
         end
@@ -74,7 +74,7 @@ else
         %same fg structure assumed, so no need to do the splicing.
         classification.index(baseIndexes)=iNames;
         classification.index(addIndexes)=iNames;
-        unique(classification.index)
+        unique(classification.index);
     end
 end
     

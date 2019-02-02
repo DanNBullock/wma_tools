@@ -25,15 +25,25 @@ config = loadjson('config.json');
 
 wbfg = dtiImportFibersMrtrix(config.track, .5);
 
-fsDir='freesurfer';
+fsDir=strcat(pwd,'/freesurfer');
+
+atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz')
+
+if ~exist(atlasPath,'file')
+    fprintf('\n FILE %i NOT FOUND',atlasPath)
+end
 
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 tic
+
+fprintf('\n creating priors')
+
  [categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2);
  [asymPrior, effPrior] =bsc_streamlineGeometryPriors(wbfg);
-
+fprintf('\n prior creation complete')
+ 
  [AntPostclassificationOut] =bsc_segmentAntPostTracts(wbfg, fsDir,categoryPrior,effPrior);
  classificationOut=bsc_reconcileClassifications(classificationOut,AntPostclassificationOut);
  
