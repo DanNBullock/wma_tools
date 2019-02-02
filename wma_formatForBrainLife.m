@@ -64,7 +64,8 @@ for it = 1:length(tracts)
 end
 
 savejson('', all_tracts, fullfile('tracts/tracts.json'));
-delete('classification.mat')
+%WHY WAS THIS DELETING THE CLASSIFICATION
+%delete('classification.mat')
 % Save the results to disk
 save('output.mat','tracts','classification','-v7.3');
 
