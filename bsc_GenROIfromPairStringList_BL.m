@@ -39,17 +39,17 @@ function bsc_GenROIfromPairStringList_BL()
  end
 
 %config = loadjson('/N/dc2/projects/lifebid/HCP/Dan/GitStoreDir/ROIs2ROIsSegment/config.json');
-config = loadjson('config.json');
+config = loadjson('config.json')
 
 ROIstring=config.roiPairs;
 smoothKernel=config.smoothKernel;
 
 if isfield(config,'atlas')
-       atlas=config.atlas;
+       atlas=config.atlas
 end
 
 if isfield(config,'ROI')
-      ROIdir=config.ROI;
+      ROIdir=config.ROI
 end
 
 %% gen ROI
