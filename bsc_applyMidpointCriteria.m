@@ -31,7 +31,7 @@ function [booleanOut]=bsc_applyMidpointCriteria(midpointsIn, varargin)
 % if an fg structure is input, extract the midpoints
 if isstruct(midpointsIn)
     allStreams=midpointsIn.fibers;
-    midpoints=zeros(length(allStreams,3));
+    midpoints=zeros(length(allStreams),3);
     for iFibers=1:length(allStreams)
         fiberNodeNum=round(length(allStreams{iFibers})/2);
         curStreamline=allStreams{iFibers};

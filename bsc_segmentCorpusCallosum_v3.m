@@ -75,29 +75,20 @@ anteriorCC.fibers=wbfg.fibers(forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~e
 forcepsMinorBool=forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~excludeVentriBool&categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi'));
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMinor',forcepsMinorBool);
 
-posteriorCCROI=bsc_roiFromAtlasNums(atlasPath,[251],0);
-posteriorCCLimit=bsc_planeFromROI_v2(posteriorCCROI, 'anterior',atlasPath);
-posteriorCCTopLimit=bsc_planeFromROI_v2(111+[11000 12000], 'superior',atlasPath);
-posteriorCCposteriorLimit=bsc_planeFromROI_v2(172+[11000 12000], 'posterior',atlasPath);
-posteriorCCinferiorLimit=bsc_planeFromROI_v2(posteriorCCROI, 'inferior',atlasPath);
-postCCinferiorROI=bsc_roiFromAtlasNums(atlasPath,166+[11000 12000], 0);
-postCCinferiorROIcut=bsc_modifyROI_v2(atlasPath,postCCinferiorROI, posteriorCCinferiorLimit, 'inferior');
-postCCinferiorAnteriorLimit=bsc_planeFromROI_v2(postCCinferiorROIcut, 'posterior',atlasPath);
-postCCinferiorAnteriorMod=bsc_modifyROI_v2(atlasPath,posteriorCCinferiorLimit, postCCinferiorAnteriorLimit, 'anterior');
-posteriorCCinferiorLimit2=bsc_planeFromROI_v2(121+[11000 12000], 'superior',atlasPath);
-
-postCCanteriorSuperiorLimit=bsc_planeFromROI_v2(147+[11000 12000], 'inferior',atlasPath);
-postCCinferiorROIcut=bsc_modifyROI_v2(atlasPath,postCCanteriorSuperiorLimit, posteriorCCposteriorLimit, 'anterior');
 
 
-forcepsMajorBool=bsc_applyEndpointCriteria(wbfg, posteriorCCposteriorLimit,'posterior','both');
 
-[posteriorCC, posteriorCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{posteriorCCROI posteriorCCLimit posteriorCCTopLimit postCCinferiorAnteriorMod posteriorCCinferiorLimit2 postCCinferiorROIcut}], {'and','not','not','not','not','not'}, 'dud');
+  LatTempPostLimit=bsc_planeFromROI_v2(161+[11000 12000], 'posterior',atlasPath);
+  posteriorCCInfLimit=bsc_planeFromROI_v2(251, 'inferior',atlasPath);
+ postCCinferiorROIcut=bsc_modifyROI_v2(atlasPath,posteriorCCInfLimit, LatTempPostLimit, 'anterior');
+ [ccPostMidpoints]=bsc_applyMidpointCriteria(wbfg, LatTempPostLimit,'anterior');
 
 
-posteriorCC.fibers=wbfg.fibers(posteriorCCBool&forcepsMajorBool&categoryPrior.index==find(strcmp(categoryPrior.names,'occipital_to_occipital_interHemi')));
-forcepsMajorBool=posteriorCCBool&forcepsMajorBool&categoryPrior.index==find(strcmp(categoryPrior.names,'occipital_to_occipital_interHemi'));
+ [posteriorCC, posteriorCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postCCinferiorROIcut}], {'not'}, 'dud');
+ 
+forcepsMajorBool=ccPostMidpoints&posteriorCCBool&categoryPrior.index==find(strcmp(categoryPrior.names,'occipital_to_occipital_interHemi'));
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMajor',forcepsMajorBool);
+
 
 
 
