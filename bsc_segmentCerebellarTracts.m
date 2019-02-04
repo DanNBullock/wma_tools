@@ -105,7 +105,7 @@ for leftright= [1,2]
          otherWM=bsc_roiFromAtlasNums(atlasPath,2 ,1);
     end
     
-    notThese=wma_SegmentFascicleFromConnectome(wbfg, [{otherWM}], {'and'}, 'dud');
+    [~,notThese]=wma_SegmentFascicleFromConnectome(wbfg, [{otherWM}], {'and'}, 'dud');
   
     
     [~, contraAnterioFrontoBool]=wma_SegmentFascicleFromConnectome(wbfg, [{otherCBRoi} {antCebSplit}], {'endpoints','and'}, 'dud');
