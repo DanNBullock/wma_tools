@@ -1,4 +1,4 @@
-function [classificationOut] =wma_segMajTracks_BL()
+function wma_segMajTracks_BL()
 % [classification] =wma_segMajTracks__BL(wbfg, fsDir)
 %
 % This function automatedly segments the major human white matter tracts
@@ -70,6 +70,11 @@ classificationOut=bsc_reconcileClassifications(classificationOut,cerebellarclass
 
 [VOFclassificationOut] =bsc_segmentVOF_v2(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificationOut);
+
+classification=classificationOut;
+
+save('classification.mat',classification);
+
 toc
 
 wma_formatForBrainLife()
