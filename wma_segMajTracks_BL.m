@@ -73,7 +73,7 @@ classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificati
 
 classification=classificationOut;
 
-save('classification.mat',classification);
+save('classification.mat','classification');
 
 toc
 
