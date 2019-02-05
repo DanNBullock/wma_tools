@@ -320,7 +320,7 @@ elseif notDefined('fe') & ~notDefined('classification')
     %['stream Asym ratio stDev: ', num2str(results.WBFG.avgAsymRat)],...
     % ['Tracts Segmented: ', num2str(sum(length(rightNames)+length(interHemiNames)))],...
     
-    posBool=fe.life.fit.weights>0;
+    %posBool=fe.life.fit.weights>0;
     
     % Plot comparing pre and post life streamline proportion by length
     subplot(3,4,2)

@@ -26,7 +26,7 @@ end
 saveDir=pwd;
 
 if isfield(config,'output')
-    load(config.classification)
+    load(config.output)
     classification=classification;
     bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
 else
