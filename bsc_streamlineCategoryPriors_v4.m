@@ -16,11 +16,14 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,inflat
 % (C) Daniel Bullock, 2019, Indiana University
 
 %% parameter note & initialization
+fprintf('\n creating categorical segmentation')
+wbfg
 
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
+classificationOut
 
 classificationMid=classificationOut;
 
@@ -165,4 +168,6 @@ for icategories=1:length(uniqueNames)
     end
 end
 
+fprintf('\n categorical segmentation complete')
+classificationOut
 end

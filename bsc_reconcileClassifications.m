@@ -21,6 +21,10 @@ function [classification] = bsc_reconcileClassifications(baseClassification,clas
 %  (C) Daniel Bullock 2018 Bloomington
 %% Begin Code
 
+baseClassification
+
+classificationAdd
+
 
 if ~length(baseClassification.index)==length(classificationAdd.index)
     warning('\n Classification reconciliation assumption violated: input classifications of different lengths')

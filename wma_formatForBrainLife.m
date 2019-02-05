@@ -45,6 +45,8 @@ if ~isfield(config,'track')
 end
 
 mkdir('tracts');
+figure
+bsc_quickPlot(tracts{1})
 
 % Make colors for the tracts
 cm = parula(length(tracts));
@@ -62,6 +64,7 @@ for it = 1:length(tracts)
     all_tracts(it).filename = sprintf('%i.json',it);
     clear tract
 end
+
 
 savejson('', all_tracts, fullfile('tracts/tracts.json'));
 %WHY WAS THIS DELETING THE CLASSIFICATION
