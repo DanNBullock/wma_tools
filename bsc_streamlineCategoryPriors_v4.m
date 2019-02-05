@@ -138,7 +138,13 @@ for iStreams=1:length(wbfg.fibers)
     elseif ~isempty(find(endpoints2Identity(iStreams)==OpticCROI))
         termination2{iStreams}='OpticChi';
     end
-    terminationNames=sort({termination1{iStreams} termination2{iStreams}});
+    if length(termination1)==length(termination2)
+        terminationNames=sort({termination1{iStreams} termination2{iStreams}});
+    else
+        termination2{iStreams}
+        termination1{iStreams}
+        error('streamline identity unaccounted for')        
+    end
     if interHemiBool(iStreams)
     streamName{iStreams}=strcat(terminationNames{1},'_to_',terminationNames{2},'_interHemi');
     else
