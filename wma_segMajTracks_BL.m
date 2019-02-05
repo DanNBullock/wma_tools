@@ -71,14 +71,17 @@ classificationOut=bsc_reconcileClassifications(classificationOut,opticclassifica
 [cerebellarclassificationOut] =bsc_segmentCerebellarTracts(wbfg, fsDir,0,categoryPrior)
 classificationOut=bsc_reconcileClassifications(classificationOut,cerebellarclassificationOut);
 
-[VOFclassificationOut] =bsc_segmentVOF_v2(wbfg, fsDir,categoryPrior);
+[VOFclassificationOut] =bsc_segmentVOF_v2(wbfg, fsDir,categoryPrior)
 classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificationOut);
 
-classification=classificationOut
 
+classificationOut
+classification=classificationOut
+classification
 save('classification.mat','classification');
 
 toc
+
 
 wma_formatForBrainLife()
 

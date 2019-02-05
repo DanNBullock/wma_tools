@@ -24,8 +24,10 @@ if isfield(config,'track')
 end
 
 load('classification.mat')
+classification
 
 tracts = bsc_makeFGsFromClassification_v4(classification, fg);
+classification
 
 %  We should migrate away from this format as soon as possible.  The
 %  fg_classified structure was a mistake on my part and contains redundant
@@ -45,8 +47,6 @@ if ~isfield(config,'track')
 end
 
 mkdir('tracts');
-figure
-bsc_quickPlot(tracts{1})
 
 % Make colors for the tracts
 cm = parula(length(tracts));
@@ -71,7 +71,7 @@ savejson('', all_tracts, fullfile('tracts/tracts.json'));
 %delete('classification.mat')
 % Save the results to disk
 save('output.mat','tracts','classification','-v7.3');
-
+classification
 % save product.json information
 tract_info = cell(length(tracts), 2);
 fibercounts = zeros(1, length(tracts));
