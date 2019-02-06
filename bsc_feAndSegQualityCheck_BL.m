@@ -20,7 +20,7 @@ config = loadjson('config.json');
 if isfield(config,'fe')
     feORwbfg=config.fe;
 else
-    feORwbfg=config.wbfg;
+    feORwbfg=dtiImportFibersMrtrix(config.track, .5);
 end
 
 saveDir=pwd;
