@@ -37,7 +37,7 @@ classification= removeOutliersClassification(classification,wbfg, centroidSD, le
 
 save('classification.mat','classification')
 
-wma_formatForBrainLife()
+wma_formatForBrainLife_v2(classification,wbfg)
 end
 
 

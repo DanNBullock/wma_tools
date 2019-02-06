@@ -24,7 +24,6 @@ end
 config = loadjson('config.json');
 
 wbfg = dtiImportFibersMrtrix(config.track, .5);
-wbfg
 
 fsDir=strcat(pwd,'/freesurfer');
 
@@ -75,14 +74,10 @@ classificationOut=bsc_reconcileClassifications(classificationOut,cerebellarclass
 classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificationOut);
 
 
-classificationOut
-classification=classificationOut
-classification
 save('classification.mat','classification');
 
 toc
 
-ls
-wma_formatForBrainLife()
+wma_formatForBrainLife_v2(classification,wbfg);
 
 end
