@@ -23,6 +23,8 @@ streamVol=100000;
 %find fg name
 tractStat.name=fg.name;
 
+streamsTotal=fg.fibers;
+
 %compute effeciency measures and place in tractStat structure
 [costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ] = ConnectomeTestQ_v2(fg);
 
@@ -37,7 +39,7 @@ tractStat.stDevefficiencyRat=std(efficiencyRat);
 
 
 %compute basic statistics
-tractStat.stream_count=length(fg.fibers);
+tractStat.stream_count=length(streamsTotal);
 tractStat.length_total=sum(streamLengths);
 
 % avgerage and standard deviation for streamline lengths
@@ -46,11 +48,11 @@ tractStat.stream_length_stdev=std(streamLengths);
 
 %compute volume
 volVec=[];
-for istreamlines=1:length(fg.fibers)
-    streamLengths(istreamlines)=sum(sqrt(sum(diff(fg.fibers{istreamlines},1,2).^2)));
-    volVec=horzcat(volVec,fg.fibers{istreamlines});
+for istreamlines=1:length(streamsTotal)
+    streamLengths(istreamlines)=sum(sqrt(sum(diff(streamsTotal{istreamlines},1,2).^2)));
+    volVec=horzcat(volVec,streamsTotal{istreamlines});
     %prevent memory usage from getting too extreme
-    if rem(istreamlines,10000)==0
+    if rem(istreamlines,5000)==0
         volVec=   unique(round(volVec'),'rows')';
     end
 end
@@ -78,9 +80,9 @@ if streamVol>tractStat.volume
     
     %get the midpoints
     midpoints=[];
-    for iFibers=1:length(fg.fibers)
-        fiberNodeNum=round(length(fg.fibers{iFibers})/2);
-        curStreamline=fg.fibers{iFibers};
+    for iFibers=1:length(streamsTotal)
+        fiberNodeNum=round(length(streamsTotal{iFibers})/2);
+        curStreamline=streamsTotal{iFibers};
         midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
     end
     
@@ -90,7 +92,7 @@ if streamVol>tractStat.volume
     tractStat.endpointDensity1=tractStat.stream_count/tractStat.endpointVolume1;
     
     %compute endpoint distances from RAS cloud centroid
-    for istreamlines=1:length(fg.fibers)
+    for istreamlines=1:length(streamsTotal)
         endpointDists1(istreamlines)=sum(sqrt(sum(diff([tractStat.avgEndpointCoord1',RASout(istreamlines,:)'],1,2).^2)));
     end
     
@@ -106,7 +108,7 @@ if streamVol>tractStat.volume
     tractStat.endpointDensity2=tractStat.stream_count/tractStat.endpointVolume2;
     
     %compute endpoint distances from RAS cloud centroid
-    for istreamlines=1:length(fg.fibers)
+    for istreamlines=1:length(streamsTotal)
         endpointDists2(istreamlines)=sum(sqrt(sum(diff([tractStat.avgEndpointCoord2',LPIout(istreamlines,:)'],1,2).^2)));
     end
     
@@ -122,7 +124,7 @@ if streamVol>tractStat.volume
     tractStat.midpointDensity=tractStat.stream_count/tractStat.midpointVolume;
     
     %compute endpoint distances from RAS cloud centroid
-    for istreamlines=1:length(fg.fibers)
+    for istreamlines=1:length(streamsTotal)
         midpointDists(istreamlines)=sum(sqrt(sum(diff([tractStat.avgMidpointCoord',midpoints(istreamlines,:)'],1,2).^2)));
     end
     
