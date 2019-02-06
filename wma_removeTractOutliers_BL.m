@@ -31,7 +31,6 @@ maxIter=config.maxIter;
 
 
 wbfg = dtiImportFibersMrtrix(config.track, .5);
-wbfg
 
 classification= removeOutliersClassification(classification,wbfg, centroidSD, lengthSD,maxIter)
 

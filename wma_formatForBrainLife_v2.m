@@ -7,26 +7,19 @@ function  wma_formatForBrainLife_v2(classification,fg)
 %   applications (i.e. ones that output classification structures) and
 %   formats them for use on the brainlife platform
 
-% if ~isdeployed
-%     disp('\n adding paths');
-%     addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
-%     addpath(genpath('/N/u/brlife/git/encode'))
-%     addpath(genpath('/N/u/brlife/git/jsonlab'))
-%     addpath(genpath('/N/u/brlife/git/vistasoft'))
-%     addpath(genpath('/N/u/brlife/git/wma_tools'))
-% end
+if ~isdeployed
+    disp('\n adding paths');
+    addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
+    addpath(genpath('/N/u/brlife/git/encode'))
+    addpath(genpath('/N/u/brlife/git/jsonlab'))
+    addpath(genpath('/N/u/brlife/git/vistasoft'))
+    addpath(genpath('/N/u/brlife/git/wma_tools'))
+end
 
 
 tracts = bsc_makeFGsFromClassification_v4(classification, fg);
 
-
-%  We should migrate away from this format as soon as possible.  The
-%  fg_classified structure was a mistake on my part and contains redundant
-%  information.  The fg_classified .name field is the same as the
-%  fg_classified.fg.name field.
-%fg_classified = bsc_makeFGsFromClassification(classification, fg);
-%tracts=fg2Array(fg_classified);
-%in the case of no source tractography, make an output
+config = loadjson('config.json');
 
 if ~isfield(config,'track')
     alltracks= fgCreate();
