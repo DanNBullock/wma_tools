@@ -22,7 +22,7 @@ if isfield(config,'track')
     disp('Loading track');
     fg = dtiImportFibersMrtrix(config.track, .5);
 end
-
+ls
 load('classification.mat')
 classification
 

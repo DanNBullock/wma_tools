@@ -16,7 +16,7 @@ function[results]= wma_quantWBFG(feORwbfg)
 % -classification: Either the path to structure or the structure itself.
 %  The strucure has a field "names" with (N) names of the tracts classified
 %  while the field "indexes" has a j long vector (where  j = the nubmer of
-%  streamlines in wbFG (i.e. length(wbFG.fibers)).  This j long vector has
+%  streamlines in wbFG (i.e. length(allStreams)).  This j long vector has
 %  a 0 for to indicate a streamline has gone unclassified, or a number 1:N
 %  indicatate that the streamline has been classified as a member of tract
 %  (N).
@@ -52,9 +52,10 @@ results.WBFG=WBtractStat;
 results.WBFG.lengthProps=results.WBFG.lengthCounts/results.WBFG.stream_count;
 
 %this may make the structure too large, if so consider removing
-streamLengths=zeros(1,length(wbFG.fibers));
-for istreamlines=1:length(wbFG.fibers)
-    streamLengths(istreamlines)=sum(sqrt(sum(diff(wbFG.fibers{istreamlines},1,2).^2)));
+streamLengths=zeros(1,length(allStreams));
+allStreams=wbFG.fibers;
+for istreamlines=1:length(allStreams)
+    streamLengths(istreamlines)=sum(sqrt(sum(diff(allStreams{istreamlines},1,2).^2)));
 end
 
 results.WBFG.lengthData=streamLengths;
@@ -82,7 +83,7 @@ switch feFlag
         
         %get name
         posWB=wbFG;
-        posWB.fibers=wbFG.fibers(posIndexes);
+        posWB.fibers=allStreams(posIndexes);
         
         %get tract quantification for
         [posWBtractStat]= wma_quantTract(posWB);

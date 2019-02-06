@@ -82,7 +82,7 @@ save('classification.mat','classification');
 
 toc
 
-
+ls
 wma_formatForBrainLife()
 
 end

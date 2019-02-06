@@ -31,7 +31,7 @@ function [results]= wma_quantAllWMNorm(feORwbfg,classification)
 [wbFG, fe] = bsc_LoadAndParseFiberStructure(feORwbfg);
 
 %create fg structures for each individual tract
-tractStruc = bsc_makeFGsFromClassification(classification, wbFG);
+tractStruc = bsc_makeFGsFromClassification_v4(classification, wbFG);
 
 %get postive fibers
 if ~isempty(fe)
