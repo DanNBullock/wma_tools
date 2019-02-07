@@ -43,10 +43,10 @@ end
 
 for itracts=1:length(tractStruc)
     %run stats for indivudal tract
-    [tractStatWB]= wma_quantTract(tractStruc(itracts).fg);
+    [tractStatWB]= wma_quantTract(tractStruc{itracts});
     results.WBFG.tractStats{itracts}=tractStatWB;
     
-    fprintf('\n %s',tractStruc(itracts).fg.name)
+    fprintf('\n %s',tractStruc{itracts}.name)
     
     
     %compute and store normalized values
@@ -60,7 +60,7 @@ for itracts=1:length(tractStruc)
     end
     if ~isempty(fe)
          %run stats for indivudal tract
-    [posTractStatWB]= wma_quantTract(posTractStruc(itracts).fg);
+    [posTractStatWB]= wma_quantTract(posTractStruc{itracts});
     results.LiFEstats.tractStats{itracts}=posTractStatWB;
     
     %compute and store normalized values
