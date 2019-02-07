@@ -196,35 +196,35 @@ for ifibers= 1:length(fg.fibers)
             end
             
         end
-            if  endpoint1ID(ifibers) == 1
-                cluster1(ifibers,:)=endpoint1(ifibers,:);
-                cluster2(ifibers,:)=endpoint2(ifibers,:);
-                
-                quarterCluster1(ifibers,:)=quarterPoint1(ifibers,:);
-                quarterCluster2(ifibers,:)=quarterPoint2(ifibers,:);
-                
-                fourtyCluster(ifibers,:)=fourtyPoint(ifibers,:);
-                sixtyCluster(ifibers,:)=sixtyPoint(ifibers,:);
-                
-            else
-                cluster2(ifibers,:)=endpoint1(ifibers,:);
-                cluster1(ifibers,:)=endpoint2(ifibers,:);
-                
-                quarterCluster1(ifibers,:)=quarterPoint2(ifibers,:);
-                quarterCluster2(ifibers,:)=quarterPoint1(ifibers,:);
-                
-                fourtyCluster(ifibers,:)=sixtyPoint(ifibers,:);
-                sixtyCluster(ifibers,:)=fourtyPoint(ifibers,:);
-                
-            end
+        if  endpoint1ID(ifibers) == 1
+            cluster1(ifibers,:)=endpoint1(ifibers,:);
+            cluster2(ifibers,:)=endpoint2(ifibers,:);
+            
+            quarterCluster1(ifibers,:)=quarterPoint1(ifibers,:);
+            quarterCluster2(ifibers,:)=quarterPoint2(ifibers,:);
+            
+            fourtyCluster(ifibers,:)=fourtyPoint(ifibers,:);
+            sixtyCluster(ifibers,:)=sixtyPoint(ifibers,:);
+            
+        else
+            cluster2(ifibers,:)=endpoint1(ifibers,:);
+            cluster1(ifibers,:)=endpoint2(ifibers,:);
+            
+            quarterCluster1(ifibers,:)=quarterPoint2(ifibers,:);
+            quarterCluster2(ifibers,:)=quarterPoint1(ifibers,:);
+            
+            fourtyCluster(ifibers,:)=sixtyPoint(ifibers,:);
+            sixtyCluster(ifibers,:)=fourtyPoint(ifibers,:);
+            
         end
-        
-  
-        
-        
     end
-
     
+    
+    
+    
+end
+
+
 
 
 cluster1Centroid=mean(cluster1,1);
@@ -242,10 +242,10 @@ if RASind==1
     LPIout=cluster2;
     LPIoutEndpoint=endpoint2ID;
 else
-        RASout=cluster2;
+    RASout=cluster2;
     RASoutEndpoint=endpoint2ID;
     LPIout=cluster1;
     LPIoutEndpoint=endpoint1ID;
-
-
+end
+    
 end

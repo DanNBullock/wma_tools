@@ -76,72 +76,72 @@ fieldNames={'stream_count', 'volume','avg_stream_length','stream_length_stdev','
     'avgEndpointDist2','stDevEndpointDist1','stDevEndpointDist2','endpointDensity1','endpointDensity2','midpointDensity',...
     'avgMidpointDist','stDevMidpointDist','norms.volumeProp','norms.countProp','norms.wireProp'};
 
-fullFieldNames={'Tract Name','Streamline count', 'volume','avgerage streamline length','streamline length stdev','average full displacement','full displacement stdev',...
-    'a*exp(b*x) fit a','a*exp(b*x) fit b','streamline length total','endpoint 1 density','endpoint 2 density','average endpoint distance from centroid 1',...
-    'average endpoint distance from centroid 2','stdev of endpoint distance from centroid 1','stdev endpoint distance from centroid 2','midpoint density',...
-    'average Midpoint distance from centroid','stDev of Midpoint distance from centroid','total volume proportion','total count proportion','total wiring proportion'};
+fullFieldNames={'TractName','StreamlineCount', 'volume','avgerageStreamlineLength','streamlineLengthStdev','averageFullDisplacement','fullDisplacementStdev',...
+    'ExponentialFitA','ExponentialFitB','StreamlineLengthTotal','endpoint1Density','Endpoint2Density','AverageEndpointDistanceFromCentroid1',...
+    'AverageEndpointDistanceFromCentroid2','stdevOfEndpointDistanceFromCentroid1','stdevEndpointDistanceFromCentroid2','MidpointDensity',...
+    'averageMidpointDistanceFromCentroid','stDevOfMidpointDistanceFromCentroid','TotalVolumeProportion','TotalCountProportion','TotalWiringProportion'};
 
 conditionals=11:19;
 
 
 if isfield(config,'output')
-    for itracts=2:length(results.WBFG.tractStats)+1
-        tableArray{itracts,1}=results.WBFG.tractStats{itracts}.name;
-        tableArray{itracts,2}=results.WBFG.tractStats{itracts}.stream_count;
-        tableArray{itracts,3}=results.WBFG.tractStats{itracts}.volume;
-        tableArray{itracts,4}=results.WBFG.tractStats{itracts}.avg_stream_length;
-        tableArray{itracts,5}=results.WBFG.tractStats{itracts}.stream_length_stdev;
-        tableArray{itracts,6}=results.WBFG.tractStats{itracts}.avgFullDisp;
-        tableArray{itracts,7}=results.WBFG.tractStats{itracts}.stDevFullDisp;
-        tableArray{itracts,8}=results.WBFG.tractStats{itracts}.LogFitA;
-        tableArray{itracts,9}=results.WBFG.tractStats{itracts}.LogFitB;
-        tableArray{itracts,10}=results.WBFG.tractStats{itracts}.length_total;
+    for itracts=1:length(results.WBFG.tractStats)
+        tableArray{itracts+1,1}=results.WBFG.tractStats{itracts}.name;
+        tableArray{itracts+1,2}=results.WBFG.tractStats{itracts}.stream_count;
+        tableArray{itracts+1,3}=results.WBFG.tractStats{itracts}.volume;
+        tableArray{itracts+1,4}=results.WBFG.tractStats{itracts}.avg_stream_length;
+        tableArray{itracts+1,5}=results.WBFG.tractStats{itracts}.stream_length_stdev;
+        tableArray{itracts+1,6}=results.WBFG.tractStats{itracts}.avgFullDisp;
+        tableArray{itracts+1,7}=results.WBFG.tractStats{itracts}.stDevFullDisp;
+        tableArray{itracts+1,8}=nan;
+        tableArray{itracts+1,9}=nan;
+        tableArray{itracts+1,10}=results.WBFG.tractStats{itracts}.length_total;
         
         if ~isfield(results.WBFG.tractStats{itracts},'endpointDensity1')
             %endpointDensity1
-            tableArray{itracts,11}=nan;
+            tableArray{itracts+1,11}=nan;
             %endpointDensity2
-            tableArray{itracts,12}=nan;
+            tableArray{itracts+1,12}=nan;
             %avgEndpointDist1
-            tableArray{itracts,13}=nan;
+            tableArray{itracts+1,13}=nan;
             %avgEndpointDist2
-            tableArray{itracts,14}=nan;
+            tableArray{itracts+1,14}=nan;
             %stDevEndpointDist1
-            tableArray{itracts,15}=nan;
+            tableArray{itracts+1,15}=nan;
             %stDevEndpointDist2
-            tableArray{itracts,16}=nan;
+            tableArray{itracts+1,16}=nan;
             %midpointDensity
-            tableArray{itracts,17}=nan;
+            tableArray{itracts+1,17}=nan;
             %avgMidpointDist
-            tableArray{itracts,18}=nan;
+            tableArray{itracts+1,18}=nan;
             %stDevMidpointDist
-            tableArray{itracts,19}=nan;
+            tableArray{itracts+1,19}=nan;
         else
             %endpointDensity1
-            tableArray{itracts,11}=results.WBFG.tractStats{itracts}.endpointDensity1;
+            tableArray{itracts+1,11}=results.WBFG.tractStats{itracts}.endpointDensity1;
             %endpointDensity2
-            tableArray{itracts,12}=results.WBFG.tractStats{itracts}.endpointDensity2;
+            tableArray{itracts+1,12}=results.WBFG.tractStats{itracts}.endpointDensity2;
             %avgEndpointDist1
-            tableArray{itracts,13}=results.WBFG.tractStats{itracts}.avgEndpointDist1;
+            tableArray{itracts+1,13}=results.WBFG.tractStats{itracts}.avgEndpointDist1;
             %avgEndpointDist2
-            tableArray{itracts,14}=results.WBFG.tractStats{itracts}.avgEndpointDist2;
+            tableArray{itracts+1,14}=results.WBFG.tractStats{itracts}.avgEndpointDist2;
             %stDevEndpointDist1
-            tableArray{itracts,15}=results.WBFG.tractStats{itracts}.stDevEndpointDist1;
+            tableArray{itracts+1,15}=results.WBFG.tractStats{itracts}.stDevEndpointDist1;
             %stDevEndpointDist2
-            tableArray{itracts,16}=results.WBFG.tractStats{itracts}.stDevEndpointDist2;
+            tableArray{itracts+1,16}=results.WBFG.tractStats{itracts}.stDevEndpointDist2;
             %midpointDensity
-            tableArray{itracts,17}=results.WBFG.tractStats{itracts}.midpointDensity;
+            tableArray{itracts+1,17}=results.WBFG.tractStats{itracts}.midpointDensity;
             %avgMidpointDist
-            tableArray{itracts,18}=results.WBFG.tractStats{itracts}.avgMidpointDist;
+            tableArray{itracts+1,18}=results.WBFG.tractStats{itracts}.avgMidpointDist;
             %stDevMidpointDist
-            tableArray{itracts,19}=results.WBFG.tractStats{itracts}.stDevMidpointDist;
+            tableArray{itracts+1,19}=results.WBFG.tractStats{itracts}.stDevMidpointDist;
         end
         %norms.volumeProp
-        tableArray{itracts,20}=results.WBFG.tractStats{itracts}.norms.volumeProp;
+        tableArray{itracts+1,20}=results.WBFG.tractStats{itracts}.norms.volumeProp;
         %norms.countProp
-        tableArray{itracts,21}=results.WBFG.tractStats{itracts}.norms.countProp;
+        tableArray{itracts+1,21}=results.WBFG.tractStats{itracts}.norms.countProp;
         %norms.wireProp
-        tableArray{itracts,22}=results.WBFG.tractStats{itracts}.norms.wireProp;
+        tableArray{itracts+1,22}=results.WBFG.tractStats{itracts}.norms.wireProp;
     end
     tableOut = cell2table(tableArray,...
     'VariableNames',fullFieldNames);
