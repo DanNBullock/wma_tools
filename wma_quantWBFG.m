@@ -52,8 +52,9 @@ results.WBFG=WBtractStat;
 results.WBFG.lengthProps=results.WBFG.lengthCounts/results.WBFG.stream_count;
 
 %this may make the structure too large, if so consider removing
-streamLengths=zeros(1,length(allStreams));
 allStreams=wbFG.fibers;
+streamLengths=zeros(1,length(allStreams));
+
 for istreamlines=1:length(allStreams)
     streamLengths(istreamlines)=sum(sqrt(sum(diff(allStreams{istreamlines},1,2).^2)));
 end
