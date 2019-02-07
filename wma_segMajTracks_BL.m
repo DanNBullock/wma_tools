@@ -78,9 +78,9 @@ classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificati
 classificationOut=bsc_reconcileClassifications(classificationOut,CSTclassificationOut);
 
 classification=classificationOut
-savepath=strcat(pwd,classification.mat);
+savepath=strcat(pwd,'classification.mat');
 which('classification')
-save('classification.mat','classification');
+save(savepath,'classification');
 which('classification')
 toc
 
