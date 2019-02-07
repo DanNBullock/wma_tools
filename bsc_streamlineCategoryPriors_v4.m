@@ -18,11 +18,11 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,inflat
 %% parameter note & initialization
 fprintf('\n creating categorical segmentation')
 wbfg
-
+allStreams=wbfg.fibers;
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
-classificationOut.index=zeros(length(wbfg.fibers),1);
+classificationOut.index=zeros(length(allStreams),1);
 classificationOut
 
 classificationMid=classificationOut;
@@ -56,8 +56,9 @@ insulaROI=[[117 149]+11000 [117 149]+12000];
     
 interHemisphere=bsc_makePlanarROI(atlasPath,0, 'x');
 
-for icategories=1:length(wbfg.fibers)
-    curStream=wbfg.fibers{icategories};
+
+for icategories=1:length(allStreams)
+    curStream=allStreams{icategories};
 endpoints1(:,icategories)=curStream(:,1);
 endpoints2(:,icategories)=curStream(:,end);
 end
@@ -78,7 +79,7 @@ termination2=[];
 %streamName{iStreams}=[];
 
 
-for iStreams=1:length(wbfg.fibers)
+for iStreams=1:length(allStreams)
     if     ~isempty(find(endpoints1Identity(iStreams)==FrontalROIs))
         termination1{iStreams}='frontal';
     elseif ~isempty(find(endpoints1Identity(iStreams)==TemporalROIs))

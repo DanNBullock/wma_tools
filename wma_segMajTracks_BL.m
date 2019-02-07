@@ -37,6 +37,7 @@ classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 classificationOut
+classification=classificationOut
 tic
 
 fprintf('\n creating priors')
@@ -73,9 +74,14 @@ classificationOut=bsc_reconcileClassifications(classificationOut,cerebellarclass
 [VOFclassificationOut] =bsc_segmentVOF_v2(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificationOut);
 
-classification=classificationOut
-save('classification.mat','classification');
+[CSTclassificationOut] =bsc_segmentCST(wbfg, fsDir,categoryPrior);
+classificationOut=bsc_reconcileClassifications(classificationOut,CSTclassificationOut);
 
+classification=classificationOut
+savepath=strcat(pwd,classification.mat);
+which('classification')
+save('classification.mat','classification');
+which('classification')
 toc
 
 wma_formatForBrainLife_v2(classification,wbfg);
