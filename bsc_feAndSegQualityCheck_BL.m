@@ -146,5 +146,7 @@ if isfield(config,'output')
     tableOut = cell2table(tableArray,...
     'VariableNames',fullFieldNames);
 end
+if exist('tableOut','var')
 writetable(tableOut,'output_FiberStats.csv')
+end
 end
