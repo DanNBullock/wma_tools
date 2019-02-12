@@ -22,7 +22,7 @@ hold on
 
 for ifiblength= 1:length(fg.fibers) 
     
-    plot3(fg.fibers{ifiblength}(1,:),fg.fibers{ifiblength}(2,:),fg.fibers{ifiblength}(3,:),'Color',color);
+    plot3(fg.fibers{ifiblength}(1,:),fg.fibers{ifiblength}(2,:),fg.fibers{ifiblength}(3,:),'Color',color,'linewidth',4);
     
     if ifiblength==1
        hold on 
