@@ -74,7 +74,7 @@ end
 
 [endpoints1Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints1,'acpc');
 [endpoints2Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints2,'acpc');
-frpintf('\n endpoint identities determined')
+fprintf('\n endpoint identities determined')
 
 excludeBool=zeros(1,length(allStreams));
 includeBool=excludeBool;
@@ -90,7 +90,7 @@ termination1=cell(1,length(allStreams));
 streamName=termination1;
 
 [superficialClassification] =bsc_segmentSuperficialFibers(wbfg, fsDir);
-frpintf('\n superficial fibers identified')
+fprint('\n superficial fibers identified')
 
 validSideROI= [leftROIS rightROIS] ;
 excludeSideROI=[unknownROIS pericROI ccROIS OpticCROI wmROIS spineROIS ventricleROIS];
