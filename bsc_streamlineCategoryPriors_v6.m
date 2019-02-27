@@ -90,7 +90,7 @@ termination1=cell(1,length(allStreams));
 streamName=termination1;
 
 [superficialClassification] =bsc_segmentSuperficialFibers(wbfg, fsDir);
-fprint('\n superficial fibers identified')
+fprintf('\n superficial fibers identified')
 
 validSideROI= [leftROIS rightROIS] ;
 excludeSideROI=[unknownROIS pericROI ccROIS OpticCROI wmROIS spineROIS ventricleROIS];
