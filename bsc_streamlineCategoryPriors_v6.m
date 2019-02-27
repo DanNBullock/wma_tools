@@ -181,7 +181,7 @@ else
     error('streamline identity unaccounted for')
 end
 
-fprintf('\n endpoint categories determined')
+
 
 %hierarchy of categories here
 interhemiFlag(iStreams)=interHemiBool(iStreams)&includeBool(iStreams);
@@ -204,7 +204,7 @@ end
 
 uniqueNames=unique(streamName);
 
-
+fprintf('\n endpoint categories determined')
 
 summarizeNames={'CorpusCallosum' 'unlabeled' 'OpticChi' 'ventricle' 'whiteMatter' 'pericallosal'};
 
