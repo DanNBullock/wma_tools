@@ -14,11 +14,13 @@ function bsc_feAndSegQualityCheck_BL()
      addpath(genpath('/N/u/brlife/git/wma_tools'))
  end
 
+ 
 %config = loadjson('/N/dc2/projects/lifebid/HCP/Dan/GitStoreDir/ROIs2ROIsSegment/config.json');
 config = loadjson('config.json');
 
 if isfield(config,'fe')
     feORwbfg=config.fe;
+    fibNum=length(feORwbfg.fg.fibers);
 else
     feORwbfg=dtiImportFibersMrtrix(config.track, .5);
 end
@@ -28,6 +30,8 @@ saveDir=pwd;
 if isfield(config,'output')
     load(config.output)
     classification=classification;
+    if ~length(classification.index)==fibNum
+    
     bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
 else
     bsc_feAndSegQualityCheck(feORwbfg, [], saveDir)

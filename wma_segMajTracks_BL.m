@@ -27,7 +27,7 @@ wbfg = dtiImportFibersMrtrix(config.track, .5);
 
 fsDir=strcat(pwd,'/freesurfer');
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz')
+atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 if ~exist(atlasPath,'file')
     fprintf('\n FILE %i NOT FOUND',atlasPath)
@@ -36,30 +36,28 @@ end
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
-classificationOut
-classification=classificationOut
 tic
 
 fprintf('\n creating priors')
 
-[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2);
-[asymPrior, effPrior] =bsc_streamlineGeometryPriors(wbfg);
+[categoryPrior] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,2);
+[~, effPrior] =bsc_streamlineGeometryPriors(wbfg);
 
 fprintf('\n prior creation complete')
 
-[AntPostclassificationOut] =bsc_segmentAntPostTracts(wbfg, fsDir,categoryPrior,effPrior);
+[AntPostclassificationOut] =bsc_segmentAntPostTracts_v2(wbfg, fsDir,categoryPrior,effPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,AntPostclassificationOut);
 
 [CCclassificationOut] =bsc_segmentCorpusCallosum_v3(wbfg, fsDir,0,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,CCclassificationOut);
 
-[SubCclassificationOut] =bsc_segmentSubCortical(wbfg, fsDir,categoryPrior,effPrior);
+[SubCclassificationOut] =bsc_segmentSubCortical_v2(wbfg, fsDir,categoryPrior,effPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,SubCclassificationOut);
 
 [AslantclassificationOut] =bsc_segmentAslant(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,AslantclassificationOut);
 
-[MDLFclassificationOut] =bsc_segmentMdLF_ILF_v3(wbfg, fsDir);
+[MDLFclassificationOut] =bsc_segmentMdLF_ILF_v4(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,MDLFclassificationOut);
 
 [pArcTPCclassificationOut] = bsc_segpArcTPC(wbfg, fsDir);
@@ -77,7 +75,7 @@ classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificati
 [CSTclassificationOut] =bsc_segmentCST(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,CSTclassificationOut);
 
-classification=classificationOut
+classification= wma_resortClassificationStruc(classificationOut);
 savepath=strcat(pwd,'classification.mat');
 which('classification')
 save(savepath,'classification');

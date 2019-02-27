@@ -51,7 +51,7 @@ if ~isempty(fe)
 end
 
 %find left and right tracts and assign them the same color.
-classificationGrouping = wma_classificationStrucGrouping(classification);
+%classificationGrouping = wma_classificationStrucGrouping(classification);
 % if exist( 'distinguishable_colors')==2
 % colorMapping = distinguishable_colors(length(classificationGrouping.names),'k');
 % else

@@ -82,7 +82,9 @@ for leftright= [1,2]
     
     %use the positive and negative criteria to make a classification
     %structure
-    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal')));
+    frontoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_frontal'),categoryPrior.names)))';
+    
+    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,frontoFrontalBool);
 end
 
 end

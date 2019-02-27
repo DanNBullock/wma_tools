@@ -17,14 +17,14 @@ if ~isdeployed
 end
 
 
-tracts = bsc_makeFGsFromClassification_v4(classification, fg);
+fg_classified = bsc_makeFGsFromClassification_v4(classification, fg);
 
 config = loadjson('config.json');
 
 if ~isfield(config,'track')
     alltracks= fgCreate();
    for itracts=1:length(classification.names)
-       alltracks = fgMerge(alltracks,tracts{itracts},'alltracts');
+       alltracks = fgMerge(alltracks,fg_classified{itracts},'alltracts');
        %tck unused
        tck = dtiExportFibersMrtrix(alltracks, 'track.tck');
    end
@@ -33,16 +33,17 @@ end
 mkdir('tracts');
 
 % Make colors for the tracts
-cm = parula(length(tracts));
-for it = 1:length(tracts)
-    tract.name   = tracts{it}.name;
+cm = parula(length(fg_classified));
+for it = 1:length(fg_classified)
+    tract.name   = fg_classified{it}.name;
     tract.color  = cm(it,:);
     
     %pick randomly up to 1000 fibers (pick all if there are less than 1000)
-    fiber_count = min(1000, numel(tracts{it}.fibers));
-    tract.coords = tracts{it}.fibers(randperm(fiber_count));
+    fiber_count = min(1000, numel(fg_classified{it}.fibers));
+    tract.coords = cellfun(@(x) round(x,3), fg_classified{it}.fibers(randperm(fiber_count)), 'UniformOutput', false);
+
     
-    all_tracts(it).name = tracts{it}.name;
+    all_tracts(it).name = fg_classified{it}.name;
     all_tracts(it).color = cm(it,:);
     savejson('', tract, fullfile('tracts',sprintf('%i.json',it)));
     all_tracts(it).filename = sprintf('%i.json',it);
@@ -54,18 +55,18 @@ savejson('', all_tracts, fullfile('tracts/tracts.json'));
 %WHY WAS THIS DELETING THE CLASSIFICATION
 %delete('classification.mat')
 % Save the results to disk
-save('output.mat','tracts','classification','-v7.3');
+save('output.mat','fg_classified','classification','-v7.3');
 classification
 % save product.json information
-tract_info = cell(length(tracts), 2);
-fibercounts = zeros(1, length(tracts));
+tract_info = cell(length(fg_classified), 2);
+fibercounts = zeros(1, length(fg_classified));
 possible_error = 0;
 num_left_tracts = 0;
 num_right_tracts = 0;
 
-for i = 1 : length(tracts)
-    name = tracts{i}.name;
-    num_fibers = length(tracts{i}.fibers);
+for i = 1 : length(fg_classified)
+    name = fg_classified{i}.name;
+    num_fibers = length(fg_classified{i}.fibers);
     
     fibercounts(i) = num_fibers;
     tract_info{i,1} = name;
@@ -91,9 +92,9 @@ right_tract_ys = zeros([1, num_right_tracts]);
 left_tract_idx = 1;
 right_tract_idx = 1;
 
-for i = 1 : length(tracts)
-    name = tracts{i}.name;
-    num_fibers = length(tracts{i}.fibers);
+for i = 1 : length(fg_classified)
+    name = fg_classified{i}.name;
+    num_fibers = length(fg_classified{i}.fibers);
     basename = name;
     
     if startsWith(basename, 'Right ')

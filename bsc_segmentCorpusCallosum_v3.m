@@ -70,9 +70,10 @@ forcepsMiniorBool=bsc_applyEndpointCriteria(wbfg, periCROI,'anterior','both',olf
 %anteriorCCPlaneBool=bsc_applyEndpointCriteria(wbfg, ccAntPlane,'anterior','both');
 
 [anteriorCC, anteriorCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{anteriorCCROI} {antMidCCPlaneAnt} {periCROI}], {'and','not','and'}, 'dud');
-anteriorCC.fibers=wbfg.fibers(forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~excludeVentriBool&categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi')));
+frontalCCBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi')))';
+anteriorCC.fibers=wbfg.fibers(forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~excludeVentriBool&frontalCCBool);
 
-forcepsMinorBool=forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~excludeVentriBool&categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi'));
+forcepsMinorBool=forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~excludeVentriBool&frontalCCBool;
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMinor',forcepsMinorBool);
 
 
@@ -86,7 +87,8 @@ classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMin
 
  [posteriorCC, posteriorCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postCCinferiorROIcut}], {'not'}, 'dud');
  
-forcepsMajorBool=ccPostMidpoints&posteriorCCBool&categoryPrior.index==find(strcmp(categoryPrior.names,'occipital_to_occipital_interHemi'));
+ posteriorCCBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'occipital_to_occipital_interHemi')))';
+forcepsMajorBool=ccPostMidpoints&posteriorCCBool&posteriorCCBool;
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMajor',forcepsMajorBool);
 
 
@@ -101,7 +103,9 @@ parietalEndpointsBool=bsc_applyEndpointCriteria(wbfg, parietalCCminTopLimit,'sup
 
 [parietalCC, parietalCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{parietalCCposteriorLimit parietalCCinferiorLimit} {latPutLeft} {latPutRight}], {'not','not','not','not'}, 'dud');
 
-parietalCCBool=categoryPrior.index==find(strcmp(categoryPrior.names,'parietal_to_parietal_interHemi'))&~forcepsMinorBool&~forcepsMajorBool&parietalCCBool&parietalEndpointsBool;
+
+parInterhemiBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'parietal_to_parietal_interHemi')))';
+parietalCCBool=parInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&parietalCCBool&parietalEndpointsBool;
 
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'parietalCC',parietalCCBool);
 
@@ -118,8 +122,10 @@ anterioFrotalNot=bsc_modifyROI_v2(atlasPath,middleFrontalNot, middleFrontalLimit
 
 middleFrontalEndpointBool=bsc_applyEndpointCriteria(wbfg, frontoSeparate,'anterior','both');
 
-middleFrontalBool=categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi'))&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&middleFrontalBool&~middleFrontalEndpointBool;
-anterioFrontalBool=categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi'))&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&~middleFrontalBool&anterioFrontalBool&middleFrontalEndpointBool;
+middleFrontalInterhemiBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi')))';
+
+middleFrontalBool=middleFrontalInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&middleFrontalBool&~middleFrontalEndpointBool;
+anterioFrontalBool=middleFrontalInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&~middleFrontalBool&anterioFrontalBool&middleFrontalEndpointBool;
 anterioFrontalCC.fibers=wbfg.fibers(anterioFrontalBool);
 middleFrontalCC.fibers=wbfg.fibers(middleFrontalBool);
 

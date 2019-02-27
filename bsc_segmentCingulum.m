@@ -82,7 +82,12 @@ for leftright= [1,2]
     
     %goal state
     [frontalRem2, frontalStreamsRemBool2]=wma_SegmentFascicleFromConnectome(wbfg, [{CingMargWMIntersectA} {CCvertExcludeCut} {CCintExclude}], {'and','not','not'}, 'dud');
-    classificationBool=or(categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_parietal')),categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_temporal')));
+      parietoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_parietal'),categoryPrior.names)))';
+       frontoTemporalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_temporal'),categoryPrior.names)))';
+     
+      
+    
+    classificationBool=or(parietoFrontalBool,frontoTemporalBool);
     frontalStreamsRemBool2=~cingShortExcludeBoolBoth&cingEndpointBool&frontalStreamsRemBool2&classificationBool;
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'cingulum'),frontalStreamsRemBool2);

@@ -62,8 +62,8 @@ for leftright= [1,2]
     
     nonSubCortNames=cellfun(@isempty,strfind(categoryPrior.names,'subcortical'));
     nonCebNames=cellfun(@isempty,strfind(categoryPrior.names,'cerebellum'));
-    nonSubCortBool=any(categoryPrior.index==find(nonSubCortNames),2);
-    nonCebBoolBool=any(categoryPrior.index==find(nonCebNames),2);
+    nonSubCortBool=ismember(categoryPrior.index,find(nonSubCortNames));
+    nonCebBoolBool=ismember(categoryPrior.index,find(nonCebNames));
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'CST'),nonSubCortBool,nonCebBoolBool,cstBool);
 

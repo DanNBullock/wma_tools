@@ -36,20 +36,13 @@ classificationOut.index=zeros(length(wbfg.fibers),1);
 cbROINums=[7 8;46 47];
 thalamusLut=[10 49];
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels_v2(fsDir,2);
 
 atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
-LeftCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(1,:) ,1);
-RightCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(2,:) ,1);
-[~, leftCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{LeftCBRoi}], {'endpoints'}, 'dud');
-[~, rightCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{RightCBRoi}], {'endpoints'}, 'dud');
-spinoCebBool=or(categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal_interHemi')),categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal')));
 SpineTop= bsc_planeFromROI_v2(16,'superior',atlasPath);
 [~, SpineTopBool]=wma_SegmentFascicleFromConnectome(wbfg, [{SpineTop}], {'not'}, 'dud');
 
-classificationOut=bsc_concatClassificationCriteria(classificationOut,'leftSpinoCerebellar',leftCebBool,spinoCebBool,SpineTopBool);
-classificationOut=bsc_concatClassificationCriteria(classificationOut,'rightSpinoCerebellar',rightCebBool,spinoCebBool,SpineTopBool);
 SpineLimit= bsc_planeFromROI_v2(16,'anterior',atlasPath);
 [~, posteriorStreams]=wma_SegmentFascicleFromConnectome(wbfg, [{SpineLimit}], {'not'}, 'dud');
 
@@ -59,6 +52,11 @@ for leftright= [1,2]
     %hemispheres of the brain in accordance with freesurfer's ROI
     %numbering scheme. left = 1, right = 2
     sidenum=10000+leftright*1000;
+    %% spinoCerebellar
+      cerebellumSpinalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'cerebellum_to_spinal'),categoryPrior.names)))';
+classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SpinoCerebellar'),cerebellumSpinalBool,SpineTopBool);
+
+ 
     
     %% Ipsilateral connections
     CBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(leftright,:) ,1);
@@ -78,13 +76,16 @@ for leftright= [1,2]
     [~, motorCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi} {MotorROI}], {'endpoints','endpoints'}, 'dud');
     [~, thisCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi}], {'endpoints'}, 'dud');
     
-    motorCebBool=motorCebBool&or(categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_frontal')),categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_parietal')));
-    AnterioFrontoBool=AnterioFrontoBool&categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_frontal'));
-    middleFrontoBool=~motorCebBool&middleFrontoBool&categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_frontal'));
-    thalCebBool=thalCebBool&categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_subcortical'));
-    occipitoCebBool=posteriorStreams&thisCebBool&categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_occipital'));
-    parietoCebBool=posteriorStreams&thisCebBool&~motorCebBool&categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_parietal'));
+    motorCebBool=motorCebBool&or((categoryPrior.index==find(strcmp(categoryPrior.names,strcat(sideLabel{leftright},'cerebellum_to_frontal'))))',(categoryPrior.index==find(strcmp(categoryPrior.names,strcat(sideLabel{leftright},'cerebellum_to_parietal'))))');
+    AnterioFrontoBool=AnterioFrontoBool&(categoryPrior.index==find(strcmp(categoryPrior.names,strcat(sideLabel{leftright},'cerebellum_to_frontal'))))';
+    middleFrontoBool=~motorCebBool&middleFrontoBool&(categoryPrior.index==find(strcmp(categoryPrior.names,strcat(sideLabel{leftright},'cerebellum_to_frontal'))))';
+    thalCebBool=thalCebBool&(categoryPrior.index==find(strcmp(categoryPrior.names,strcat(sideLabel{leftright},'cerebellum_to_subcortical'))))';
+    occipitoCebBool=posteriorStreams&thisCebBool&(categoryPrior.index==find(strcmp(categoryPrior.names,strcat(sideLabel{leftright},'cerebellum_to_occipital'))))';
+    parietoCebBool=posteriorStreams&thisCebBool&~motorCebBool&(categoryPrior.index==find(strcmp(categoryPrior.names,strcat(sideLabel{leftright},'cerebellum_to_parietal'))))';
     
+     % parietoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_parietal'),categoryPrior.names)))';
+      
+      
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MotorCerebellar'),motorCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},' AnterioFrontoCerebellar'),AnterioFrontoBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MiddleFrontoBoolCerebellar'),middleFrontoBool);

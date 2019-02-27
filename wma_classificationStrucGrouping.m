@@ -1,5 +1,22 @@
 function classificationGrouping = wma_classificationStrucGrouping(classification)
-
+% classificationGrouping = wma_classificationStrucGrouping(classification)
+%
+% This function finds which pairs of names (and thus index labels)
+% correspond to left/right variants of the same tract.  It presumes a
+% finite number of possible lables that can indicate this status (as
+% established in the removalVec variable.  It the creates another
+% classificaiton structure, essentially unifying the tract into one, which
+% has no left right designation.
+%
+%  Inputs
+%  classification:  standardly organized classification
+%
+%  Outputs:
+%  classificationGrouping:  a classification structure with the left and
+%  right classifications merged
+%
+%  Dan Bullock 2019
+%%
 
 
 
@@ -20,9 +37,6 @@ end
 %modify the flag vec for 'left' and 'left ' overlap
 flagMatrix(1,:)=xor(flagMatrix(1,:),flagMatrix(2,:));
 flagMatrix(5,:)=xor(flagMatrix(5,:),flagMatrix(6,:));
-
-leftFlag=sum(flagMatrix(1:length(removalVec)/2,:),1)>0;
-rightFlag=sum(flagMatrix((length(removalVec)/2+1):end,:),1)>0;
 
 truncatedName=cell(1,length(tractNames));
 

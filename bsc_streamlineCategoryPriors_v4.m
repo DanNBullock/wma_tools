@@ -143,7 +143,7 @@ for iStreams=1:length(allStreams)
         terminationNames=sort({termination1{iStreams} termination2{iStreams}});
     else
         endpoints1Identity(iStreams)
-        endpoints12dentity(iStreams)
+        endpoints2Identity(iStreams)
         error('streamline identity unaccounted for')        
     end
     if interHemiBool(iStreams)

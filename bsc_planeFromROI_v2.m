@@ -24,7 +24,7 @@ end
 
 if isnumeric(roiIN)
     
-    roiIN=bsc_roiFromAtlasNums(atlas,[roiIN ],0);
+    roiIN=bsc_roiFromAtlasNums(atlas,[roiIN ],1);
     
 elseif isstruct(roiIN)
     
