@@ -20,5 +20,6 @@ else
     %do nothing, index bool should remain all false
     warning('\n no streamlines found for %s found in classification structure',tractName)
 end
+indexBool=indexBool';
 end
     
