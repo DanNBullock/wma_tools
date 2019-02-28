@@ -182,8 +182,8 @@ if ~notDefined('fe') & ~notDefined('classification')
     
     bottomPlot1=subplot(2,5,[4,5]);
     hold on
-    bar(log10(countPlotInput'))
-    title({'log10 of proportion of connectome',' streamlines in tract'})
+    bar(100*countPlotInput')
+    title({' proportion of connectome',' streamlines in tract'})
     legend('Left','Right')
     xlabel('Tract')
     ylabel('% classificaiton input streamlines in tract (%)')
@@ -383,7 +383,7 @@ elseif notDefined('fe') & ~notDefined('classification')
     
     bottomPlot1=subplot(3,4,[6 7 8]);
     hold on
-    bar(log10(countPlotInput'))
+    bar(100*countPlotInput')
     title({'log10 of proportion of connectome',' streamlines in tract'})
     legend('Left','Right')
     xlabel('Tract')

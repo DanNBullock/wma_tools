@@ -7,12 +7,13 @@ function [indexBool] = bsc_extractStreamIndByName(classification,tractName)
 
 %%
 %find index of name
-nameIndex=strcmp(classification.names,tractName);
+nameIndex=find(strcmp(classification.names,tractName));
 
 %set indexBool to 0, no index can be -1, so this should be false
 indexBool=classification.index==-1;
 
 if ~isempty(nameIndex)
+    
     relevantIndexes=classification.index==nameIndex;
     indexBool(relevantIndexes)=true;
 else
