@@ -27,7 +27,7 @@ for iFiles=1:length(fileIndexes)
 end
 
 intersection = fileName(ismember(fileName, dependancyList));
-keyboard
+
 callMatrix=zeros(length(intersection));
 %% Matrix construction
 %row=source, column = target
