@@ -44,7 +44,9 @@ LeftCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(1,:) ,1);
 RightCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(2,:) ,1);
 [~, leftCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{LeftCBRoi}], {'endpoints'}, 'dud');
 [~, rightCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{RightCBRoi}], {'endpoints'}, 'dud');
-spinoCebBool=or(categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal_interHemi')),categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal')));
+%bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_frontal')
+%spinoCebBool=or(categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal_interHemi')),categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal')));
+spinoCebBool=or(bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal_interHemi'),bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal'));
 SpineTop= bsc_planeFromROI_v2(16,'superior',atlasPath);
 [~, SpineTopBool]=wma_SegmentFascicleFromConnectome(wbfg, [{SpineTop}], {'not'}, 'dud');
 
