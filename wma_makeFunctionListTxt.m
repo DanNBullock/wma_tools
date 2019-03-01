@@ -59,8 +59,6 @@ plot(dg)
 % figure
 % etreeplot(callMatrix)
 
-callMatrix = wma_makeGitDirTree(pwd);
-
 saveas(gcf,strcat(pwd,strcat(dirName,'map.png')));
 
 T = cell2table(intersection');
