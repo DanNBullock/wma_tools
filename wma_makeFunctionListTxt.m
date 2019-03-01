@@ -52,7 +52,7 @@ for iUniqueFiles=1:length(intersection)
     fprintf('\n %i Functon dependancies of %s determined',length(dependancyList),intersection{iUniqueFiles})
 end
 
-figure
+figure('visible', 'off')
 dg=digraph(callMatrix, NamesVec,'OmitSelfLoops');
 plot(dg)
 % inputFunctions = indegree(dg);
