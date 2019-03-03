@@ -16,9 +16,32 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,inflat
 % (C) Daniel Bullock, 2019, Indiana University
 
 %% parameter note & initialization
+%%
+whoOutput=whos;
+[memSort, sortOrder]=sort([whoOutput(:).bytes]);
+memSort=(memSort)*(1e-6);
+memNames={whoOutput(sortOrder).name};
+for iMemObjects=1:length(memSort)
+    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
+end
+fprintf('\n total %6.4f \n',sum(memSort(:)))
+%%
+
 fprintf('\n creating categorical segmentation')
 wbfg
+[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, fsDir);
+%%
+whoOutput=whos;
+[memSort, sortOrder]=sort([whoOutput(:).bytes]);
+memSort=(memSort)*(1e-6);
+memNames={whoOutput(sortOrder).name};
+for iMemObjects=1:length(memSort)
+    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
+end
+fprintf('\n total %6.4f \n',sum(memSort(:)))
+%%
 allStreams=wbfg.fibers;
+clear wbfg
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
@@ -142,7 +165,7 @@ termination2=cell(1,length(allStreams));
 termination1=cell(1,length(allStreams));
 streamName=termination1;
 
-[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, fsDir);
+
 
 %%
 whoOutput=whos;
