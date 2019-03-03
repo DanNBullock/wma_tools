@@ -120,7 +120,7 @@ for leftright= [1,2]
     
         %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
     
-    contramotorCebBool=~notThese&contramotorCebBool&or( bsc_extractStreamIndByName(classification,'cerebellum_to_frontal_interHemi'), bsc_extractStreamIndByName(classification,'cerebellum_to_parietal_interHemi'));
+    contramotorCebBool=~notThese&contramotorCebBool&or( bsc_extractStreamIndByName(classification,'cerebellum_to_frontal_interHemi'), bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_parietal_interHemi'));
     contraAnterioFrontoBool=~notThese&contraAnterioFrontoBool&bsc_extractStreamIndByName(classification,'cerebellum_to_frontal_interHemi');
     contramiddleFrontoBool=~notThese&~contramotorCebBool&contramiddleFrontoBool&bsc_extractStreamIndByName(classification,'cerebellum_to_frontal_interHemi');
     contrathalCebBool=~notThese&contrathalCebBool&bsc_extractStreamIndByName(classification,'cerebellum_to_subcortical_interHemi');
