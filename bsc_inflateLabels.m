@@ -18,6 +18,7 @@ function [inflatedAtlas] =bsc_inflateLabels(fsDir,inflateItr)
 atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 atlasIn=niftiRead(atlasPath);
+fprintf('\n beginning island removal')
 [ olab] = fnDeislandLabels_v2(atlasIn, [],5,999);
 atlasIter=olab;
 %set relevant ROI indicies

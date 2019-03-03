@@ -56,15 +56,20 @@ pericROI=[[167]+11000 [167]+12000];
 
 insulaROI=[[117 149]+11000 [117 149]+12000];
 
+fprintf('\n rois set')
 
 endpoints1=zeros(3,length(allStreams));
 endpoints2=zeros(3,length(allStreams));
+
+
 
 for icategories=1:length(allStreams)
     curStream=allStreams{icategories};
     endpoints1(:,icategories)=curStream(:,1);
     endpoints2(:,icategories)=curStream(:,end);
 end
+
+fprintf('\n endpoints extracted')
 
 if inflateITer>0
     [inflatedAtlas] =bsc_inflateLabels(fsDir,inflateITer);
