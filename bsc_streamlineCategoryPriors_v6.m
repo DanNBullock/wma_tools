@@ -287,6 +287,11 @@ elseif or(RightBool(iStreams),singleRightBoolproto(iStreams))&includeBool(iStrea
     streamName{iStreams}=strcat('right',streamName{iStreams});
 end
 
+if interhemiFlag(iStreams)&validUIndexes(iStreams)
+    streamName{iStreams}=strcat('MaskFailure');
+end
+
+
 end
 
 %%
@@ -301,12 +306,12 @@ fprintf('\n total %6.4f \n',sum(memSort(:)))
 %%
 uniqueNames=unique(streamName);
 
-fprintf('\n endpoint categories determined')
+fprintf('\n %i endpoint categories determined', length(uniqueNames))
 
 summarizeNames={'CorpusCallosum' 'unlabeled' 'OpticChi' 'ventricle' 'whiteMatter' 'pericallosal'};
 
 for icategories=1:length(uniqueNames)
-    icategories
+
     if contains(uniqueNames{icategories},summarizeNames)
         for isummary=1:length(summarizeNames)
             summaryIndex(isummary)=contains(uniqueNames{icategories},summarizeNames{isummary});
