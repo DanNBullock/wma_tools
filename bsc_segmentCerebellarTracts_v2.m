@@ -83,11 +83,11 @@ for leftright= [1,2]
     
     %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
     motorCebBool=motorCebBool&or(bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_frontal')),bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_parietal')));
-    AnterioFrontoBool=AnterioFrontoBool&bsc_extractStreamIndByName(classification,strcat(sideLabel{leftright},'cerebellum_to_frontal'));
-    middleFrontoBool=~motorCebBool&middleFrontoBool&bsc_extractStreamIndByName(classification,strcat(sideLabel{leftright},'cerebellum_to_frontal'));
-    thalCebBool=thalCebBool&bsc_extractStreamIndByName(classification,strcat(sideLabel{leftright},'cerebellum_to_subcortical'));
-    occipitoCebBool=posteriorStreams&thisCebBool&bsc_extractStreamIndByName(classification,strcat(sideLabel{leftright},'cerebellum_to_occipital'));
-    parietoCebBool=posteriorStreams&thisCebBool&~motorCebBool&bsc_extractStreamIndByName(classification,strcat(sideLabel{leftright},'cerebellum_to_parietal'));
+    AnterioFrontoBool=AnterioFrontoBool&bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_frontal'));
+    middleFrontoBool=~motorCebBool&middleFrontoBool&bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_frontal'));
+    thalCebBool=thalCebBool&bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_subcortical'));
+    occipitoCebBool=posteriorStreams&thisCebBool&bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_occipital'));
+    parietoCebBool=posteriorStreams&thisCebBool&~motorCebBool&bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_parietal'));
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MotorCerebellar'),motorCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},' AnterioFrontoCerebellar'),AnterioFrontoBool);
@@ -120,12 +120,12 @@ for leftright= [1,2]
     
         %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
     
-    contramotorCebBool=~notThese&contramotorCebBool&or( bsc_extractStreamIndByName(classification,'cerebellum_to_frontal_interHemi'), bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_parietal_interHemi'));
-    contraAnterioFrontoBool=~notThese&contraAnterioFrontoBool&bsc_extractStreamIndByName(classification,'cerebellum_to_frontal_interHemi');
-    contramiddleFrontoBool=~notThese&~contramotorCebBool&contramiddleFrontoBool&bsc_extractStreamIndByName(classification,'cerebellum_to_frontal_interHemi');
-    contrathalCebBool=~notThese&contrathalCebBool&bsc_extractStreamIndByName(classification,'cerebellum_to_subcortical_interHemi');
-    contraoccipitoCebBool=~notThese&posteriorStreams&contrathisCebBool&bsc_extractStreamIndByName(classification,'cerebellum_to_occipital_interHemi');
-    contraparietoCebBool=~notThese&posteriorStreams&contrathisCebBool&~contramotorCebBool&bsc_extractStreamIndByName(classification,'cerebellum_to_parietal_interHemi');
+    contramotorCebBool=~notThese&contramotorCebBool&or( bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_frontal_interHemi'), bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_parietal_interHemi'));
+    contraAnterioFrontoBool=~notThese&contraAnterioFrontoBool&bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_frontal_interHemi');
+    contramiddleFrontoBool=~notThese&~contramotorCebBool&contramiddleFrontoBool&bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_frontal_interHemi');
+    contrathalCebBool=~notThese&contrathalCebBool&bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_subcortical_interHemi');
+    contraoccipitoCebBool=~notThese&posteriorStreams&contrathisCebBool&bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_occipital_interHemi');
+    contraparietoCebBool=~notThese&posteriorStreams&contrathisCebBool&~contramotorCebBool&bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_parietal_interHemi');
 
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraMotorCerebellar'),contramotorCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraAnterioFrontoCerebellar'),contraAnterioFrontoBool);

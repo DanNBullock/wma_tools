@@ -63,7 +63,7 @@ classificationOut=bsc_reconcileClassifications(classificationOut,MDLFclassificat
 [pArcTPCclassificationOut] = bsc_segpArcTPC(wbfg, fsDir);
 classificationOut=bsc_reconcileClassifications(classificationOut,pArcTPCclassificationOut);
 
-[opticclassificationOut] =bsc_opticRadiationSeg_V6(wbfg, fsDir, 0);
+[opticclassificationOut] =bsc_opticRadiationSeg_V7(wbfg, fsDir, 0,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,opticclassificationOut);
 
 [cerebellarclassificationOut] =bsc_segmentCerebellarTracts_v2(wbfg, fsDir,0,categoryPrior);

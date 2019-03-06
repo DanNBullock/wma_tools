@@ -69,7 +69,11 @@ for leftright= [1,2]
     
     
     [~, UncSegBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalTop} {amigPost} {thalPost}], {'not','not','not'}, 'dud');
-    frontoTemporalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_temporal'),categoryPrior.names)))';
+    
+    frontoTemporalBool=or(bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_temporal')),bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_temporal_ufiber')));
+    
+    %categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),''),categoryPrior.names)))';
+    
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Uncinate'),frontoTemporalBool,UncSegBool);
     
@@ -92,7 +96,7 @@ for leftright= [1,2]
     [~, IFOFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{ccCarveOut} {antTempPlane}], {'not','and'}, 'dud');
     
         %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
-        frontoOccipitalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'frontal_to_occipital'));
+        frontoOccipitalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_parietal'));
     %frontoOccipitalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_occipital'),categoryPrior.names)))';
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'IFOF'),frontoOccipitalBool,IFOFBool);

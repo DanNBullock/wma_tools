@@ -36,6 +36,10 @@ indexVector=1:length(classificationGrouping.names);
 for itracts=1:length(classificationGrouping.names)
     %find all indexes which correspond to this group
     candidateIndexes=classificationIn.index(classificationGrouping.index==itracts);
+    if isempty(candidateIndexes)
+        warning('\n %s has no associated streamlines', classificationGrouping.names{itracts})
+    end
+    
     %find which indexes in the input classification correspond to this group
     uniqueIndexes=unique(candidateIndexes);
     %get the count
@@ -62,6 +66,9 @@ groupOrdering=horzcat(singletonIndexes,pairIndexes);
 for itracts=groupOrdering
     %find all indexes which correspond to this group
     candidateIndexes=classificationIn.index(classificationGrouping.index==itracts);
+if isempty(candidateIndexes)
+        warning('\n %s has no associated streamlines', classificationGrouping.names{itracts})
+    end
     %find which indexes in the input classification correspond to this group
     uniqueIndexes=unique(candidateIndexes);
     %find the cooresponding names    

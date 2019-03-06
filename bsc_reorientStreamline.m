@@ -14,4 +14,5 @@ function [fiberTract] = bsc_reorientStreamline(fiberTract)
      fiberTract=fliplr(fiberTract);
  end
      
+end
  

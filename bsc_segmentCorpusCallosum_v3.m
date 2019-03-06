@@ -70,7 +70,8 @@ forcepsMiniorBool=bsc_applyEndpointCriteria(wbfg, periCROI,'anterior','both',olf
 %anteriorCCPlaneBool=bsc_applyEndpointCriteria(wbfg, ccAntPlane,'anterior','both');
 
 [anteriorCC, anteriorCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{anteriorCCROI} {antMidCCPlaneAnt} {periCROI}], {'and','not','and'}, 'dud');
-frontalCCBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi')))';
+
+frontalCCBool=bsc_extractStreamIndByName(categoryPrior,'frontal_to_frontal_interHemi');
 anteriorCC.fibers=wbfg.fibers(forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~excludeVentriBool&frontalCCBool);
 
 forcepsMinorBool=forcepsMiniorBool&anteriorCCBool&~excludeCCBool&~excludeVentriBool&frontalCCBool;
@@ -87,7 +88,8 @@ classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMin
 
  [posteriorCC, posteriorCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postCCinferiorROIcut}], {'not'}, 'dud');
  
- posteriorCCBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'occipital_to_occipital_interHemi')))';
+ posteriorCCBool=or(bsc_extractStreamIndByName(categoryPrior,'occipital_to_occipital_interHemi'),bsc_extractStreamIndByName(categoryPrior,'MaskFailure'));
+
 forcepsMajorBool=ccPostMidpoints&posteriorCCBool&posteriorCCBool;
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMajor',forcepsMajorBool);
 
@@ -104,7 +106,7 @@ parietalEndpointsBool=bsc_applyEndpointCriteria(wbfg, parietalCCminTopLimit,'sup
 [parietalCC, parietalCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{parietalCCposteriorLimit parietalCCinferiorLimit} {latPutLeft} {latPutRight}], {'not','not','not','not'}, 'dud');
 
 
-parInterhemiBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'parietal_to_parietal_interHemi')))';
+parInterhemiBool=bsc_extractStreamIndByName(categoryPrior,'parietal_to_parietal_interHemi');
 parietalCCBool=parInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&parietalCCBool&parietalEndpointsBool;
 
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'parietalCC',parietalCCBool);
@@ -122,7 +124,9 @@ anterioFrotalNot=bsc_modifyROI_v2(atlasPath,middleFrontalNot, middleFrontalLimit
 
 middleFrontalEndpointBool=bsc_applyEndpointCriteria(wbfg, frontoSeparate,'anterior','both');
 
-middleFrontalInterhemiBool=(categoryPrior.index==find(strcmp(categoryPrior.names,'frontal_to_frontal_interHemi')))';
+
+middleFrontalInterhemiBool=bsc_extractStreamIndByName(categoryPrior,'frontal_to_frontal_interHemi');
+
 
 middleFrontalBool=middleFrontalInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&middleFrontalBool&~middleFrontalEndpointBool;
 anterioFrontalBool=middleFrontalInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&~middleFrontalBool&anterioFrontalBool&middleFrontalEndpointBool;

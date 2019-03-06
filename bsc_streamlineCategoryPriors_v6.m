@@ -287,7 +287,7 @@ elseif or(RightBool(iStreams),singleRightBoolproto(iStreams))&includeBool(iStrea
     streamName{iStreams}=strcat('right',streamName{iStreams});
 end
 
-if interhemiFlag(iStreams)&validUIndexes(iStreams)
+if interhemiFlag(iStreams)&validUIndexes(iStreams)&superficialClassification.index
     streamName{iStreams}=strcat('MaskFailure');
 end
 

@@ -73,6 +73,7 @@ for leftright= [1,2]
     posteriorLentiLimit=bsc_planeFromROI_v2(lentiLut(leftright,:), 'posterior',atlasPath);
     antPalLimit=bsc_planeFromROI_v2(palLut(leftright,:), 'anterior',atlasPath);
     postPalLimit=bsc_planeFromROI_v2(palLut(leftright,:), 'posterior',atlasPath);
+    infPalLimit=bsc_planeFromROI_v2(palLut(leftright,:), 'inferior',atlasPath);
     
     antSpineLimit=bsc_planeFromROI_v2(16, 'anterior',atlasPath);
     postPutExclude=bsc_modifyROI_v2(inflatedAtlas,putROI, antSpineLimit, 'posterior');
@@ -95,6 +96,7 @@ for leftright= [1,2]
     anteriorMedialExclude=bsc_modifyROI_v2(inflatedAtlas,anteriorThalLimit,lateralThalamicLimit, 'medial');
     %anteriorMedialExclude=bsc_modifyROI_v2(inflatedAtlas,anteriorThalLimit,lateralThalamicLimit, 'medial');
     
+        [~, posteriorThalLimitBool]=wma_SegmentFascicleFromConnectome(wbfg, [{posteriorThalLimit}], {'not'}, 'dud');
     [~, FrontoMotorBool]=wma_SegmentFascicleFromConnectome(wbfg, [{MotorROI}], {'endpoints'}, 'dud');
     [~, frontalBool]=wma_SegmentFascicleFromConnectome(wbfg, [{FrontalROI} {posteriorInferiorExclude} {posteriorSuperiorExclude} {posteriorLateralExclude}], {'endpoints','not','not','not'}, 'dud');
     [~, temporalBool]=wma_SegmentFascicleFromConnectome(wbfg, [{TemporalROI}], {'endpoints'}, 'dud');
@@ -114,6 +116,8 @@ for leftright= [1,2]
     
     % MAKE FRONTAL ENDPOINT CRITERIA
     frontoEndpointBool=bsc_applyEndpointCriteria(wbfg,anteriorThalLimit,'anterior','one');
+        lateralThalEndpointBool=bsc_applyEndpointCriteria(wbfg,infPalLimit,'inferior','one');
+        
    
     frontalSubcorticalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_subcortical'),categoryPrior.names)))';
     parietalSubcorticalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'parietal_to_subcortical'),categoryPrior.names)))';
@@ -125,7 +129,7 @@ for leftright= [1,2]
     
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'frontoThalamic'),frontoThalamicBool,frontoEndpointBool,frontalBool,~FrontoMotorBool,frontalSubcorticalBool);
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'temporoThalamic'),temporoThalamicBool,temporalBool,temporalSubcorticalBool);
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'temporoThalamic'),temporoThalamicBool,temporalBool,temporalSubcorticalBool,lateralThalEndpointBool);
     % no need to duplicate the
     %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'occipitalThalamic'),thalamicBool,occipitalBool,categoryPrior.index==find(strcmp(categoryPrior.names,'cortex_to_subcortical')));
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'parietoThalamic'),parietoThalamicBool,parietalBool,parietalSubcorticalBool);
