@@ -21,12 +21,7 @@ function [classificationOut] =bsc_segmentAntPostTracts_v2(wbfg, fsDir,varargin)
 sideLabel={'left','right'};
 
 categoryPrior=varargin{1};
-effPrior=varargin{2}
-
-allStreams=wbfg.fibers;
-
-
-
+effPrior=varargin{2};
 
 %initialize classification structure
 classificationOut=[];
@@ -92,11 +87,15 @@ for leftright= [1,2]
     ccCarveOut=bsc_mergeROIs(ccCarveOut,antCCtopThal);
     
     antTempPlane=bsc_planeFromROI_v2(173+sidenum, 'anterior',atlasPath);
+       infCCLimit=bsc_planeFromROI_v2(255, 'inferior',atlasPath);
     
-    [~, IFOFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{ccCarveOut} {antTempPlane}], {'not','and'}, 'dud');
+    
+       [infTempROI]=bsc_modifyROI_v2(atlasPath,antTempPlane, infCCLimit, 'inferior');
+    
+    [testtract, IFOFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{infTempROI}], {'and'}, 'dud');
     
         %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
-        frontoOccipitalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_parietal'));
+        frontoOccipitalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_occipital'));
     %frontoOccipitalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_occipital'),categoryPrior.names)))';
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'IFOF'),frontoOccipitalBool,IFOFBool);
