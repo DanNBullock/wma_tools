@@ -82,7 +82,8 @@ for leftright= [1,2]
     
     %use the positive and negative criteria to make a classification
     %structure
-    frontoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_frontal'),categoryPrior.names)))';
+ 
+    frontoFrontalBool=  or( bsc_extractStreamIndByName(categoryPrior,sideLabel{leftright},'frontal_to_frontal'),   bsc_extractStreamIndByName(categoryPrior,sideLabel{leftright},'frontal_to_frontal_ufiber'));
     
     [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,frontoFrontalBool);
 end

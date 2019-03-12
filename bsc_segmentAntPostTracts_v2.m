@@ -43,7 +43,7 @@ subcort=[10 12 13 17 18; 49 51 52 53 54];
 
 interHemiNot=bsc_makePlanarROI(atlasPath,0, 'x');
 
-[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,categoryPrior);
+[classificationOut] =bsc_segmentCingulum_v3(wbfg, fsDir,categoryPrior);
 cingulumBool=or(classificationOut.index==find(strcmp(classificationOut.names,'rightcingulum')),classificationOut.index==find(strcmp(classificationOut.names,'leftcingulum')));
 
 
@@ -87,15 +87,15 @@ for leftright= [1,2]
     ccCarveOut=bsc_mergeROIs(ccCarveOut,antCCtopThal);
     
     antTempPlane=bsc_planeFromROI_v2(173+sidenum, 'anterior',atlasPath);
-       infCCLimit=bsc_planeFromROI_v2(255, 'inferior',atlasPath);
+    infCCLimit=bsc_planeFromROI_v2(255, 'inferior',atlasPath);
     
     
-       [infTempROI]=bsc_modifyROI_v2(atlasPath,antTempPlane, infCCLimit, 'inferior');
+    [infTempROI]=bsc_modifyROI_v2(atlasPath,antTempPlane, infCCLimit, 'inferior');
     
-    [testtract, IFOFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{infTempROI}], {'and'}, 'dud');
+    [~, IFOFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{infTempROI}], {'and'}, 'dud');
     
-        %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
-        frontoOccipitalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_occipital'));
+    %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
+    frontoOccipitalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_occipital'));
     %frontoOccipitalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_occipital'),categoryPrior.names)))';
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'IFOF'),frontoOccipitalBool,IFOFBool);
@@ -128,8 +128,8 @@ for leftright= [1,2]
     
     [SLF3, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf}], {'endpoints','not'}, 'dud');
     
-    SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool;
-    SLF3Bool=SLF3Bool&parietoFrontalBool;
+    SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool&~IFOFBool;
+    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool;
     
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF1And2'),SLF12Bool);

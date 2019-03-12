@@ -91,12 +91,13 @@ for leftright= [1,2]
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MotorCerebellar'),motorCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},' AnterioFrontoCerebellar'),AnterioFrontoBool);
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MiddleFrontoBoolCerebellar'),middleFrontoBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ThalamicoCerebellar'),thalCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'OccipitoCerebellar'),occipitoCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ParietoCerebellar'),parietoCebBool);
     
     if experimentalBool
+          classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MiddleFrontoCerebellar'),middleFrontoBool);
+  
          classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MiddleFrontoBoolCerebellar'),middleFrontoBool);
     end
 
@@ -129,10 +130,11 @@ for leftright= [1,2]
 
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraMotorCerebellar'),contramotorCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraAnterioFrontoCerebellar'),contraAnterioFrontoBool);
-     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraOccipitoCerebellar'),contraoccipitoCebBool);
-     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraParietoCerebellar'),contraparietoCebBool);
-     
+      
      if experimentalBool
+          classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraOccipitoCerebellar'),contraoccipitoCebBool);
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraParietoCerebellar'),contraparietoCebBool);
+    
          classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraMiddleFrontoBoolCerebellar'),contramiddleFrontoBool);
          classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ContraThalamicoCerebellar'),contrathalCebBool);
      end
