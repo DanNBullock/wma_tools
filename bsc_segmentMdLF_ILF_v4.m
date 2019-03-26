@@ -88,7 +88,14 @@ for leftright= [1,2]
     ILFAntEndpointBool=bsc_applyEndpointCriteria(wbfg,lingGyAnt,'anterior','one');
     ILFPostEndpointBool=bsc_applyEndpointCriteria(wbfg,posteriorILFAnt,'posterior','one');
     
-    [classificationILF]=bsc_concatClassificationCriteria(classificationILF,strcat(sideLabel{leftright},'ILF'),occipitoTemporalBool,ILFAntEndpointBool,ILFPostEndpointBool);
+       insPost=bsc_planeFromROI_v2(150+sidenum, 'posterior',atlasPath);
+    tempTransVTop=bsc_planeFromROI_v2(133+sidenum, 'superior',atlasPath);
+        TopArcAnd=bsc_modifyROI_v2(atlasPath,insPost, tempTransVTop, 'superior');
+        
+            [~, ILFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{TopArcAnd}], {'not'}, 'dud');
+        
+    
+    [classificationILF]=bsc_concatClassificationCriteria(classificationILF,strcat(sideLabel{leftright},'ILF'),occipitoTemporalBool,ILFAntEndpointBool,ILFPostEndpointBool,ILFBool);
     
     
     [~, MDLFind]=bsc_tractByEndpointROIs(wbfg, [{mergedParietalROI},{mergedLatTempROI}]);

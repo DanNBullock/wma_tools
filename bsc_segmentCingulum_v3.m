@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
+function [classificationOut] =bsc_segmentCingulum_v3(wbfg, fsDir,varargin)
 %[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
 %
 % This function automatedly segments the cingulum
@@ -25,6 +25,8 @@ sideLabel={'left','right'};
 categoryPrior=varargin{1};
 %categoryPrior=categoryPrior{1};
 
+thalIDs=[10,49];
+
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
@@ -35,6 +37,15 @@ atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 %iterates through left and right sides
 for leftright= [1,2]
+    
+      thalTop=bsc_planeFromROI_v2(thalIDs(leftright), 'superior',atlasPath);
+    ccPostLimit=bsc_planeFromROI_v2(251, 'posterior',atlasPath);
+    ccAntLimit=bsc_planeFromROI_v2(254, 'anterior',atlasPath);
+    
+    %carve out the area around and above the cc
+    [postCCtopThal]=bsc_modifyROI_v2(atlasPath,ccPostLimit, thalTop, 'superior');
+    [ccInterior1]=bsc_modifyROI_v2(atlasPath,thalTop, ccPostLimit, 'anterior');
+    [ccInterior2]=bsc_modifyROI_v2(atlasPath,ccInterior1, ccAntLimit, 'posterior');
 
     %sidenum is basically a way of switching  between the left and right
     %hemispheres of the brain in accordance with freesurfer's ROI
@@ -49,7 +60,7 @@ for leftright= [1,2]
     [cingSupExcPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCSupLim, 'superior');
 
     %goal state
-    [~, cingSegBool]=wma_SegmentFascicleFromConnectome(wbfg, [{cingIncPlane}, {cingSupExcPlane} ], {'and','not'}, 'dud');
+    [~, cingSegBool]=wma_SegmentFascicleFromConnectome(wbfg, [{cingIncPlane}, {cingSupExcPlane}, {ccInterior2} ], {'and','not','not'}, 'dud');
     parietoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_parietal'),categoryPrior.names)))';
     frontoTemporalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_temporal'),categoryPrior.names)))';
 

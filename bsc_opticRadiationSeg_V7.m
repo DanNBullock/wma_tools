@@ -21,7 +21,7 @@ function [classificationOut] =bsc_opticRadiationSeg_V7(wbfg, fsDir, expandSegBoo
 sideLabel={'left','right'};
 
 % obtain midpoints
-allStreams=wbfg.fibers;
+%allStreams=wbfg.fibers;
 % obtain midpoints
 
 categoryPrior=varargin{1};
@@ -100,39 +100,42 @@ for leftright= [1,2]
     
     %APPLY ENDPOINT CRITERIA
     opticBool=bsc_applyEndpointCriteria(wbfg,preOccipPlane,'posterior','one');
-       %meyerEndBool=bsc_applyEndpointCriteria(wbfg,hippClip,'posterior','one');
+    %meyerEndBool=bsc_applyEndpointCriteria(wbfg,hippClip,'posterior','one');
+    putPostPlane=    bsc_planeFromROI_v2(palLut(leftright),'posterior',atlasPath);
+    [~, antThalExcludeBool] = wma_SegmentFascicleFromConnectome(wbfg, [{putPostPlane}   ], {'not' }, 'dud');
+    [~ ,  extremeAntExclude]=wma_SegmentFascicleFromConnectome(wbfg, [{thalAnt}   ], {'not' }, 'dud');
     
-       % opticMidBool=bsc_applyMidpointCriteria(wbfg,thalPost,'posterior');
+    % opticMidBool=bsc_applyMidpointCriteria(wbfg,thalPost,'posterior');
     
     %SEGMENT
-    [~, thalBool] = wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI}   ], {'endpoints' }, 'dud');
-     [~, clipInd] = wma_SegmentFascicleFromConnectome(wbfg, [{hippClip}   ], {'not' }, 'dud');
-     occipSub=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'occipital_to_subcortical'));
-     
-       %[~, meyerTopInd] = wma_SegmentFascicleFromConnectome(wbfg, [{hippClip}   ], {'and' }, 'dud');
-       
-         [~, latThalInd] = wma_SegmentFascicleFromConnectome(wbfg, [{thalLatPlost}   ], {'and' }, 'dud');
+    [~, thalBool] = wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} ], {'endpoints' }, 'dud');
+    [~, clipInd] = wma_SegmentFascicleFromConnectome(wbfg, [{hippClip}   ], {'not' }, 'dud');
+    occipSub=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'occipital_to_subcortical'));
+    
+    %[~, meyerTopInd] = wma_SegmentFascicleFromConnectome(wbfg, [{hippClip}   ], {'and' }, 'dud');
+    
+    [~, latThalInd] = wma_SegmentFascicleFromConnectome(wbfg, [{thalLatPlost}   ], {'and' }, 'dud');
     
     %[~, meyerBool] = wma_SegmentFascicleFromConnectome(wbfg, [{preOccipPlane} {thalamicROI} {postSuperiorThalPlane} {opticStemHalf} {thalAnt} {medThalWMCut} {palWM} {interHemiNot}], {'and','endpoints','not','and','not','not','not','not' }, 'dud');
-    meyerBool=thalBool&clipInd&occipSub&latThalInd;
+    meyerBool=thalBool&clipInd&occipSub&latThalInd&extremeAntExclude;
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'meyer'),meyerBool);
-
+    
     fprintf('\n Meyers loop segmented')
-   %Meyer segmentation complete============================================
-   %%
-   % begin Baum Segmentation
-   %GENERATE ANATOMICAL ROIS
-   
+    %Meyer segmentation complete============================================
+    %%
+    % begin Baum Segmentation
+    %GENERATE ANATOMICAL ROIS
+    
     %DEFINE INTERSECTION ROIS
-   % baumstemInflateA=bsc_roiFromAtlasNums(atlasPath,[172]+sidenum, 21);
+    % baumstemInflateA=bsc_roiFromAtlasNums(atlasPath,[172]+sidenum, 21);
     %baumwmIntersectA=bsc_intersectROIs(baumstemInflateA,wm);
     %baumStemInflateB=bsc_roiFromAtlasNums(atlasPath,[166]+sidenum, 21);
     %baumWmIntersectB=bsc_intersectROIs(baumStemInflateB,wm);
     %baumStem   =bsc_intersectROIs(baumWmIntersectB,baumwmIntersectA);
-
+    
     %[~, baumBool] = wma_SegmentFascicleFromConnectome(wbfg, [{preOccipPlane} {thalamicROI}  {interHemiNot} {thalAnt} {baumStem} {opticStemHalf} {medThalWMCut} {palWM} ], {'and','endpoints','not','not','and', 'not','not','not' }, 'dud');
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'baum'),thalBool,~meyerBool,occipSub,latThalInd);
-    baumBool=thalBool&~meyerBool&occipSub&latThalInd;
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'baum'),thalBool,~meyerBool,occipSub,latThalInd,antThalExcludeBool);
+    baumBool=thalBool&~meyerBool&occipSub&latThalInd&antThalExcludeBool;
     
     %classificationOut=bsc_reconcileClassifications(classificationOut,baumClassification);
     fprintf('\n baums loop segmented')

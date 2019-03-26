@@ -104,7 +104,7 @@ for leftright= [1,2]
     [~, parietalBool]=wma_SegmentFascicleFromConnectome(wbfg, [{ParietalROI} {posteriorInferiorExclude} {anteriorThalLimit}], {'endpoints', 'not', 'not'}, 'dud');
     %create different versions of this
     [~, frontoThalamicBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} {posteriorLateralExclude} {posteriorInferiorExclude} {middleLateralExclude} {anteriorSuperiorFrontalLimit}], {'endpoints', 'not', 'not' ,'not','not'}, 'dud');
-    [~, temporoThalamicBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} {postPeriC} {anteriorLateralExclude}], {'endpoints','not','not'}, 'dud');
+    [~, temporoThalamicBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} {postPeriC} {anteriorLateralExclude} {superiorThalLimit}], {'endpoints','not','not','not'}, 'dud');
     [~, parietoThalamicBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} {antPalLimit} {inferiorThalLimit}], {'endpoints','not', 'not'}, 'dud');
     [~, lentiThalamicBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} {palROI} {postPutExclude}], {'endpoints','endpoints','not'}, 'dud');
     [~, motorTthalamicBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} {inferiorThalLimit} {anteriorLateralExclude}], {'endpoints','not','not'}, 'dud');
@@ -133,7 +133,7 @@ for leftright= [1,2]
     % no need to duplicate the
     %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'occipitalThalamic'),thalamicBool,occipitalBool,categoryPrior.index==find(strcmp(categoryPrior.names,'cortex_to_subcortical')));
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'parietoThalamic'),parietoThalamicBool,parietalBool,parietalSubcorticalBool);
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'lentiThalamic'),lentiThalamicBool,lentiBool,intraSubcorticalBool);%
+    %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'lentiThalamic'),lentiThalamicBool,lentiBool,intraSubcorticalBool);%
      classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'motorThalamic'),motorTthalamicBool,~frontalBool,FrontoMotorBool,motorBoolPrior);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'spinoThalamic'),spinoThalamicBool,spinalSubcorticalBool);
     

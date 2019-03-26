@@ -40,6 +40,7 @@ cbROINums=[7 8 46 47];
 lentiLut=[12 13 51 52];
 palLut=[13;52];
 wmLut=[2;41];
+thalLut=[10;49];
 
 %iterates through left and right sides
 for leftright= [1,2]
@@ -47,6 +48,8 @@ for leftright= [1,2]
     %hemispheres of the brain in accordance with freesurfer's ROI
     %numbering scheme. left = 1, right = 2
     sidenum=10000+leftright*1000;
+    
+     thalAntPlane=bsc_planeFromROI_v2(thalLut(leftright), 'anterior',atlasPath);
     
     CBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums ,1);
 
@@ -58,12 +61,14 @@ for leftright= [1,2]
         otherWM=bsc_roiFromAtlasNums(atlasPath,2 ,1);
     end
     
-    [cst, cstBool]=wma_SegmentFascicleFromConnectome(wbfg, [{MotorROI} {SpineROI} {otherWM} {CBRoi}], {'endpoints','and', 'not','not'}, 'dud');
+    [cst, cstBool]=wma_SegmentFascicleFromConnectome(wbfg, [{MotorROI} {SpineROI} {otherWM} {CBRoi} {thalAntPlane}], {'endpoints','and', 'not','not','not'}, 'dud');
     
     nonSubCortNames=cellfun(@isempty,strfind(categoryPrior.names,'subcortical'));
     nonCebNames=cellfun(@isempty,strfind(categoryPrior.names,'cerebellum'));
     nonSubCortBool=ismember(categoryPrior.index,find(nonSubCortNames));
     nonCebBoolBool=ismember(categoryPrior.index,find(nonCebNames));
+    
+
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'CST'),nonSubCortBool,nonCebBoolBool,cstBool);
 

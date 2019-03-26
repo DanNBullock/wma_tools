@@ -92,7 +92,7 @@ for leftright= [1,2]
     
     [infTempROI]=bsc_modifyROI_v2(atlasPath,antTempPlane, infCCLimit, 'inferior');
     
-    [~, IFOFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{infTempROI}], {'and'}, 'dud');
+    [~, IFOFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{infTempROI} {ccCarveOut}], {'and', 'not'}, 'dud');
     
     %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
     frontoOccipitalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_occipital'));
@@ -103,9 +103,15 @@ for leftright= [1,2]
     %IFOF DONE ========================================================
     %Create anatomical Rois
     latFisInf=bsc_planeFromROI_v2(141+sidenum, 'inferior',atlasPath);
+    insPost=bsc_planeFromROI_v2(150+sidenum, 'posterior',atlasPath);
+    tempTransVTop=bsc_planeFromROI_v2(133+sidenum, 'superior',atlasPath);
+     
     postLatFisInf=bsc_modifyROI_v2(atlasPath,latFisInf, ccPostLimit, 'posterior');
+       %neckArcAnd=bsc_modifyROI_v2(atlasPath,latFisInf, insPost, 'posterior');
     
-    [arc, arcBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postCCtopThal} {postLatFisInf}], {'and', 'and'}, 'dud');
+    TopArcAnd=bsc_modifyROI_v2(atlasPath,insPost, tempTransVTop, 'superior');
+    
+    [~, arcBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postLatFisInf} {TopArcAnd} ], {'and', 'and'}, 'dud');
     
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Arc'),frontoTemporalBool,arcBool);
@@ -120,13 +126,20 @@ for leftright= [1,2]
         
     slf12exclude= bsc_modifyROI_v2(atlasPath,ccInterior2, ccMidLimit, 'posterior');
 
-    slf12ROI=bsc_roiFromAtlasNums(atlasPath,[115 114 116 154 155 153]+sidenum,1);
+    %slf12ROI=bsc_roiFromAtlasNums(atlasPath,[115 114 116 154 155 153]+sidenum,1);
     
     [SFL3Intersection] = bsc_MultiIntersectROIs(atlasPath,19,112+sidenum, 150+sidenum );
     
-    [SLF12, SLF12Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{slf12ROI} {slf12exclude}], {'endpoints','not'}, 'dud');
+        palAnt=bsc_planeFromROI_v2(palLut(leftright), 'anterior',atlasPath);
+        frontSinfLimit=bsc_planeFromROI_v2(155+sidenum, 'inferior',atlasPath);
+        
+        slf3Fix= bsc_modifyROI_v2(atlasPath,palAnt, frontSinfLimit, 'superior');
     
-    [SLF3, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf}], {'endpoints','not'}, 'dud');
+    [~, SLF12Bool]=wma_SegmentFascicleFromConnectome(wbfg, [ {slf12exclude} {TopArcAnd}], {'not','and'}, 'dud');
+    
+    [~, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf} {slf3Fix}], {'endpoints','not','not'}, 'dud');
+    
+
     
     SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool&~IFOFBool;
     SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool;
