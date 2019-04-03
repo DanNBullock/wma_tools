@@ -50,7 +50,7 @@ for leftright= [1,2]
     %to the 2006 DK atlas.  This is because we want the
     %frontal_inf-Triangular_part ROI in order to be in keeping with the
     %litterature on the Aslant
-    [lateralROI] =bsc_roiFromAtlasNums(atlasPath,[114]+sidenum,5);
+    [lateralROI] =bsc_roiFromAtlasNums(atlasPath,[114 112]+sidenum,1);
     lateralROI.name='lateral';
     
     %the inflated lateralROI includes some areas near the insula that

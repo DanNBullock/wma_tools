@@ -37,7 +37,7 @@ atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 %iterates through left and right sides
 for leftright= [1,2]
-    
+    sidenum=10000+leftright*1000;
       thalTop=bsc_planeFromROI_v2(thalIDs(leftright), 'superior',atlasPath);
     ccPostLimit=bsc_planeFromROI_v2(251, 'posterior',atlasPath);
     ccAntLimit=bsc_planeFromROI_v2(254, 'anterior',atlasPath);
@@ -50,13 +50,16 @@ for leftright= [1,2]
     %sidenum is basically a way of switching  between the left and right
     %hemispheres of the brain in accordance with freesurfer's ROI
     %numbering scheme. left = 1, right = 2
-    sidenum=10000+leftright*1000;
+    
     periCSupLim=bsc_planeFromROI_v2([156]+sidenum, 'superior',atlasPath);
     periCLatLim=bsc_planeFromROI_v2([167]+sidenum, 'lateral',atlasPath);
     [ccMidAnt] = bsc_planeFromROI_v2(252, 'anterior',atlasPath);
     
+    
+        [cingIncPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCLatLim, 'medial');  
+        
     %[cingExcPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCLatLim, 'medial');
-    [cingIncPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCLatLim, 'lateral');
+  
     [cingSupExcPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCSupLim, 'superior');
 
     %goal state
