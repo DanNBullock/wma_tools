@@ -63,3 +63,5 @@ wma_segMajTracks_BL()
 wma_removeTractOutliers_BL()
 
 wma_makeFunctionListTxt
+
+wma_segMajTracksBins_BL()

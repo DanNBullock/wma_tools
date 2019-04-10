@@ -38,8 +38,8 @@ classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 tic
 
-fprintf('\n creating priors')
 
+ fprintf('\n creating priors')   
 [categoryPrior] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,2);
 [~, effPrior] =bsc_streamlineGeometryPriors(wbfg);
 
@@ -74,6 +74,7 @@ classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificati
 
 [CSTclassificationOut] =bsc_segmentCST(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,CSTclassificationOut);
+
 
 classification= wma_resortClassificationStruc(classificationOut);
 savepath=strcat(pwd,'classification.mat');
