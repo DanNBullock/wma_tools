@@ -3,7 +3,7 @@ function tractOut=wma_loadTck(filepath)
 %
 % Loads a tck and converts it to vistasoft format.  Requires mrtrix3
 %
-tracks = read_mrtrix_tracks (filepath)
+tracks = read_mrtrix_tracks (filepath);
 mrtrxHeaderFields=fieldnames(tracks);
 dataInd=contains(mrtrxHeaderFields,'data');
 dataTypeInd=contains(mrtrxHeaderFields,'datatype');

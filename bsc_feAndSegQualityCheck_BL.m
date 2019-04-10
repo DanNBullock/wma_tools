@@ -12,6 +12,7 @@ function bsc_feAndSegQualityCheck_BL()
      addpath(genpath('/N/u/brlife/git/jsonlab'))
      addpath(genpath('/N/u/brlife/git/vistasoft'))
      addpath(genpath('/N/u/brlife/git/wma_tools'))
+     addpath(genpath('/N/soft/rhel7/mrtrix/3.0/mrtrix3/matlab'))
  end
 
  
@@ -22,7 +23,7 @@ if isfield(config,'fe')
     feORwbfg=config.fe;
     fibNum=length(feORwbfg.fg.fibers);
 else
-    feORwbfg=dtiImportFibersMrtrix(config.track, .5);
+    feORwbfg=wma_loadTck(config.track);
 end
 
 saveDir=pwd;
