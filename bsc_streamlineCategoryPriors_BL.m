@@ -33,7 +33,7 @@ end
 
 fsDir='freesurfer';
 
-wbfg = dtiImportFibersMrtrix(config.track, .5);
+wbfg =wma_loadTck(config.track);
 
 [classification] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,inflateITer);
 save('classification.mat','classification')
