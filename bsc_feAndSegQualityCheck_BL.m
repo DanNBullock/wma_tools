@@ -24,6 +24,7 @@ if isfield(config,'fe')
     fibNum=length(feORwbfg.fg.fibers);
 else
     feORwbfg=wma_loadTck(config.track);
+    fibNum=length(feORwbfg.fibers);
 end
 
 saveDir=pwd;
@@ -31,11 +32,12 @@ saveDir=pwd;
 if isfield(config,'output')
     load(config.output)
     classification=classification;
-    if ~length(classification.index)==fibNum
-    
-    bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
-else
-    bsc_feAndSegQualityCheck(feORwbfg, [], saveDir)
+    if length(classification.index)==fibNum
+        
+        bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
+    else
+        bsc_feAndSegQualityCheck(feORwbfg, [], saveDir)
+    end
 end
 
 load('tractomeResultStruc.mat')

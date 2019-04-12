@@ -114,7 +114,7 @@ for leftright= [1,2]
     [~, arcBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postLatFisInf} {TopArcAnd} ], {'and', 'and'}, 'dud');
     
     
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Arc'),frontoTemporalBool,arcBool);
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Arc'),frontoTemporalBool,arcBool,~cingulumBool);
     
     %Arcuate segmentation complete========================================
     

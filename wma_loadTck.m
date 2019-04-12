@@ -9,7 +9,7 @@ dataInd=contains(mrtrxHeaderFields,'data');
 dataTypeInd=contains(mrtrxHeaderFields,'datatype');
 
 tractOut=[];
-tractOut.name='tract'
+tractOut.name='tract';
 tractOut.colorRgb=[  20    90   200];
 tractOut.thickness=-0.5000;
 tractOut.visible=1;

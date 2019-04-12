@@ -66,6 +66,7 @@ for leftright= [1,2]
     CBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(leftright,:) ,1);
     ThalROI=bsc_roiFromAtlasNums(inflatedAtlas,thalamusLut(leftright) ,1);
     antCebSplit= bsc_planeFromROI_v2(thalamusLut(leftright),'anterior',atlasPath);
+    thalTop=bsc_planeFromROI_v2(thalamusLut(leftright),'superior',atlasPath)
     
     %motorCerebellum
     frontoMotorLimit= bsc_planeFromROI_v2(170+sidenum, 'anterior',inflatedAtlas);
@@ -76,7 +77,7 @@ for leftright= [1,2]
     
     [~, AnterioFrontoBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi} {antCebSplit}], {'endpoints','and'}, 'dud');
     [~, middleFrontoBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi} {antCebSplit}], {'endpoints','not'}, 'dud');
-    [~, thalCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi} {ThalROI} {SpineLimit}], {'endpoints','endpoints','not'}, 'dud');
+    [~, thalCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi} {ThalROI} {SpineLimit} {thalTop}], {'endpoints','endpoints','not','not',}, 'dud');
     [~, motorCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi} {MotorROI}], {'endpoints','endpoints'}, 'dud');
     [~, thisCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{CBRoi}], {'endpoints'}, 'dud');
     
