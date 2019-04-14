@@ -102,6 +102,8 @@ for leftright= [1,2]
     
     %IFOF DONE ========================================================
     %Create anatomical Rois
+    
+    postCingNot=bsc_roiFromAtlasNums(atlasPath,[108]+sidenum ,5);
     latFisInf=bsc_planeFromROI_v2(141+sidenum, 'inferior',atlasPath);
     insPost=bsc_planeFromROI_v2(150+sidenum, 'posterior',atlasPath);
     tempTransVTop=bsc_planeFromROI_v2(133+sidenum, 'superior',atlasPath);
@@ -111,7 +113,7 @@ for leftright= [1,2]
     
     TopArcAnd=bsc_modifyROI_v2(atlasPath,insPost, tempTransVTop, 'superior');
     
-    [~, arcBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postLatFisInf} {TopArcAnd} ], {'and', 'and'}, 'dud');
+    [~, arcBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postLatFisInf} {TopArcAnd} {postCingNot} ], {'and', 'and','not'}, 'dud');
     
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Arc'),frontoTemporalBool,arcBool,~cingulumBool);
@@ -125,6 +127,11 @@ for leftright= [1,2]
     ccMidLimit=bsc_planeFromROI_v2(252, 'anterior',atlasPath);
         
     slf12exclude= bsc_modifyROI_v2(atlasPath,ccInterior2, ccMidLimit, 'posterior');
+    
+    interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106]+sidenum ,1)
+    
+    [~, interiorWallBool]=  bsc_tractByEndpointROIs(wbfg, {interiorWallROI interiorWallROI});
+    
 
     %slf12ROI=bsc_roiFromAtlasNums(atlasPath,[115 114 116 154 155 153]+sidenum,1);
     
@@ -141,8 +148,8 @@ for leftright= [1,2]
     
 
     
-    SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool&~IFOFBool;
-    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool;
+    SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool;
+    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool&~interiorWallBool;
     
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF1And2'),SLF12Bool);

@@ -88,12 +88,15 @@ for leftright= [1,2]
     ILFAntEndpointBool=bsc_applyEndpointCriteria(wbfg,lingGyAnt,'anterior','one');
     ILFPostEndpointBool=bsc_applyEndpointCriteria(wbfg,posteriorILFAnt,'posterior','one');
     
-       insPost=bsc_planeFromROI_v2(150+sidenum, 'posterior',atlasPath);
+    insPost=bsc_planeFromROI_v2(150+sidenum, 'posterior',atlasPath);
     tempTransVTop=bsc_planeFromROI_v2(133+sidenum, 'superior',atlasPath);
-        TopArcAnd=bsc_modifyROI_v2(atlasPath,insPost, tempTransVTop, 'superior');
-        
-            [~, ILFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{TopArcAnd}], {'not'}, 'dud');
-        
+    TopArcAnd=bsc_modifyROI_v2(atlasPath,insPost, tempTransVTop, 'superior');
+    
+    cingRemoveROI=bsc_roiFromAtlasNums(inflatedAtlas,[109 110]+sidenum,5);
+    
+    
+    [~, ILFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{TopArcAnd} {cingRemoveROI} ], {'not', 'not'}, 'dud');
+    
     
     [classificationILF]=bsc_concatClassificationCriteria(classificationILF,strcat(sideLabel{leftright},'ILF'),occipitoTemporalBool,ILFAntEndpointBool,ILFPostEndpointBool,ILFBool);
     
@@ -104,10 +107,10 @@ for leftright= [1,2]
     %streamlines passing through these areas
     [subCortROI] = bsc_roiFromAtlasNums(atlasPath,subCortIDs(leftright,:),1);
     
-       [anteriorMDLFLimit] = bsc_planeFromROI_v2(172+sidenum, 'anterior',atlasPath);
+    [anteriorMDLFLimit] = bsc_planeFromROI_v2(172+sidenum, 'anterior',atlasPath);
     [latFis] = bsc_planeFromROI_v2(150+sidenum, 'superior',atlasPath);
     [mdlfFrontRm]=bsc_modifyROI_v2(atlasPath,anteriorMDLFLimit, latFis, 'superior');
-
+    
     [~, removeMDLFIND]=wma_SegmentFascicleFromConnectome(wbfg, [{subCortROI},{mdlfFrontRm}], {'not','not'}, 'dud');
     
     temporoParietalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'parietal_to_temporal'),categoryPrior.names)))';
@@ -144,5 +147,5 @@ end
 %Compile classifications into one single structure
 classificationOut=bsc_reconcileClassifications(classification,classificationILF);
 classificationOut=bsc_reconcileClassifications(classificationOut,classificationMDLFang);
-classificationOut=bsc_reconcileClassifications(classificationOut,classificationMDLFspl);                
-    end
+classificationOut=bsc_reconcileClassifications(classificationOut,classificationMDLFspl);
+end

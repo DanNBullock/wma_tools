@@ -90,6 +90,7 @@ fullFieldNames={'TractName','StreamlineCount', 'volume','avgerageStreamlineLengt
 
 conditionals=11:19;
 
+results.WBFG.tractStats
 
 if isfield(config,'output')
     for itracts=1:length(results.WBFG.tractStats)

@@ -74,6 +74,9 @@ for leftright= [1,2]
     %institute a posterior border based on the paracentral gyrus/sulcus
     antParSup=bsc_planeFromROI_v2([103]+sidenum, 'anterior',atlasPath);
     
+    preventAnteriorBool= bsc_applyMidpointCriteria(wbfg,antParSup,'posterior');
+    
+    
     %find those streamlines which run afoul of one of the three criteria.
     %This is, in essence a set of additional exclusion criteria for
     %streamlines which are included in the initial segmentation, but
@@ -85,7 +88,7 @@ for leftright= [1,2]
  
     frontoFrontalBool=  or( bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal')),   bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber')));
     
-    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,frontoFrontalBool);
+    [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,frontoFrontalBool,preventAnteriorBool);
 end
 
 end
