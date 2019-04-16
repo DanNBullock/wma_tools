@@ -17,7 +17,7 @@ wbfg=wma_loadTck(config.track);
 
 load(config.output)
 
-if isfield(config.subSelect)
+if isfield(config,'subSelect')
     subSelect=config.subSelect;
 else
     subSelect=1:length(classification.names);
