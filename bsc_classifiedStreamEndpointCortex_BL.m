@@ -24,6 +24,7 @@ else
 end
 
 saveDir=fullfile(pwd,'rois/rois/');
+mkdir(saveDir);
 
 fsDir=strcat(pwd,'/freesurfer');
 
