@@ -116,9 +116,10 @@ end
 
 
 %% Apply Smooth
-
+if ~strcmp(filter,'exact')
 RASNiiData=smooth3(RASNiiData,filter,kernelSize);
 LPINiiData=smooth3(LPINiiData,filter,kernelSize);
+end
 
 %% Apply Mask
 %not going to do it for now and see what happens
