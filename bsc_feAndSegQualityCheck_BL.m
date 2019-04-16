@@ -155,6 +155,6 @@ if isfield(config,'output')
     'VariableNames',fullFieldNames);
 end
 if exist('tableOut','var')
-writetable(tableOut,'output_FiberStats.csv')
+writetable(tableOut,'/resultsSummary/output_FiberStats.csv')
 end
 end

@@ -472,8 +472,8 @@ end
 figHandle=gcf;
 
 if ~notDefined('saveDir')
-    saveas(gcf,strcat(saveDir,'/tractomeStatPlot.epsc'));
-    save(strcat(saveDir,'/tractomeResultStruc.mat'),'results')
+    saveas(gcf,strcat(saveDir,'/image/tractomeStatPlot.epsc'));
+    save(strcat(saveDir,'/tractmeasures/tractomeResultStruc.mat'),'results')
 end
 
 end

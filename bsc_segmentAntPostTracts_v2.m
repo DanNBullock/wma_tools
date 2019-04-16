@@ -132,24 +132,23 @@ for leftright= [1,2]
     
     [~, interiorWallBool]=  bsc_tractByEndpointROIs(wbfg, {interiorWallROI interiorWallROI});
     
-
+    
     %slf12ROI=bsc_roiFromAtlasNums(atlasPath,[115 114 116 154 155 153]+sidenum,1);
     
     [SFL3Intersection] = bsc_MultiIntersectROIs(atlasPath,19,112+sidenum, 150+sidenum );
     
-        palAnt=bsc_planeFromROI_v2(palLut(leftright), 'anterior',atlasPath);
-        frontSinfLimit=bsc_planeFromROI_v2(155+sidenum, 'inferior',atlasPath);
-        
-        slf3Fix= bsc_modifyROI_v2(atlasPath,palAnt, frontSinfLimit, 'superior');
+    palAnt=bsc_planeFromROI_v2(palLut(leftright), 'anterior',atlasPath);
+    frontSinfLimit=bsc_planeFromROI_v2(155+sidenum, 'inferior',atlasPath);
+    
+    slf3Fix= bsc_modifyROI_v2(atlasPath,palAnt, frontSinfLimit, 'superior');
     
     [~, SLF12Bool]=wma_SegmentFascicleFromConnectome(wbfg, [ {slf12exclude} {TopArcAnd}], {'not','and'}, 'dud');
     
     [~, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf} {slf3Fix}], {'endpoints','not','not'}, 'dud');
     
-
     
-    SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool;
-    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool&~interiorWallBool;
+    SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool';
+    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool&~interiorWallBool';
     
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF1And2'),SLF12Bool);

@@ -16,51 +16,22 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,inflat
 % (C) Daniel Bullock, 2019, Indiana University
 
 %% parameter note & initialization
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
 
-fprintf('\n creating categorical segmentation')
-wbfg
+
+
 [superficialClassification] =bsc_segmentSuperficialFibers(wbfg, fsDir);
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
+
 allStreams=wbfg.fibers;
 clear wbfg
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(allStreams),1);
-classificationOut
+
 
 classificationMid=classificationOut;
 
 atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz')
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 leftROIS=[[101:1:175]+11000 26  17 18 7 8 10:13];
@@ -93,32 +64,14 @@ fprintf('\n rois set')
 
 endpoints1=zeros(3,length(allStreams));
 endpoints2=zeros(3,length(allStreams));
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
+
 
 for icategories=1:length(allStreams)
     curStream=allStreams{icategories};
     endpoints1(:,icategories)=curStream(:,1);
     endpoints2(:,icategories)=curStream(:,end);
 end
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
+
 fprintf('\n endpoints extracted')
 
 if inflateITer>0
@@ -127,31 +80,11 @@ else
     inflatedAtlas=niftiRead(atlasPath);
 end
 
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
 
 [endpoints1Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints1,'acpc');
 [endpoints2Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints2,'acpc');
 fprintf('\n endpoint identities determined')
 
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
 excludeBool=zeros(1,length(allStreams));
 includeBool=excludeBool;
 LeftBool=excludeBool;
@@ -167,16 +100,6 @@ streamName=termination1;
 
 
 
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
 fprintf('\n superficial fibers identified')
 
 validSideROI= [leftROIS rightROIS] ;
@@ -294,16 +217,6 @@ end
 
 end
 
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
 uniqueNames=unique(streamName);
 
 fprintf('\n %i endpoint categories determined', length(uniqueNames))
@@ -324,17 +237,7 @@ for icategories=1:length(uniqueNames)
     end
 end
 
-%%
-whoOutput=whos;
-[memSort, sortOrder]=sort([whoOutput(:).bytes]);
-memSort=(memSort)*(1e-6);
-memNames={whoOutput(sortOrder).name};
-for iMemObjects=1:length(memSort)
-    fprintf('\n %s %6.4f',memNames{iMemObjects},memSort(iMemObjects))
-end
 
-fprintf('\n total %6.4f \n',sum(memSort(:)))
-%%
 classificationOut = wma_resortClassificationStruc(classificationOut);
 
 fprintf('\n categorical segmentation complete')
