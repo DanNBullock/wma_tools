@@ -472,6 +472,8 @@ end
 figHandle=gcf;
 
 if ~notDefined('saveDir')
+    mkdir(fullfile(saveDir,'/image/'));
+    mkdir(fullfile(saveDir,'/tractmeasures/'));
     saveas(gcf,strcat(saveDir,'/image/tractomeStatPlot.epsc'));
     save(strcat(saveDir,'/tractmeasures/tractomeResultStruc.mat'),'results')
 end

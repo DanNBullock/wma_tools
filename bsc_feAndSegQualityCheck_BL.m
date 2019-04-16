@@ -155,6 +155,7 @@ if isfield(config,'output')
     'VariableNames',fullFieldNames);
 end
 if exist('tableOut','var')
+    mkdir('resultsSummary')
 writetable(tableOut,'/resultsSummary/output_FiberStats.csv')
 end
 end
