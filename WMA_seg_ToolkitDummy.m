@@ -65,3 +65,5 @@ wma_removeTractOutliers_BL()
 wma_makeFunctionListTxt
 
 wma_segMajTracksBins_BL()
+
+bsc_classifiedStreamEndpointCortex_BL
