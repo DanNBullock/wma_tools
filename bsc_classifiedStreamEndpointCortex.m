@@ -52,24 +52,24 @@ if ischar(classification)
     load(classification);
 end
 
-fprintf('\n A total of %i streamlines are classified in this structure, representing %2.2f of the identified tracts ', length(find(classification.index>0)), length(find(classification.index>0))/length(find(fe.life.fit.weights))*100)
-
 % if an fe structure is detected, alters classificaiton index to only
 % include positively weighted fibers
 if ~isempty(fe)
 classification=wma_clearNonvalidClassifications(classification,fe);
-end
 fprintf('\n A total of %i streamlines are classified in this structure, representing %2.2f of the identified tracts ', length(find(classification.index>0)), length(find(classification.index>0))/length(find(fe.life.fit.weights))*100)
+else
+    fprintf('\n A total of %i streamlines are classified in this structure, representing %2.2f of the identified tracts ', length(find(classification.index>0)), length(find(classification.index>0))/length(wbFG.fibers)*100)
+end
 
 % if an fe structure is detected, alters classificaiton index to only
 % include positively weighted fibers
 
-fprintf('\n Of those, %i streamlines also have evidence, representing %2.2f of the streamlines with evidence.', length(find(classification.index>0)), length(find(classification.index>0))/length(find(fe.life.fit.weights>0))*100)
 if ~isempty(fe)
 classification=wma_clearNonvalidClassifications(classification,fe);
+fprintf('\n Of those, %i streamlines also have evidence, representing %2.2f of the streamlines with evidence.', length(find(classification.index>0)), length(find(classification.index>0))/length(find(fe.life.fit.weights>0))*100)
+
 end
 
-fprintf('\n Of those, %i streamlines also have evidence, representing %2.2f of the streamlines with evidence.', length(find(classification.index>0)), length(find(classification.index>0))/length(find(fe.life.fit.weights>0))*100)
 
 
 % if user does not pass in a subselection
