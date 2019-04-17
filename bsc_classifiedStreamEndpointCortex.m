@@ -31,10 +31,13 @@ function bsc_classifiedStreamEndpointCortex(wbFG, classification, fsDir, saveDir
 %
 %   -decayFunc: the decay function to use to calculate weight to throw in
 %   voxels
-%          ->uniform: no distance loss until threshold, then zero
+%          ->uniform/box: no distance loss until threshold, then zero
+%          ->gaussian:  applies a gaussian smoothing kernel
+%          ->exact:  only counts exact endpoint voxel
+%
+%          To be implimented later:
 %          ->linear: normalized linear cost to distance, 0 at dist > threshold
 %          ->exponential: exponential cost to distance, 0 at dist > threshold
-%          ->exact:  only counts exact endpoint voxel, uses floor()
 %
 %  -decayRadiusThresh: A distance threshold between tract endpoint and gray
 %   matter voxels (default: 3 mm).
@@ -70,8 +73,6 @@ fprintf('\n Of those, %i streamlines also have evidence, representing %2.2f of t
 
 end
 
-
-
 % if user does not pass in a subselection
 if notDefined('subSelect')
     subSelect=1:length(classification.names);
@@ -101,7 +102,5 @@ for iFGs = 1:length(subSelect)
 end
 
 %deletes pool and temporary directory if it exists.
-
-
 
 end

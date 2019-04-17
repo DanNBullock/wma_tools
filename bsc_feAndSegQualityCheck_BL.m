@@ -156,6 +156,7 @@ if isfield(config,'output')
 end
 if exist('tableOut','var')
     resultsSummaryDir=fullfile(pwd,'resultsSummary');
+    mkdir(resultsSummaryDir)
 writetable(tableOut,fullfile(resultsSummaryDir,'output_FiberStats.csv'));
 end
 end
