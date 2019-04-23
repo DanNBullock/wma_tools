@@ -128,10 +128,10 @@ for leftright= [1,2]
         
     slf12exclude= bsc_modifyROI_v2(atlasPath,ccInterior2, ccMidLimit, 'posterior');
     
-    interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106]+sidenum ,1)
+    %interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106]+sidenum ,1);
     
-    [~, interiorWallBool]=  bsc_tractByEndpointROIs(wbfg, {interiorWallROI interiorWallROI});
-    
+    [interiorWallBool]=bsc_endpointAtlasCriteria(wbfg,fsDir,[116 109 108  107 167 147 172 130 110 106]+sidenum,'either');
+  
     
     %slf12ROI=bsc_roiFromAtlasNums(atlasPath,[115 114 116 154 155 153]+sidenum,1);
     
@@ -142,15 +142,15 @@ for leftright= [1,2]
     
     slf3Fix= bsc_modifyROI_v2(atlasPath,palAnt, frontSinfLimit, 'superior');
     
-    [~, SLF12Bool]=wma_SegmentFascicleFromConnectome(wbfg, [ {slf12exclude} {TopArcAnd}], {'not','and'}, 'dud');
+    [~, SLF12segBool]=wma_SegmentFascicleFromConnectome(wbfg, [ {slf12exclude} {TopArcAnd}], {'not','and'}, 'dud');
     
     [~, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf} {slf3Fix}], {'endpoints','not','not'}, 'dud');
     
     
-    SLF12Bool=SLF12Bool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool';
-    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool&~interiorWallBool';
+    SLF12Bool=SLF12segBool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool;
+    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool&~interiorWallBool;
     
-    keyboard
+    
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF1And2'),SLF12Bool);
     %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF2'),SLF2Bool);

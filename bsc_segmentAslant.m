@@ -74,7 +74,7 @@ for leftright= [1,2]
     %institute a posterior border based on the paracentral gyrus/sulcus
     antParSup=bsc_planeFromROI_v2([103]+sidenum, 'anterior',atlasPath);
     
-    preventAnteriorBool= bsc_applyMidpointCriteria(wbfg,antParSup,'posterior');
+    preventAnteriorBool= bsc_applyMidpointCriteria(wbfg,antPeriCall,'posterior');
     
     
     %find those streamlines which run afoul of one of the three criteria.
@@ -82,7 +82,7 @@ for leftright= [1,2]
     %streamlines which are included in the initial segmentation, but
     %nonetheless do not meet criteria for being included in the tract
     [~,boundedInd]=wma_SegmentFascicleFromConnectome(wbfg, [{antPeriCall},{antParSup},{notHemi}], {'not', 'not','not'}, 'exclusions');
-    
+    keyboard
     %use the positive and negative criteria to make a classification
     %structure
  
