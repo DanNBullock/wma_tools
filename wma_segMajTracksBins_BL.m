@@ -96,7 +96,7 @@ for iDivisions=1:length(binWalls)-1
 end
 
 classification= wma_resortClassificationStruc(classificationHold);
-savepath=strcat(pwd,'classification.mat');
+savepath=strcat(pwd,'/classification/classification.mat');
 which('classification')
 save(savepath,'classification');
 which('classification')

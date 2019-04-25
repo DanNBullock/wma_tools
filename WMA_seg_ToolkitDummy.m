@@ -67,3 +67,5 @@ wma_makeFunctionListTxt
 wma_segMajTracksBins_BL()
 
 bsc_classifiedStreamEndpointCortex_BL
+
+classificationFromMultiTCK
