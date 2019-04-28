@@ -69,3 +69,5 @@ wma_segMajTracksBins_BL()
 bsc_classifiedStreamEndpointCortex_BL
 
 classificationFromMultiTCK
+
+bsc_feAndSegQualityCheck_BL_v2()
