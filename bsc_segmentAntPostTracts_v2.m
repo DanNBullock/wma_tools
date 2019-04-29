@@ -128,7 +128,7 @@ for leftright= [1,2]
         
     slf12exclude= bsc_modifyROI_v2(atlasPath,ccInterior2, ccMidLimit, 'posterior');
     
-    interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106]+sidenum ,1)
+    interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106 103 127]+sidenum ,1)
     
     [~, interiorWallBool]=  bsc_tractByEndpointROIs(wbfg, {interiorWallROI interiorWallROI});
     
