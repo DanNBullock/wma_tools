@@ -63,8 +63,6 @@ for leftright= [1,2]
     [cingSupExcPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCSupLim, 'superior');
 
     %goal state
-    keyboard
-    
     [~, cingSegBool]=wma_SegmentFascicleFromConnectome(wbfg, [{cingIncPlane}, {cingSupExcPlane}, {ccInterior2} ], {'and','not','not'}, 'dud');
     parietoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_parietal'),categoryPrior.names)))';
     frontoTemporalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_temporal'),categoryPrior.names)))';

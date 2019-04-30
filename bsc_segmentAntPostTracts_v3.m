@@ -43,9 +43,9 @@ subcort=[10 12 13 17 18; 49 51 52 53 54];
 
 interHemiNot=bsc_makePlanarROI(atlasPath,0, 'x');
 
+%do it here as a prior
 [classificationOut] =bsc_segmentCingulum_v3(wbfg, fsDir,categoryPrior);
 cingulumBool=or(classificationOut.index==find(strcmp(classificationOut.names,'rightcingulum')),classificationOut.index==find(strcmp(classificationOut.names,'leftcingulum')));
-
 
 %iterates through left and right sides
 for leftright= [1,2]
@@ -156,6 +156,8 @@ for leftright= [1,2]
     %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF2'),SLF2Bool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF3'),SLF3Bool);
     
+    
+    %%
     
     
 end

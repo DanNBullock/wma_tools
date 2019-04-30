@@ -92,6 +92,10 @@ for iDivisions=1:length(binWalls)-1
     [CSTclassificationOut] =bsc_segmentCST(wbfgSubSection, fsDir,categoryPrior);
     classificationOut=bsc_reconcileClassifications(classificationOut,CSTclassificationOut);
     
+    %do it again to compensate for something eating it earlier
+    [cingclassificationBool] =bsc_segmentCingulum_v3(wbfg, fsDir,categoryPrior);
+    classificationOut=bsc_reconcileClassifications(classificationOut,cingclassificationBool);
+    
     classificationHold= bsc_spliceClassifications(classificationHold,classificationOut);
 end
 

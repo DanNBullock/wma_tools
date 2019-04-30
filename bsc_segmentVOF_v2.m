@@ -52,9 +52,13 @@ for leftright= [1,2]
     
     vofMidpointBool=bsc_applyMidpointCriteria(wbfg,vofPostLimit,'posterior',vofBottomPlane,'superior',vofInferiorPlane,'inferior');
     [~, vofCandidateBool]=wma_SegmentFascicleFromConnectome(wbfg, [{vofBottomPlane} {vofInferiorPlane} {vofPostLimit} {wmROI}], {'and','and','not','and'}, 'dud');
-        occipitalOccipitalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'occipital_to_occipital'),categoryPrior.names)))';
+    %should help fix failures to find vof
+    [occipitalOccipitalBool] = or(bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'occipital_to_occipital')),bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'occipital_to_occipital_ufiber')));
+    %occipitalOccipitalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'occipital_to_occipital'),categoryPrior.names)))';
     
     VofBool=vofMidpointBool&vofCandidateBool&occipitalOccipitalBool;
+    
+    
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'VOF'),VofBool);
   
