@@ -34,7 +34,7 @@ wbfg = dtiImportFibersMrtrix(config.track, .5);
 
 classification= removeOutliersClassification(classification,wbfg, centroidSD, lengthSD,maxIter)
 
-save('classification.mat','classification')
+save('classification/classification.mat','classification')
 
 wma_formatForBrainLife_v2(classification,wbfg)
 end

@@ -71,3 +71,5 @@ bsc_classifiedStreamEndpointCortex_BL
 classificationFromMultiTCK
 
 bsc_feAndSegQualityCheck_BL_v2()
+
+bsc_makeWBFGandClassFromList()

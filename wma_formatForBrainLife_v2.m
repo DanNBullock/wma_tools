@@ -16,6 +16,9 @@ if ~isdeployed
     addpath(genpath('/N/u/brlife/git/wma_tools'))
 end
 
+%saving again, just for good measure
+savepath=strcat(pwd,'/classification/classification.mat');
+save(savepath,'classification');
 
 fg_classified = bsc_makeFGsFromClassification_v4(classification, fg);
 
