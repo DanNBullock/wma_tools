@@ -23,16 +23,21 @@ end
 
 config = loadjson('config.json');
 
-load(config.output)
+if isfield(config,'output')
+    load(config.output)
+    classification=classification;
+elseif isfield(config,'classification')
+    load(config.classification)
+    classification=classification;
+end
 
 centroidSD=config.centroidSD;
 lengthSD=config.lengthSD;
 maxIter=config.maxIter;
 
-
 wbfg = dtiImportFibersMrtrix(config.track, .5);
 
-classification= removeOutliersClassification(classification,wbfg, centroidSD, lengthSD,maxIter)
+classification= removeOutliersClassification(classification,wbfg, centroidSD, lengthSD,maxIter);
 
 save('classification/classification.mat','classification')
 
