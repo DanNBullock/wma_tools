@@ -19,6 +19,7 @@ if ~isdeployed
     addpath(genpath('/N/u/brlife/git/vistasoft'))
     addpath(genpath('/N/u/brlife/git/wma_tools'))
     addpath(genpath('/N/u/brlife/git/mba'))
+    addpath(genpath('/N/soft/rhel7/mrtrix/3.0/mrtrix3/matlab'))
 end
 
 config = loadjson('config.json');
@@ -35,7 +36,7 @@ centroidSD=config.centroidSD;
 lengthSD=config.lengthSD;
 maxIter=config.maxIter;
 
-wbfg = dtiImportFibersMrtrix(config.track, .5);
+wbfg=wma_loadTck(config.track);
 
 classification= removeOutliersClassification(classification,wbfg, centroidSD, lengthSD,maxIter);
 
