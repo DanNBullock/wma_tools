@@ -11,15 +11,15 @@ end
 
 config = loadjson('config.json');
 
-fileDirs=config.csvDirs;
+csvPaths=config.csvPaths;
 
-for iFiles= 1:length(fileDirs)
-    csvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
-end
+% for iFiles= 1:length(fileDirs)
+%     csvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
+% end
 
 plotProperties=config.plotProperties;
 if ~isempty(str2num(plotProperties))
-    plotProperties=str2num(plotProperties)
+    plotProperties=str2num(plotProperties);
 else
     %do nothing, its presumably some strings
 end

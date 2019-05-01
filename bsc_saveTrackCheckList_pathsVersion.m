@@ -8,7 +8,7 @@ function bsc_saveTrackCheckList_pathsVersion(csvPaths,plotProperties,zThresh,sav
 
 [subjNames,domainNames,propertyNames,valueArray]= bsc_normalizeStatMeasures_pathsVersion(csvPaths);
 
-fileID = fopen(fullfile(workingDir,[identifierTag,'_checkList.txt']),'w');
+fileID = fopen(fullfile(saveDir,'checkList.txt'),'w');
 
 fprintf(fileID,'\n Check performed on %s using thresh %s ',datestr(datetime),num2str(zThresh))
 
