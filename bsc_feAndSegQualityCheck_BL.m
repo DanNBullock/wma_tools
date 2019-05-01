@@ -31,6 +31,15 @@ saveDir=pwd;
 
 if isfield(config,'output')
     load(config.output)
+        classification=classification;
+    if length(classification.index)==fibNum
+        
+        bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
+    else
+        bsc_feAndSegQualityCheck(feORwbfg, [], saveDir)
+    end
+elseif isfield(config,'classification')
+    load(config.classification)
     classification=classification;
     if length(classification.index)==fibNum
         

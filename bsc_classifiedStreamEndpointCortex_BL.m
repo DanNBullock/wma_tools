@@ -15,7 +15,13 @@ config = loadjson('config.json');
 
 wbfg=wma_loadTck(config.track);
 
-load(config.output)
+if isfield(config,'output')
+    load(config.output)
+    classification=classification;
+elseif isfield(config,'classification')
+    load(config.classification)
+    classification=classification;
+end
 
 if isfield(config,'subSelect')
     subSelect=config.subSelect;

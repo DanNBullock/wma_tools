@@ -57,9 +57,7 @@ for leftright= [1,2]
     %occipitalOccipitalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'occipital_to_occipital'),categoryPrior.names)))';
     
     VofBool=vofMidpointBool&vofCandidateBool&occipitalOccipitalBool;
-    
-    
-    
+
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'VOF'),VofBool);
   
 end
