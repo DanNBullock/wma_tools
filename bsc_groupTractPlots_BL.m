@@ -11,11 +11,13 @@ end
 
 config = loadjson('config.json');
 
-csvPaths=config.csvPaths;
+testJson=loadjson('/N/dc2/projects/lifebid/HCP/Dan/OtherTestData/config.json');
+csvPaths=config.csv;
 
-% for iFiles= 1:length(fileDirs)
-%     csvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
-% end
+ for iFiles= 1:length(fileDirs)
+     %csvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
+     subjects{iFiles}=testJson.x0x5F_inputs{iFiles}.meta.subject;
+ end
 
 plotProperties=config.plotProperties;
 if ~isempty(str2num(plotProperties))
@@ -30,7 +32,7 @@ zThresh=str2num(zThresh);
 bsc_plotTractZscoreMeasures_pathsVersion(csvPaths,plotProperties,pwd)
 
 if isfield(config,'zThresh')
-bsc_saveTrackCheckList_pathsVersion(csvPaths,config.plotProperties,zThresh,pwd)
+bsc_saveTrackCheckList_pathsVersion(csvPaths,config.plotProperties,zThresh,subjects,pwd)
 end
 
 end

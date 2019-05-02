@@ -13,9 +13,9 @@ mkdir(fullfile(saveDir,'data'));
 
 [domainNames,propertyNames,valueArray]= bsc_normalizeStatMeasures_pathsVersion(csvPaths);
 
-nonNameProperties=propertyNames(2:end);
+%nonNameProperties=propertyNames(2:end);
 
-onlysubjNames=erase(subjNames,'sub-');
+%onlysubjNames=erase(subjNames,'sub-');
 
 mkdir(fullfile(workingDir,'image/'));
 

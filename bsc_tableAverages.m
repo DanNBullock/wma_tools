@@ -16,6 +16,7 @@ for isubjects =1:length(csvPaths)
             avgTable=currTable;
             stdTable=currTable;
             
+            
         else
             
             %checks to see that same domainsize is being merged
@@ -132,8 +133,10 @@ stdTable= table('Size',[dataSize(1),dataSize(2)+1],'VariableTypes',varTypes);
 
 avgTable{1:end,1}=catDomains;
 avgTable{1:end,2:end}=meanData;
+avgTable.Properties.VariableNames=propertyNames;
 
 stdTable{1:end,1}=catDomains;
 stdTable{1:end,2:end}=stdData;
+stdTable.Properties.VariableNames=propertyNames;
 
 end

@@ -1,4 +1,4 @@
-function bsc_saveTrackCheckList_pathsVersion(csvPaths,plotProperties,zThresh,saveDir)
+function bsc_saveTrackCheckList_pathsVersion(csvPaths,plotProperties,zThresh,subjects,saveDir)
 
 
 %workingDir='/N/dc2/projects/lifebid/HCP/Dan/EcogProject/proj-5c33a141836af601cc85858d'
@@ -6,9 +6,10 @@ function bsc_saveTrackCheckList_pathsVersion(csvPaths,plotProperties,zThresh,sav
 %plotProperties=[19 20]
 %zThresh=[-4 6]
 
-[subjNames,domainNames,propertyNames,valueArray]= bsc_normalizeStatMeasures_pathsVersion(csvPaths);
+[domainNames,propertyNames,valueArray]= bsc_normalizeStatMeasures_pathsVersion(csvPaths);
 
-fileID = fopen(fullfile(saveDir,'checkList.txt'),'w');
+subjNames=subjects;
+fileID = fopen(fullfile(saveDir,'text','checkList.txt'),'w');
 
 fprintf(fileID,'\n Check performed on %s using thresh %s ',datestr(datetime),num2str(zThresh))
 
