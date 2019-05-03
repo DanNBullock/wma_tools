@@ -16,7 +16,7 @@ csvPaths=config.csv;
 
  for iFiles= 1:length(csvPaths)
      %blcsvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
-     subjects{iFiles}=testJson.x0x5F_inputs{iFiles}.meta.subject;
+     subjects{iFiles}=config.x0x5F_inputs{iFiles}.meta.subject;
  end
 
 plotProperties=config.plotProperties;

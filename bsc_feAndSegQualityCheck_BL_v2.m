@@ -50,7 +50,7 @@ elseif isfield(config,'classification')
     end
      error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count')
 end
-
+pl
 %maybe this is causing problems?
 %load('tractomeResultStruc.mat')
 results.WBFG
