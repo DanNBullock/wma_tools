@@ -11,11 +11,11 @@ end
 
 config = loadjson('config.json');
 
-testJson=loadjson('/N/dc2/projects/lifebid/HCP/Dan/OtherTestData/config.json');
+
 csvPaths=config.csv;
 
- for iFiles= 1:length(fileDirs)
-     %csvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
+ for iFiles= 1:length(csvPaths)
+     %blcsvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
      subjects{iFiles}=testJson.x0x5F_inputs{iFiles}.meta.subject;
  end
 
