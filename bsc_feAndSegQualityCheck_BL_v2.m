@@ -31,14 +31,26 @@ saveDir=pwd;
 
 if isfield(config,'output')
     load(config.output)
+        classification=classification;
+    if length(classification.index)==fibNum
+        
+        bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
+    else
+        bsc_feAndSegQualityCheck(feORwbfg, [], saveDir)
+    end
+     error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count')
+elseif isfield(config,'classification')
+    load(config.classification)
     classification=classification;
     if length(classification.index)==fibNum
-        [~,results]=bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir);
+        
+     bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir)
     else
-        [~,results]=bsc_feAndSegQualityCheck(feORwbfg, [], saveDir);
+        bsc_feAndSegQualityCheck(feORwbfg, [], saveDir)
     end
-    error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count')
+     error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count')
 end
+
 %maybe this is causing problems?
 %load('tractomeResultStruc.mat')
 results.WBFG
