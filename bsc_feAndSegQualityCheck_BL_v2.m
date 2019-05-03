@@ -33,11 +33,11 @@ if isfield(config,'output')
     load(config.output)
     classification=classification;
     if length(classification.index)==fibNum
-        
         [~,results]=bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir);
     else
         [~,results]=bsc_feAndSegQualityCheck(feORwbfg, [], saveDir);
     end
+    error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count')
 end
 %maybe this is causing problems?
 %load('tractomeResultStruc.mat')
