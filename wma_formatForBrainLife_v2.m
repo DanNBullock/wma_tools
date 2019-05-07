@@ -17,6 +17,7 @@ if ~isdeployed
 end
 
 %saving again, just for good measure
+mkdir(fullfile(pwd,'classification'));
 savepath=strcat(pwd,'/classification/classification.mat');
 save(savepath,'classification');
 
