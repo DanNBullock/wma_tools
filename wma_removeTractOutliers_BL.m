@@ -39,7 +39,7 @@ maxIter=config.maxIter;
 wbfg=wma_loadTck(config.track);
 
 classification= removeOutliersClassification(classification,wbfg, centroidSD, lengthSD,maxIter);
-
+mkdir(fullfile(pwd,'classification'));
 save('classification/classification.mat','classification')
 
 wma_formatForBrainLife_v2(classification,wbfg)
