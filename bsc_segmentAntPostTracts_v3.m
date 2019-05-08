@@ -130,9 +130,10 @@ for leftright= [1,2]
     
     %interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106]+sidenum ,1);
     
-    [interiorWallBool]=bsc_endpointAtlasCriteria(wbfg,fsDir,[116 109 108  107 167 147 172 130 110 106]+sidenum,'either');
+    %[interiorWallBool]=bsc_endpointAtlasCriteria(wbfg,fsDir,[116 109 108  107 167 147 172 130 110 106 127]+sidenum,'either');
+  %be harsher
+    interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106 127]+sidenum,1);
   
-    
     %slf12ROI=bsc_roiFromAtlasNums(atlasPath,[115 114 116 154 155 153]+sidenum,1);
     
     [SFL3Intersection] = bsc_MultiIntersectROIs(atlasPath,19,112+sidenum, 150+sidenum );
@@ -142,9 +143,9 @@ for leftright= [1,2]
     
     slf3Fix= bsc_modifyROI_v2(atlasPath,palAnt, frontSinfLimit, 'superior');
     
-    [~, SLF12segBool]=wma_SegmentFascicleFromConnectome(wbfg, [ {slf12exclude} {TopArcAnd}], {'not','and'}, 'dud');
+    [~, SLF12segBool]=wma_SegmentFascicleFromConnectome(wbfg, [ {slf12exclude} {TopArcAnd} {interiorWallROI}], {'not','and','not'}, 'dud');
     
-    [~, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf} {slf3Fix}], {'endpoints','not','not'}, 'dud');
+    [~, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf} {slf3Fix} {interiorWallROI}], {'endpoints','not','not', 'not'}, 'dud');
     
     
     SLF12Bool=SLF12segBool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool;

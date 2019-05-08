@@ -37,8 +37,8 @@ fsDir='freesurfer';
 wbfg =wma_loadTck(config.track);
 
 [classification] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,inflateITer);
-mkdir(fullfile(pwd,'classification'));
-save(fullfile(pwd,'/classification/classification.mat','classification'))
+%mkdir(fullfile(pwd,'classification'));
+%save(fullfile(pwd,'/classification/classification.mat','classification'))
 ls
 fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
     sum(classification.index>0),length(classification.names))
