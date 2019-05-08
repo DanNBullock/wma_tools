@@ -34,7 +34,7 @@ if ~isfield(config,'track')
    end
 end
 
-mkdir('tracts');
+mkdir('classification/tracts');
 
 % Make colors for the tracts
 cm = parula(length(fg_classified));
@@ -49,13 +49,13 @@ for it = 1:length(fg_classified)
     
     all_tracts(it).name = fg_classified{it}.name;
     all_tracts(it).color = cm(it,:);
-    savejson('', tract, fullfile('tracts',sprintf('%i.json',it)));
+    savejson('', tract, fullfile('classification/tracts',sprintf('%i.json',it)));
     all_tracts(it).filename = sprintf('%i.json',it);
     clear tract
 end
 
 
-savejson('', all_tracts, fullfile('tracts/tracts.json'));
+savejson('', all_tracts, fullfile('classification/tracts/tracts.json'));
 %WHY WAS THIS DELETING THE CLASSIFICATION
 %delete('classification.mat')
 % Save the results to disk
