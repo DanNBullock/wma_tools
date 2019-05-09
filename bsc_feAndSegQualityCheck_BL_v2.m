@@ -33,12 +33,11 @@ if isfield(config,'output')
     load(config.output)
     classification=classification;
     if length(classification.index)==fibNum
-        
         [~, results]=bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir);
     else
-        [~, results]=bsc_feAndSegQualityCheck(feORwbfg, [], saveDir);
+        error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count \n classificiation %i \n track %i', length(classification.index),length(feORwbfg.fibers))
     end
-    error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count')
+    
 elseif isfield(config,'classification')
     load(config.classification)
     classification=classification;
@@ -46,9 +45,10 @@ elseif isfield(config,'classification')
         
         [~, results]=bsc_feAndSegQualityCheck(feORwbfg, classification, saveDir);
     else
-        [~, results]=bsc_feAndSegQualityCheck(feORwbfg, [], saveDir);
+        error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count \n classificiation %i \n track %i', length(classification.index),length(feORwbfg.fibers))
     end
-    error('\n mismatch between classification structure and input fibergroup \n Hint: check stream count')
+else
+    [~, results]=bsc_feAndSegQualityCheck(feORwbfg, [], saveDir);
 end
 
 %maybe this is causing problems?
