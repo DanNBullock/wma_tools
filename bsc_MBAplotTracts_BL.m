@@ -37,9 +37,11 @@ end
 
 if isfield(config,'subSelect')
     subSelect=config.subSelect;
+    subSelect=str2num(subSelect);
     colors=distinguishable_colors(length(subSelect),'k');
 else
     subSelect=1:length(classification.names);
+    subSelect=str2num(subSelect);
     colors=distinguishable_colors(length(subSelect),'k');
 end
 
