@@ -82,7 +82,7 @@ for leftright= [1,2]
     %streamlines which are included in the initial segmentation, but
     %nonetheless do not meet criteria for being included in the tract
     [~,boundedInd]=wma_SegmentFascicleFromConnectome(wbfg, [{antPeriCall},{antParSup},{notHemi}], {'not', 'not','not'}, 'exclusions');
-    keyboard
+    
     %use the positive and negative criteria to make a classification
     %structure
  
