@@ -148,8 +148,8 @@ for leftright= [1,2]
     [~, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf} {slf3Fix} {interiorWallROI}], {'endpoints','not','not', 'not'}, 'dud');
     
     
-    SLF12Bool=SLF12segBool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool;
-    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool&~interiorWallBool;
+    SLF12Bool=SLF12segBool&parietoFrontalBool&~cingulumBool&~IFOFBool;
+    SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool;
     
     
     

@@ -106,7 +106,7 @@ conditionals=11:19;
 
 results.WBFG.tractStats
 
-if isfield(config,'output')
+if or(isfield(config,'output'),isfield(config,'output'))
     for itracts=1:length(results.WBFG.tractStats)
         tableArray{itracts+1,1}=results.WBFG.tractStats{itracts}.name;
         tableArray{itracts+1,2}=results.WBFG.tractStats{itracts}.stream_count;
