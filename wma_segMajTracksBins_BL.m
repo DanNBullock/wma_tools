@@ -93,17 +93,17 @@ for iDivisions=1:length(binWalls)-1
     classificationOut=bsc_reconcileClassifications(classificationOut,CSTclassificationOut);
     
     %do it again to compensate for something eating it earlier
-    [cingclassificationBool] =bsc_segmentCingulum_v3(wbfg, fsDir,categoryPrior);
+    [cingclassificationBool] =bsc_segmentCingulum_v3(wbfgSubSection, fsDir,categoryPrior);
     classificationOut=bsc_reconcileClassifications(classificationOut,cingclassificationBool);
     
     classificationHold= bsc_spliceClassifications(classificationHold,classificationOut);
 end
 
 classification= wma_resortClassificationStruc(classificationHold);
-savepath=strcat(pwd,'/classification/classification.mat');
-which('classification')
-save(savepath,'classification');
-which('classification')
+%savepath=strcat(pwd,'/classification/classification.mat');
+%which('classification')
+%save(savepath,'classification');
+%which('classification')
 toc
 
 wma_formatForBrainLife_v2(classification,wbfg);
