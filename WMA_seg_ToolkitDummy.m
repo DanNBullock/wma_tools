@@ -75,3 +75,5 @@ bsc_feAndSegQualityCheck_BL_v2()
 bsc_makeWBFGandClassFromList()
 
 bsc_groupTractPlots_BL()
+
+bsc_MBAplotTracts_BL()
