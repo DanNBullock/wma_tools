@@ -76,7 +76,7 @@ classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificati
 classificationOut=bsc_reconcileClassifications(classificationOut,CSTclassificationOut);
 
 %do it again to compensate for something eating it earlier
-[cingclassificationBool] =bsc_segmentCingulum_v3(wbfgSubSection, fsDir,categoryPrior);
+[cingclassificationBool] =bsc_segmentCingulum_v3(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,cingclassificationBool);
 
 classification= wma_resortClassificationStruc(classificationOut);
