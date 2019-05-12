@@ -59,6 +59,7 @@ bsc_GenROIfromPairStringList_BL()
 bsc_streamlineCategoryPriors_BL()
 
 wma_segMajTracks_BL()
+wma_segMajTracks_BL_v2()
 
 wma_removeTractOutliers_BL()
 
