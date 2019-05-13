@@ -9,16 +9,26 @@ function bsc_saveTrackCheckList_pathsVersion(csvPaths,plotProperties,zThresh,sub
 [domainNames,propertyNames,valueArray]= bsc_normalizeStatMeasures_pathsVersion(csvPaths);
 
 subjNames=subjects;
+mkdir(fullfile(saveDir,'text'));
 fileID = fopen(fullfile(saveDir,'text','checkList.txt'),'w');
 
 fprintf(fileID,'\n Check performed on %s using thresh %s ',datestr(datetime),num2str(zThresh))
 
+for iplotProperties=1:length(plotProperties)
+    if ischar(plotProperties{iplotProperties})
+    plotProperties{iplotProperties}=find(strcmp(plotProperties{iplotProperties},propertyNames));
+    else
+        %probably will error for numbers
+        plotProperties{iplotProperties}=plotProperties{iplotProperties}+1;
+    end
+end
+
 tractNames={domainNames{2:end}};
 for iplotProperties=1:length(plotProperties)
     
-    fprintf(fileID,'\n\n\n initiating check for %s',propertyNames{(plotProperties(iplotProperties)+1)})
+    fprintf(fileID,'\n\n\n initiating check for %s',propertyNames{(plotProperties{iplotProperties})})
     %indexing at 2 to get rid of wbfg
-    plotArray=squeeze(valueArray(2:end,plotProperties(iplotProperties)+1,:));
+    plotArray=squeeze(valueArray(2:end,plotProperties{iplotProperties},:));
     
     if length(zThresh)==2
         minz=min(zThresh);

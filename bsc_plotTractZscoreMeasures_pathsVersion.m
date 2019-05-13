@@ -17,18 +17,27 @@ mkdir(fullfile(saveDir,'data'));
 
 %onlysubjNames=erase(subjNames,'sub-');
 
-mkdir(fullfile(workingDir,'image/'));
+for iplotProperties=1:length(plotProperties)
+    if ischar(plotProperties{iplotProperties})
+    plotProperties{iplotProperties}=find(strcmp(plotProperties{iplotProperties},propertyNames));
+    else
+        %probably will error for numbers
+        plotProperties{iplotProperties}=plotProperties{iplotProperties}+1;
+    end
+end
+
+mkdir(fullfile(saveDir,'image/'));
 
 for iplotProperties=1:length(plotProperties)
     leftLabels=[];
     for iDomains=1:length(domainNames)
-    leftLabels{iDomains}=[domainNames{iDomains},' (',num2str(avgTable{iDomains,plotProperties(iplotProperties)+1}),' +/- ',num2str(stdTable{iDomains,plotProperties(iplotProperties)+1})];
+    leftLabels{iDomains}=[domainNames{iDomains},' (',num2str(avgTable{iDomains,plotProperties{iplotProperties}}),' +/- ',num2str(stdTable{iDomains,plotProperties{iplotProperties}}),')'];
     end
     figure
     %indexing at 2 to squeeze out wbfg, casuses problems otherwise
-    plotArray=squeeze(valueArray(:,plotProperties(iplotProperties)+1,:));
+    plotArray=squeeze(valueArray(:,plotProperties{iplotProperties},:));
     %plotArray(isnan(plotArray))=0;
-    minMax=[abs(min(min(min(plotArray,[],'omitnan')))),max(max(max(plotArray,[],'omitnan')))]
+    minMax=[abs(min(min(min(plotArray,[],'omitnan')))),max(max(max(plotArray,[],'omitnan')))];
     maxOrMin=max(minMax);
     imagesc(plotArray)
     redBlueMap=redblue(99999);
@@ -48,15 +57,15 @@ for iplotProperties=1:length(plotProperties)
     ax = gca;
     ax.YLabel.String = 'Tracts';
      ax.XLabel.String = 'Subjects';
-    ax.Title.String = [identifierTag,' tracts'' ', propertyNames{plotProperties(iplotProperties)+1},'s'];
+    ax.Title.String = [propertyNames{plotProperties{iplotProperties}}];
     curMap=colorbar;
     curMap.Label.String = 'Z score';
-    figName=[identifierTag,'_', propertyNames{plotProperties(iplotProperties)+1}];
+    figName=[propertyNames{plotProperties{iplotProperties}}];
     
-    saveas(gcf,[fullfile(workingDir,'image/'),figName,'.svg']);
+    saveas(gcf,[fullfile(saveDir,'image/'),figName,'.svg']);
 end
 
-if saveFlag
+if ~notDefined(saveDir)
     save([fullfile(saveDir,'data'),'groupZscoreData.mat'],'subjNames','domainNames','propertyNames','valueArray')
 end
 

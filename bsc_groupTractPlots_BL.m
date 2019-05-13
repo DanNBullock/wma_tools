@@ -14,6 +14,7 @@ config = loadjson('config.json');
 
 csvPaths=config.csv;
 
+%will break if not on docker, due to strange reading behavior
  for iFiles= 1:length(csvPaths)
      %blcsvPaths{iFiles}=fullfile(fileDirs{iFiles},'output_FiberStats.csv');
      subjects{iFiles}=config.x0x5F_inputs{iFiles}.meta.subject;
@@ -22,7 +23,9 @@ csvPaths=config.csv;
 plotProperties=config.plotProperties;
 if ~isempty(str2num(plotProperties))
     plotProperties=str2num(plotProperties);
-else
+else 
+    plotProperties = erase(plotProperties,' ');
+    plotProperties = strsplit(plotProperties,',');
     %do nothing, its presumably some strings
 end
     
@@ -32,7 +35,7 @@ zThresh=str2num(zThresh);
 bsc_plotTractZscoreMeasures_pathsVersion(csvPaths,plotProperties,pwd)
 
 if isfield(config,'zThresh')
-bsc_saveTrackCheckList_pathsVersion(csvPaths,config.plotProperties,zThresh,subjects,pwd)
+bsc_saveTrackCheckList_pathsVersion(csvPaths,plotProperties,zThresh,subjects,pwd)
 end
 
 end

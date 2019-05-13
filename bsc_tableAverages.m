@@ -132,16 +132,12 @@ end
 
 [DataRows,DataColums]=size(meanData);
 
-avgHold=cell(DataRows,DataColums+1);
-avgHold{1:end,1}=catDomains;
-avgHold{1:end,2:end}=meanData;
+avgHold=horzcat(catDomains,num2cell(meanData));
 
 avgTable=cell2table(avgHold);
 avgTable.Properties.VariableNames=propertyNames;
 
-stdHold=cell(DataRows,DataColums+1);
-stdHold{1:end,1}=catDomains;
-stdHold{1:end,2:end}=stdData;
+stdHold=horzcat(catDomains,num2cell(stdData));
 
 stdTable=cell2table(stdHold);
 stdTable.Properties.VariableNames=propertyNames;

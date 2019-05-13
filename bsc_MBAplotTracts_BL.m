@@ -41,12 +41,13 @@ if isfield(config,'subSelect')
     colors=distinguishable_colors(length(subSelect),'k');
 else
     subSelect=1:length(classification.names);
-    subSelect=str2num(subSelect);
     colors=distinguishable_colors(length(subSelect),'k');
 end
 
-for figView={'saggital','coronal','axial'}
-    bsc_plotClassifiedStreamsAdaptive_v2(feORwbfg, classification ,t1, figView, saveDir,subSelect,colors)
+views={'saggital','coronal','axial'};
+views={'saggital'};
+for figView=1:1
+    bsc_plotClassifiedStreamsAdaptive_v2(feORwbfg, classification ,t1, views{figView}, saveDir,subSelect,colors)
 end
 
 end
