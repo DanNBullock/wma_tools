@@ -26,7 +26,7 @@ config = loadjson('config.json');
 wbfg=wma_loadTck(config.track);
 %wbfg = dtiImportFibersMrtrix(config.track, .5);
 
-fsDir=strcat(pwd,'/freesurfer');
+fsDir=strcat(pwd,'/freesurfer');bl
 
 atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 

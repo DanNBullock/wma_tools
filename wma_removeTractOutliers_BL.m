@@ -44,7 +44,3 @@ classification= removeOutliersClassification(classification,wbfg, centroidSD, le
 
 wma_formatForBrainLife_v2(classification,wbfg)
 end
-
-
-
-

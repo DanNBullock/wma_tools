@@ -43,7 +43,7 @@ smallCM = distinguishable_colors(neededColors,'k');
 
 %find names and appropriate order for tracts
 for iTracts=1:length(fg_classified)
-nameList=fg_classified{iTracts}.name;
+nameList{iTracts}=fg_classified{iTracts}.name;
 end
 
 %create a color vector with color pairings in the correct locations
@@ -51,8 +51,8 @@ for iGroups=1:length(classificationGrouped.names)
     curIndexes=bsc_extractStreamIndByName(classificationGrouped,classificationGrouped.names{iGroups});
     curNames={classification.names{unique(classification.index(curIndexes))}};
     for iNames=1:length(curNames)
-        namePlace=find(strcmp(curNames{iNames},nameList));
-      cm(namePlace,:)=smallCM(iGroups);
+        namePlace=strcmp(curNames{iNames},nameList);
+      cm(namePlace,:)=smallCM(iGroups,:);
     end
 end  
     
