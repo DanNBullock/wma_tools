@@ -51,7 +51,7 @@ for iGroups=1:length(classificationGrouped.names)
     curIndexes=bsc_extractStreamIndByName(classificationGrouped,classificationGrouped.names{iGroups});
     curNames={classification.names{unique(classification.index(curIndexes))}};
     for iNames=1:length(curNames)
-        namePlace=strcmp(curNames{iNames},nameList);
+        namePlace=find(strcmp(curNames{iNames},nameList));
       cm(namePlace,:)=smallCM(iGroups,:);
     end
 end  
