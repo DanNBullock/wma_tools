@@ -37,7 +37,25 @@ end
 mkdir('classification/tracts');
 
 % Make colors for the tracts
-cm = parula(length(fg_classified));
+classificationGrouped=wma_classificationStrucGrouping(classification);
+neededColors=length(classificationGrouped.names);
+smallCM = distinguishable_colors(neededColors,'k');
+
+%find names and appropriate order for tracts
+for iTracts=1:length(fg_classified)
+nameList=fg_classified{iTracts}.name;
+end
+
+%create a color vector with color pairings in the correct locations
+for iGroups=1:length(classificationGrouped.names)
+    curIndexes=bsc_extractStreamIndByName(classificationGrouped,classificationGrouped.names{iGroups});
+    curNames={classification.names{unique(classification.index(curIndexes))}};
+    for iNames=1:length(curNames)
+        namePlace=find(strcmp(curNames{iNames},nameList));
+      cm(namePlace,:)=smallCM(iGroups);
+    end
+end  
+    
 for it = 1:length(fg_classified)
     tract.name   = fg_classified{it}.name;
     tract.color  = cm(it,:);
