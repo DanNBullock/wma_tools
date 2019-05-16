@@ -15,8 +15,6 @@ function bsc_feAndSegQualityCheck_BL_v2()
      addpath(genpath('/N/soft/rhel7/mrtrix/3.0/mrtrix3/matlab'))
  end
 
- 
-%config = loadjson('/N/dc2/projects/lifebid/HCP/Dan/GitStoreDir/ROIs2ROIsSegment/config.json');
 config = loadjson('config.json');
 
 if isfield(config,'fe')
@@ -106,7 +104,11 @@ conditionals=11:19;
 
 results.WBFG.tractStats
 
-if or(isfield(config,'output'),isfield(config,'output'))
+%making it outside conditional
+resultsSummaryDir=fullfile(pwd,'resultsSummary');
+mkdir(resultsSummaryDir)
+
+if or(isfield(config,'output'),isfield(config,'classification'))
     for itracts=1:length(results.WBFG.tractStats)
         tableArray{itracts+1,1}=results.WBFG.tractStats{itracts}.name;
         tableArray{itracts+1,2}=results.WBFG.tractStats{itracts}.stream_count;
@@ -167,10 +169,11 @@ if or(isfield(config,'output'),isfield(config,'output'))
     end
     tableOut = cell2table(tableArray,...
     'VariableNames',fullFieldNames);
+
+else
+    error('no input classification found')
 end
 if exist('tableOut','var')
-    resultsSummaryDir=fullfile(pwd,'resultsSummary');
-    mkdir(resultsSummaryDir)
 writetable(tableOut,fullfile(resultsSummaryDir,'output_FiberStats.csv'));
 end
 end
