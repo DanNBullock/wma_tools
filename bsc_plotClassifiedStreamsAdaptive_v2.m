@@ -136,7 +136,8 @@ if length(subSelect)==1
 else
 
 %this was set differently in the past, why was this?
-slices      = {[-1 0 0],[0 0 0] ,[0 0 0]};
+%code doesnt like 000
+slices      = {[-1 0 0],[0 -1 0] ,[0 0 -1]};
 end
 
 % figure setting
@@ -207,7 +208,7 @@ for iview = 1:length(fig.views)
     figureHand.Position(3:4)=figureHand.Position(3:4)*4;
 
     fprintf('Saving as %s', strcat(fig.names{1},num2str(iview))) 
-    keyboard
+    
     saveas ( fh,strrep(strcat(saveDir,'/',fig.names{1},num2str(iview)),'  ', '_'),'jpg')
 end
 

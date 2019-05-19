@@ -38,16 +38,36 @@ end
 
 if isfield(config,'subSelect')
     subSelect=config.subSelect;
-    subSelect=str2num(subSelect);
-    colors=distinguishable_colors(length(subSelect),'k');
+    subSelect=str2num(subSelect);   
 else
     subSelect=1:length(classification.names);
-    colors=distinguishable_colors(length(subSelect),'k');
 end
+%%
+%code stolen from format for brainlife
+classificationGrouped=wma_classificationStrucGrouping(classification);
+neededColors=length(classificationGrouped.names);
+smallCM = distinguishable_colors(neededColors,'k');
 
+%find names and appropriate order for tracts
+for iTracts=1:length(classification.names)
+nameList{iTracts}=classification.names{iTracts};
+end
+cm=[];
+%create a color vector with color pairings in the correct locations
+for iGroups=1:length(classificationGrouped.names)
+    curIndexes=bsc_extractStreamIndByName(classificationGrouped,classificationGrouped.names{iGroups});
+    curNames={classification.names{unique(classification.index(curIndexes))}};
+    for iNames=1:length(curNames)
+        namePlace=find(strcmp(curNames{iNames},nameList));
+      cm(namePlace,:)=smallCM(iGroups,:);
+    end
+end  
+
+colors=cm(subSelect,:);
+%%
 views={'saggital','coronal','axial'};
-views={'saggital'};
-for figView=1:1
+
+for figView=1:3
     bsc_plotClassifiedStreamsAdaptive_v2(feORwbfg, classification ,t1, views{figView}, saveDir,subSelect,colors)
 end
 
