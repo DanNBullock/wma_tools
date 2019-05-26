@@ -53,12 +53,13 @@ for iTracts=1:length(classification.names)
 nameList{iTracts}=classification.names{iTracts};
 end
 cm=[];
+cm=zeros(length(classificationGrouped.names),3)
 %create a color vector with color pairings in the correct locations
 for iGroups=1:length(classificationGrouped.names)
     curIndexes=bsc_extractStreamIndByName(classificationGrouped,classificationGrouped.names{iGroups});
     curNames={classification.names{unique(classification.index(curIndexes))}};
     for iNames=1:length(curNames)
-        namePlace=find(strcmp(curNames{iNames},nameList));
+        namePlace=strcmp(curNames{iNames},nameList);
       cm(namePlace,:)=smallCM(iGroups,:);
     end
 end  
