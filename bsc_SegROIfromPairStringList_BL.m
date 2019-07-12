@@ -69,7 +69,7 @@ for iROIs=1:length(stringCells)
  mergedROIs{iROIs}=fullfile(pwd,'roi',strcat('ROI',num2str(iROIs),'.nii.gz'));
 end
     [classification]=multiROIpairSeg(feORwbfg,mergedROIs);
-    save('/classification/classification.mat','classification')
+    %save('/classification/classification.mat','classification')
     fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
     sum(classification.index>0),length(classification.names))
     wma_formatForBrainLife_v2(classification,feORwbfg)
