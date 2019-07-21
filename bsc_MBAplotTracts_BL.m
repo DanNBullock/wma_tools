@@ -37,8 +37,16 @@ elseif isfield(config,'classification')
 end
 
 if isfield(config,'subSelect')
-    subSelect=config.subSelect;
-    subSelect=str2num(subSelect);   
+    preSubSelect=config.subSelect;
+    if ~isempty(str2num(preSubSelect))
+        subSelect=str2num(preSubSelect);
+    else
+        subTracts=split(preSubSelect,' ');
+        [~,~,subSelect]=intersect(subTracts,classification.names);
+        if isempty(subSelect)
+            error('Tract(s) not found; check paramater input and classification structure')
+        end
+    end
 else
     subSelect=1:length(classification.names);
 end
@@ -53,7 +61,7 @@ for iTracts=1:length(classification.names)
 nameList{iTracts}=classification.names{iTracts};
 end
 cm=[];
-cm=zeros(length(classificationGrouped.names),3)
+cm=zeros(length(classificationGrouped.names),3);
 %create a color vector with color pairings in the correct locations
 for iGroups=1:length(classificationGrouped.names)
     curIndexes=bsc_extractStreamIndByName(classificationGrouped,classificationGrouped.names{iGroups});

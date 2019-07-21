@@ -24,7 +24,7 @@ function [wbFG, fe] = bsc_LoadAndParseFiberStructure(feORwbfg)
 if ischar(feORwbfg)
     % loads if a path
     if strcmp(feORwbfg(end-3:end),'.tck')
-        wbFG =  wma_loadTck(feORwbfg);
+        wbFG =  wma_loadTck(feORwbfg, .5);
         fe=[];
     else
         load(feORwbfg)

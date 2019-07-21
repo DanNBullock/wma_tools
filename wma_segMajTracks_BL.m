@@ -45,7 +45,7 @@ tic
 
 fprintf('\n prior creation complete')
 
-[AntPostclassificationOut] =bsc_segmentAntPostTracts_v2(wbfg, fsDir,categoryPrior,effPrior);
+[AntPostclassificationOut] =bsc_segmentAntPostTracts_v3(wbfg, fsDir,categoryPrior,effPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,AntPostclassificationOut);
 
 [CCclassificationOut] =bsc_segmentCorpusCallosum_v3(wbfg, fsDir,0,categoryPrior);

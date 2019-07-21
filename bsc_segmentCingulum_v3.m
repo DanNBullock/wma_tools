@@ -38,7 +38,7 @@ atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 %iterates through left and right sides
 for leftright= [1,2]
     sidenum=10000+leftright*1000;
-      thalTop=bsc_planeFromROI_v2(thalIDs(leftright), 'superior',atlasPath);
+    thalTop=bsc_planeFromROI_v2(thalIDs(leftright), 'superior',atlasPath);
     ccPostLimit=bsc_planeFromROI_v2(251, 'posterior',atlasPath);
     ccAntLimit=bsc_planeFromROI_v2(254, 'anterior',atlasPath);
     
@@ -56,17 +56,18 @@ for leftright= [1,2]
     [ccMidAnt] = bsc_planeFromROI_v2(252, 'anterior',atlasPath);
     
     
-        [cingIncPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCLatLim, 'medial');  
-        
+    [cingIncPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCLatLim, 'medial');
+    
     %[cingExcPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCLatLim, 'medial');
-  
+    
     [cingSupExcPlane]=bsc_modifyROI_v2(atlasPath,ccMidAnt,periCSupLim, 'superior');
-
+    
     %goal state
     [~, cingSegBool]=wma_SegmentFascicleFromConnectome(wbfg, [{cingIncPlane}, {cingSupExcPlane}, {ccInterior2} ], {'and','not','not'}, 'dud');
-    parietoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_parietal'),categoryPrior.names)))';
-    frontoTemporalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_temporal'),categoryPrior.names)))';
-
+    
+    parietoFrontalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'frontal_to_parietal'));
+    frontoTemporalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'frontal_to_temporal'));
+    
     classificationBool=or(parietoFrontalBool,frontoTemporalBool);
     cingRemBool=cingSegBool&classificationBool;
     

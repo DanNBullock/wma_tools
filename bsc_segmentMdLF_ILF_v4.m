@@ -79,7 +79,8 @@ for leftright= [1,2]
     [mergedLatTempROI]=bsc_modifyROI_v2(atlasPath,mergedLatTempROI, amygdalaPost, 'anterior');
     
     %% begin segmenting
-    occipitoTemporalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'occipital_to_temporal'),categoryPrior.names)))';
+    %bsc_extractStreamIndByName(classification,tractName)
+    occipitoTemporalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'occipital_to_temporal'));
     
     %get rid of ILF streamlines above anterior temporal area
     [lingGyAnt] = bsc_planeFromROI_v2(162+sidenum, 'anterior',atlasPath);
@@ -112,8 +113,8 @@ for leftright= [1,2]
     [mdlfFrontRm]=bsc_modifyROI_v2(atlasPath,anteriorMDLFLimit, latFis, 'superior');
     
     [~, removeMDLFIND]=wma_SegmentFascicleFromConnectome(wbfg, [{subCortROI},{mdlfFrontRm}], {'not','not'}, 'dud');
-    
-    temporoParietalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'parietal_to_temporal'),categoryPrior.names)))';
+
+    temporoParietalBool= bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'parietal_to_temporal'))';
     
     
     %Find WM for spl

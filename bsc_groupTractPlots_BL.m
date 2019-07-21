@@ -32,8 +32,12 @@ if ~isdeployed
     for iSubjects=1:length(subjects)
         curSubjDir=fullfile(projPath,subjects{iSubjects});
         subDirContent=dir(curSubjDir);
+        if any(contains({subDirContent(:).name},dataDirHeader))
         subjDataDir=subDirContent(contains({subDirContent(:).name},dataDirHeader)).name;
         csvPaths{iSubjects}=fullfile(curSubjDir,subjDataDir,'output_FiberStats.csv');
+        else
+        csvPaths{iSubjects}=[];
+        end
     end
 else
     for iFiles= 1:length(csvPaths)
@@ -56,7 +60,7 @@ zThresh=str2num(zThresh);
 bsc_plotTractZscoreMeasures_pathsVersion(csvPaths,plotProperties,pwd)
 
 if isfield(config,'zThresh')
-bsc_saveTrackCheckList_pathsVersion(csvPaths,plotProperties,zThresh,subjects,pwd)
+bsc_saveTrackCheckList_pathsVersion_v2(csvPaths,plotProperties,zThresh,5,subjects,pwd)
 end
 
 end

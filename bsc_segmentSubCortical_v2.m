@@ -8,7 +8,7 @@ function [classificationOut] =bsc_segmentSubCortical_v2(wbfg, fsDir,varargin)
 % Inputs:
 % -wbfg: a whole brain fiber group structure
 % -fsDir: path to THIS SUBJECT'S freesurfer directory
-% -varargin{1}: categoryPrior, from bsc_streamlineCategoryPriors_v3 
+% -varargin{1}: categoryPrior, from bsc_streamlineCategoryPriors_v3
 % -varargin{2}: effPrior, from ConnectomeTestQ_v2
 %
 % Outputs:
@@ -96,7 +96,7 @@ for leftright= [1,2]
     anteriorMedialExclude=bsc_modifyROI_v2(inflatedAtlas,anteriorThalLimit,lateralThalamicLimit, 'medial');
     %anteriorMedialExclude=bsc_modifyROI_v2(inflatedAtlas,anteriorThalLimit,lateralThalamicLimit, 'medial');
     
-        [~, posteriorThalLimitBool]=wma_SegmentFascicleFromConnectome(wbfg, [{posteriorThalLimit}], {'not'}, 'dud');
+    [~, posteriorThalLimitBool]=wma_SegmentFascicleFromConnectome(wbfg, [{posteriorThalLimit}], {'not'}, 'dud');
     [~, FrontoMotorBool]=wma_SegmentFascicleFromConnectome(wbfg, [{MotorROI}], {'endpoints'}, 'dud');
     [~, frontalBool]=wma_SegmentFascicleFromConnectome(wbfg, [{FrontalROI} {posteriorInferiorExclude} {posteriorSuperiorExclude} {posteriorLateralExclude}], {'endpoints','not','not','not'}, 'dud');
     [~, temporalBool]=wma_SegmentFascicleFromConnectome(wbfg, [{TemporalROI}], {'endpoints'}, 'dud');
@@ -116,14 +116,14 @@ for leftright= [1,2]
     
     % MAKE FRONTAL ENDPOINT CRITERIA
     frontoEndpointBool=bsc_applyEndpointCriteria(wbfg,anteriorThalLimit,'anterior','one');
-        lateralThalEndpointBool=bsc_applyEndpointCriteria(wbfg,infPalLimit,'inferior','one');
-        
-   
-    frontalSubcorticalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_subcortical'),categoryPrior.names)))';
-    parietalSubcorticalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'parietal_to_subcortical'),categoryPrior.names)))';
-    temporalSubcorticalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'subcortical_to_temporal'),categoryPrior.names)))';
-    spinalSubcorticalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'spinal_to_subcortical'),categoryPrior.names)))';
-     intraSubcorticalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'subcortical_to_subcortical'),categoryPrior.names)))';
+    lateralThalEndpointBool=bsc_applyEndpointCriteria(wbfg,infPalLimit,'inferior','one');
+    
+    %bsc_extractStreamIndByName(classification,tractName)
+    frontalSubcorticalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'frontal_to_subcortical'));
+    parietalSubcorticalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'parietal_to_subcortical'));
+    temporalSubcorticalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'subcortical_to_temporal'));
+    spinalSubcorticalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'spinal_to_subcortical'));
+    intraSubcorticalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'subcortical_to_subcortical'));
     
     motorBoolPrior=or(parietalSubcorticalBool,frontalSubcorticalBool);
     
@@ -134,7 +134,7 @@ for leftright= [1,2]
     %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'occipitalThalamic'),thalamicBool,occipitalBool,categoryPrior.index==find(strcmp(categoryPrior.names,'cortex_to_subcortical')));
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'parietoThalamic'),parietoThalamicBool,parietalBool,parietalSubcorticalBool);
     %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'lentiThalamic'),lentiThalamicBool,lentiBool,intraSubcorticalBool);%
-     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'motorThalamic'),motorTthalamicBool,~frontalBool,FrontoMotorBool,motorBoolPrior);
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'motorThalamic'),motorTthalamicBool,~frontalBool,FrontoMotorBool,motorBoolPrior);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'spinoThalamic'),spinoThalamicBool,spinalSubcorticalBool);
     
     

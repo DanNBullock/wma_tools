@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_segmentAntPostTracts_v2(wbfg, fsDir,varargin)
+function [classificationOut] =bsc_segmentAntPostTracts_v3(wbfg, fsDir,varargin)
 % [classificationOut] =bsc_segmentArc_Cingulum(wbfg, fsDir)
 %
 % This function automatedly segments the middle longitudinal fasiculus

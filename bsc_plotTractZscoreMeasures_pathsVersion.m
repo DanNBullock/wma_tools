@@ -9,9 +9,9 @@ mkdir(fullfile(saveDir,'data'));
 
 %csvPaths = tractStatNamesGen(workingDir,identifierTag)
 
-[avgTable, stdTable]=bsc_tableAverages(csvPaths);
+[avgTable, stdTable]=bsc_tableAverages_v3(csvPaths);
 
-[domainNames,propertyNames,valueArray]= bsc_normalizeStatMeasures_pathsVersion(csvPaths);
+
 
 %nonNameProperties=propertyNames(2:end);
 

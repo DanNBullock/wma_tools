@@ -109,6 +109,7 @@ for leftright= [1,2]
     
     %SEGMENT
     [~, thalBool] = wma_SegmentFascicleFromConnectome(wbfg, [{thalamicROI} ], {'endpoints' }, 'dud');
+    %fix this, its not precise.
     [~, clipInd] = wma_SegmentFascicleFromConnectome(wbfg, [{hippClip}   ], {'not' }, 'dud');
     occipSub=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'occipital_to_subcortical'));
     
