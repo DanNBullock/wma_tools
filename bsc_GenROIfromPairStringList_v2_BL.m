@@ -68,6 +68,9 @@ roiDirPathOut='roi/';
 %functions/appps.
 roiStem='ROI';
 mkdir(roiDirPathOut)
+%Just guessing what the right path for this for now
+textDir=pwd;
+fileID = fopen(fullfile(textDir,'ROIfiles.txt'),'w');
 
 %% ROI creation loop
 for iROIs=1:length(stringCells)
@@ -108,6 +111,8 @@ for iROIs=1:length(stringCells)
         mergedROI =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel);
         %operating under presumption that roi.name is a thing...  
         currROIName=fullfile(pwd,strcat('/',roiDirPathOut,'/',roiStem,mergedROI.name,'.nii.gz'));
+        %write file name to text file
+        fprintf(fileID, strcat(currROIName,'\n'))
         [~, ~]=dtiRoiNiftiFromMat (mergedROI,atlas,currROIName,1);
     elseif ~notDefined('ROIdir')&&dirFlag
         roiDirContents=dir(ROIdirIN);
@@ -138,10 +143,13 @@ for iROIs=1:length(stringCells)
         % this may result in odd names if merged rois are merged again
         mergedROI = niftiMerge(niiPaths, strcat(roiDirPathOut,'/',strrep(curROIStringHold,' ','_'),'.nii.gz'));        %end
         currROIName=mergedROI.fname;
+        %write file name to text file
+        fprintf(fileID, strcat(currROIName,'\n'))
         fprintf('\n saving %s',currROIName)
         niftiWrite(mergedROI,currROIName)
     else
         error('Apparent missing file inputs (atlas or roi dir) relative to current roi specification (%s) ',curROIStringHold)
     end
 end
+fclose(fileID)
 end
