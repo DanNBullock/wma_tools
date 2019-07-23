@@ -45,9 +45,14 @@ if isfield(config,'atlas')
        atlas=config.atlas
 end
 
+if isfield(config,'rois')
+      ROIdirIN=config.rois
+end
+%alternate, becaue I'm a bad programmer/lazy
 if isfield(config,'ROI')
       ROIdirIN=config.ROI
 end
+
 
 %% gen ROI
 fprintf('Generating ROIs for the following indicies: \n %s',ROIstring);
@@ -59,7 +64,8 @@ stringCells = splitlines(ROIstring);
 %is this right?  If there was a way to flag a line such that it could be
 %revisted later, this would be it, as this is where the troublesome ROI
 %directory is made.
-roiDirPathOut='roi/';
+roiDirPathOut=fullfile(pwd,'rois/');
+mkdir(roiDirPathOut)
 %the stem that preceeds the roi identifier (identifier = either integer or
 %underscore delimited, concatonated string of integers corresponding to the
 %7/20/2019 note:  previously there was some discrepancy with whether there
@@ -67,7 +73,7 @@ roiDirPathOut='roi/';
 %ROIxxx.  This led to incompatabilities between my and brad's
 %functions/appps.
 roiStem='ROI';
-mkdir(roiDirPathOut)
+
 %Just guessing what the right path for this for now
 textDir=pwd;
 fileID = fopen(fullfile(textDir,'ROIfiles.txt'),'w');
@@ -90,16 +96,26 @@ for iROIs=1:length(stringCells)
     startChar=min(find(numBool));
     curROIStringHold=stringCells{iROIs};
     %what if a literal name inludes numbers...
-    curROIStringCut=curROIStringHold(startChar:end);  
+    curROIStringCut=curROIStringHold(startChar:end);
     if all(isnumeric(str2num(curROIStringCut))) && startChar==1
-        ROInums=str2num(curROIStringCut);
-        dirFlag=false;
-        atlasFlag=true;
-    %Assume literal input, either concat or literal.  Spaces in name
-    %obviously dont work as they would indicate separate file names,
-    %according to our conventions
+        %subconditional
+        
+        if isfield(config,'atlas')
+            ROInums=str2num(curROIStringCut);
+            dirFlag=false;
+            atlasFlag=true;
+        else
+            ROInames=splitlines(strrep(curROIStringHold,' ',newline));
+            ROInames= ROInames(~cellfun('isempty',ROInames));
+            dirFlag=true;
+            atlasFlag=false;
+        end
+        %Assume literal input, either concat or literal.  Spaces in name
+        %obviously dont work as they would indicate separate file names,
+        %according to our conventions
     else
         ROInames=splitlines(strrep(curROIStringHold,' ',newline));
+        ROInames= ROInames(~cellfun('isempty',ROInames));
         dirFlag=true;
         atlasFlag=false;
     end
@@ -109,18 +125,19 @@ for iROIs=1:length(stringCells)
     %atlas *and* an roidir is passed, this can be made more robust
     if ~notDefined('atlas')&&atlasFlag
         mergedROI =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel);
-        %operating under presumption that roi.name is a thing...  
+        %operating under presumption that roi.name is a thing...
         currROIName=fullfile(pwd,strcat('/',roiDirPathOut,'/',roiStem,mergedROI.name,'.nii.gz'));
         %write file name to text file
         fprintf(fileID, strcat(currROIName,'\n'))
         [~, ~]=dtiRoiNiftiFromMat (mergedROI,atlas,currROIName,1);
-    elseif ~notDefined('ROIdir')&&dirFlag
+    elseif ~notDefined('ROIdirIN')&&dirFlag
         roiDirContents=dir(ROIdirIN);
         roiDirContentsNames={roiDirContents.name};
         %preemptive charCount for dircontentNames
         roiDirContentsLengths=cellfun(@length,roiDirContentsNames);
         %use concat of .nii.gz to elminiate substring issues.
         assumedROIName=strcat(ROInames,'.nii.gz');
+        ROIOutName=[];
         for iROInums=1:length(ROInames)
             presumedFileNameIndex=find(contains(roiDirContentsNames,assumedROIName));
             %check for multiple hits, use heuristic to select
@@ -132,24 +149,32 @@ for iROIs=1:length(stringCells)
             %if it is still greater than 1, just guess.  Better method
             %might be to pick minimal disagreement
             if length(presumedFileNameIndex)>1
-                  presumedFileNameIndex=  presumedFileNameIndex(1);
+                presumedFileNameIndex=  presumedFileNameIndex(1);
             end
-            niiPaths{iROInums}=strcat(ROIdirIN,roiDirContentsNames(presumedFileNameIndex));
+            presumedFileName=roiDirContentsNames{presumedFileNameIndex};
+            niiPaths{iROInums}=fullfile(ROIdirIN,presumedFileName);
+            periodIndex=strfind(roiDirContentsNames{presumedFileNameIndex},'.');
+            if iROInums==1
+                ROIOutName=strcat(ROIOutName,presumedFileName(1:periodIndex(1)-1));
+            else
+                ROIOutName=strcat(ROIOutName,'_',presumedFileName(1:periodIndex(1)-1));
+            end
+            %now that the paths have been generated, merge
+            %removing this conditional, roi should be generated and passed out
+            %regardless of singleton nature.
+            %if length(ROInums)>1
+            % this may result in odd names if merged rois are merged again
+            mergedROI = niftiMerge(niiPaths, strcat(roiDirPathOut,ROIOutName,'.nii.gz'));        %end
+            currROIName=mergedROI.fname;
+            %write file name to text file
+            fprintf(fileID, strcat(currROIName,'\n'))
+            fprintf('\n saving %s',currROIName)
+            niftiWrite(mergedROI,currROIName)
+            clear niiPaths
         end
-        %now that the paths have been generated, merge
-        %removing this conditional, roi should be generated and passed out
-        %regardless of singleton nature.
-        %if length(ROInums)>1
-        % this may result in odd names if merged rois are merged again
-        mergedROI = niftiMerge(niiPaths, strcat(roiDirPathOut,'/',strrep(curROIStringHold,' ','_'),'.nii.gz'));        %end
-        currROIName=mergedROI.fname;
-        %write file name to text file
-        fprintf(fileID, strcat(currROIName,'\n'))
-        fprintf('\n saving %s',currROIName)
-        niftiWrite(mergedROI,currROIName)
     else
         error('Apparent missing file inputs (atlas or roi dir) relative to current roi specification (%s) ',curROIStringHold)
     end
 end
-fclose(fileID)
+    fclose(fileID)
 end
