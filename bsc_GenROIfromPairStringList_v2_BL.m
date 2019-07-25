@@ -128,7 +128,8 @@ for iROIs=1:length(stringCells)
         %operating under presumption that roi.name is a thing...
         currROIName=fullfile(pwd,strcat('/',roiDirPathOut,'/',roiStem,mergedROI.name,'.nii.gz'));
         %write file name to text file
-        fprintf(fileID, strcat(currROIName,'\n'))
+        nameToWrite=erase(currROIName,'.nii.gz');
+        fprintf(fileID, strcat(nameToWrite,'\n'))
         [~, ~]=dtiRoiNiftiFromMat (mergedROI,atlas,currROIName,1);
     elseif ~notDefined('ROIdirIN')&&dirFlag
         roiDirContents=dir(ROIdirIN);
@@ -167,7 +168,8 @@ for iROIs=1:length(stringCells)
             mergedROI = niftiMerge(niiPaths, strcat(roiDirPathOut,ROIOutName,'.nii.gz'));        %end
             currROIName=mergedROI.fname;
             %write file name to text file
-            fprintf(fileID, strcat(currROIName,'\n'))
+            nameToWrite=erase(currROIName,'.nii.gz');
+            fprintf(fileID, strcat(nameToWrite,'\n'))
             fprintf('\n saving %s',currROIName)
             niftiWrite(mergedROI,currROIName)
             clear niiPaths
