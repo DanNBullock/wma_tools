@@ -20,6 +20,8 @@ atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 atlasIn=niftiRead(atlasPath);
 fprintf('\n beginning island removal')
 [ olab] = fnDeislandLabels_v2(atlasIn, [],5,999);
+
+
 atlasIter=olab;
 %set relevant ROI indicies
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
@@ -178,4 +180,6 @@ end
     toc
     
     inflatedAtlas=atlasIter;
+    niftiWrite(inflatedAtlas,atlasPath)
+    
 end

@@ -69,7 +69,7 @@ classificationOut=bsc_reconcileClassifications(classificationOut,opticclassifica
 [cerebellarclassificationOut] =bsc_segmentCerebellarTracts_v2(wbfg, fsDir,0,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,cerebellarclassificationOut);
 
-[VOFclassificationOut] =bsc_segmentVOF_v2(wbfg, fsDir,categoryPrior);
+[VOFclassificationOut] =bsc_segmentVOF_v4(wbfg, fsDir,categoryPrior);
 classificationOut=bsc_reconcileClassifications(classificationOut,VOFclassificationOut);
 
 [CSTclassificationOut] =bsc_segmentCST(wbfg, fsDir,categoryPrior);

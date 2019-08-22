@@ -49,6 +49,7 @@ for iInputs=1:length(varargin)/3
     if isstruct(varargin{iInputs*3-2})
         refCoord=[mean(varargin{iInputs*3-2}.coords(:,1)),mean(varargin{iInputs*3-2}.coords(:,2)),mean(varargin{iInputs*3-2}.coords(:,3))];
     else
+        refCoord=varargin{iInputs*3-2}
         %no need to redfine refCoord
     end
     

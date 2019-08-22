@@ -18,6 +18,7 @@ function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg, fsDir,categoryPrior)
 
 %% parameter note & initialization
 
+
 % caudate ROI specification
 caudateLUT=[11,50];
 amygdlaIDs=[18,54];

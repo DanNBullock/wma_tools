@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_segmentVOF_v2(wbfg, fsDir,varargin)
+function [classificationOut] =bsc_segmentVOF_v4(wbfg, fsDir,varargin)
 %[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
 %
 % This function automatedly segments the vertical occipital fasiculus
@@ -37,6 +37,13 @@ wmLut=[2,41];
 atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 
+%OccipitalROI=[[120 119 111 158 166 143 145 159 152 122 162 161 121 160 102]+11000 [120 119 111 158 166 143 145 159 152 122 162 161 121 160 102]+12000];
+
+inferiorOccipROInums=[143 102 122 152 161 162];
+superiorOccipROInums=[120 121 158 111 166 159];
+neitherROInums=[145 160];
+
+
 for leftright= [1,2]
     
     %sidenum is basically a way of switching  between the left and right
@@ -44,19 +51,34 @@ for leftright= [1,2]
     %numbering scheme. left = 1, right = 2
     sidenum=10000+leftright*1000;
     
+    
+    inferiorOccipROI=bsc_roiFromAtlasNums(atlasPath,inferiorOccipROInums+sidenum,1);
+    [~, inferiorBool]=  bsc_tractByEndpointROIs(wbfg, [{inferiorOccipROI} {inferiorOccipROI}]);
+    
+        superiorOccipROI=bsc_roiFromAtlasNums(atlasPath,superiorOccipROInums+sidenum,1);
+    [~, superiorBool]=  bsc_tractByEndpointROIs(wbfg, [{superiorOccipROI} {superiorOccipROI}]);
+    
+    [~,criteriaBool]= bsc_tractByEndpointROIs(wbfg, [{inferiorOccipROI} {superiorOccipROI}]);
+    
+    [botthEndpointsInf]=bsc_applyEndpointCriteria(wbfg, [0 0 0], 'inferior','both');
+    
+    [supEndpointsCriter]=bsc_applyEndpointCriteria(wbfg, [0 0 3], 'superior','one');
+    [infEndpointsCriter]=bsc_applyEndpointCriteria(wbfg, [0 0 -3], 'inferior','one');
+    
     vofBottomPlane= bsc_planeFromROI_v2(162+sidenum,'superior',atlasPath);
     vofInferiorPlane= bsc_planeFromROI_v2(159+sidenum,'inferior',atlasPath);
-    vofPostLimit= bsc_planeFromROI_v2(166+sidenum,'anterior',atlasPath);
+    vofPostLimit= bsc_planeFromROI_v2(111+sidenum,'anterior',atlasPath);
     
     wmROI=bsc_roiFromAtlasNums(atlasPath,wmLut(leftright),1);
     
     vofMidpointBool=bsc_applyMidpointCriteria(wbfg,vofPostLimit,'posterior',vofBottomPlane,'superior',vofInferiorPlane,'inferior');
-    [~, vofCandidateBool]=wma_SegmentFascicleFromConnectome(wbfg, [{vofBottomPlane} {vofInferiorPlane} {vofPostLimit} {wmROI}], {'and','and','not','and'}, 'dud');
+    [~, vofCandidateBool]=wma_SegmentFascicleFromConnectome(wbfg, [{vofPostLimit}], {'not'}, 'dud');
     %should help fix failures to find vof
     [occipitalOccipitalBool] = or(bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'occipital_to_occipital')),bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'occipital_to_occipital_ufiber')));
     %occipitalOccipitalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'occipital_to_occipital'),categoryPrior.names)))';
     
-    VofBool=occipitalOccipitalBool&vofMidpointBool;%vofCandidateBool
+    VofBool=~inferiorBool'&~superiorBool'&occipitalOccipitalBool&criteriaBool'&vofCandidateBool&supEndpointsCriter&infEndpointsCriter;
+    VofBoolDud=~inferiorBool'&~superiorBool'&occipitalOccipitalBool&criteriaBool'&vofCandidateBool&~botthEndpointsInf;
 
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'VOF'),VofBool);
   
