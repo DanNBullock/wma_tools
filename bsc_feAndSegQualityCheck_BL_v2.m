@@ -102,7 +102,7 @@ fullFieldNames={'TractName','StreamlineCount', 'volume','avgerageStreamlineLengt
 
 conditionals=11:19;
 
-results.WBFG.tractStats
+%results.WBFG.tractStats
 
 %making it outside conditional
 resultsSummaryDir=fullfile(pwd,'resultsSummary');
@@ -171,7 +171,7 @@ if or(isfield(config,'output'),isfield(config,'classification'))
     'VariableNames',fullFieldNames);
 
 else
-    error('no input classification found')
+    warning('no input classification found')
 end
 if exist('tableOut','var')
 writetable(tableOut,fullfile(resultsSummaryDir,'output_FiberStats.csv'));

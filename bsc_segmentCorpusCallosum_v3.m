@@ -130,12 +130,12 @@ middleFrontalInterhemiBool=bsc_extractStreamIndByName(categoryPrior,'frontal_to_
 
 middleFrontalBool=middleFrontalInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&middleFrontalBool&~middleFrontalEndpointBool;
 anterioFrontalBool=middleFrontalInterhemiBool&~forcepsMinorBool&~forcepsMajorBool&~parietalCCBool&~middleFrontalBool&anterioFrontalBool&middleFrontalEndpointBool;
-anterioFrontalCC.fibers=wbfg.fibers(anterioFrontalBool);
-middleFrontalCC.fibers=wbfg.fibers(middleFrontalBool);
+%anterioFrontalCC.fibers=wbfg.fibers(anterioFrontalBool);
+%middleFrontalCC.fibers=wbfg.fibers(middleFrontalBool);
 
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'middleFrontalCC',middleFrontalBool);
 
 if experimentalBool
-classificationOut=bsc_concatClassificationCriteria(classificationOut,'anterioFrontalCC',anterioFrontalCC);
+classificationOut=bsc_concatClassificationCriteria(classificationOut,'anterioFrontalCC',anterioFrontalBool);
 end
 end
