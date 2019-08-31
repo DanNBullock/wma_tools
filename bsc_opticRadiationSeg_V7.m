@@ -1,5 +1,4 @@
-function [classificationOut] =bsc_opticRadiationSeg_V7(wbfg, fsDir, expandSegBool,varargin)
-% [classification] =bsc_opticRadiationSeg_V6(wbfg, fsDir, expandSegBool)
+function [classificationOut] =bsc_opticRadiationSeg_V7(wbfg,atlasPath,expandSegBool,varargin)
 %
 % This function automatedly segments components of the optic readiation
 % from a given whole brain fiber group using the subject's 2009 DK
@@ -7,7 +6,6 @@ function [classificationOut] =bsc_opticRadiationSeg_V7(wbfg, fsDir, expandSegBoo
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -expandSegBool: boolean value indicating whether to perform segmentation
 % of experimental/unconfirmed tracts.
 %
@@ -16,13 +14,7 @@ function [classificationOut] =bsc_opticRadiationSeg_V7(wbfg, fsDir, expandSegBoo
 %
 % (C) Daniel Bullock, 2017, Indiana University
 
-%% parameter note & initialization
-%create left/right lables
 sideLabel={'left','right'};
-
-% obtain midpoints
-%allStreams=wbfg.fibers;
-% obtain midpoints
 
 categoryPrior=varargin{1};
 
@@ -31,9 +23,7 @@ classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 
-
-
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 lentiLut=[12 13; 51 52];
 palLut=[13;52];
@@ -42,10 +32,8 @@ ventricleLut=[4;43];
 wmLut=[2;41];
 hippoLUT=[17;53];
 choroLUT=[31;63];
-
 subcort=[10 12 13 17 18; 49 51 52 53 54];
     
-
 %iterates through left and right sides
 for leftright= [1,2]
     

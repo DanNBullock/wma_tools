@@ -1,5 +1,4 @@
-function [classificationOut] =bsc_segmentSubCortical_v2(wbfg, fsDir,varargin)
-%  [classificationOut] =bsc_segmentSubCortical(wbfg, fsDir,varargin)
+function [classificationOut] =bsc_segmentSubCortical_v2(wbfg,atlasPath,varargin)
 %
 % This function automatedly segments the middle longitudinal fasiculus
 % from a given whole brain fiber group using the subject's 2009 DK
@@ -7,7 +6,6 @@ function [classificationOut] =bsc_segmentSubCortical_v2(wbfg, fsDir,varargin)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -varargin{1}: categoryPrior, from bsc_streamlineCategoryPriors_v3
 % -varargin{2}: effPrior, from ConnectomeTestQ_v2
 %
@@ -18,12 +16,10 @@ function [classificationOut] =bsc_segmentSubCortical_v2(wbfg, fsDir,varargin)
 %% Begin code
 %create left/right labels
 
-
-
 categoryPrior=varargin{1};
 effPrior=varargin{2};
 
-atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
 
 sideLabel={'left','right'};
 
@@ -36,7 +32,7 @@ putLut=[12 ; 51 ];
 palLut=[ 13; 52];
 thalamusLut=[10 49];
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlasPath,2);
 
 %iterates through left and right sides
 for leftright= [1,2]

@@ -1,14 +1,10 @@
-function [classification] =bsc_segmentAslant(wbfg, fsDir,varargin)
-%
-%[classification] =bsc_segmentAslant(wbfg, fsDir)
-%
+function [classification] =bsc_segmentAslant(wbfg,varargin)
 % This function automatedly segments the middle longitudinal fasiculus
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 % -classification:  A standardly constructed classification structure
@@ -26,7 +22,7 @@ classification.index=zeros(length(wbfg.fibers),1);
 %establish side labels for later name use
 sideLabel={'left','right'};
 
-atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
 
 %iterates through left and right sides
 for leftright= [1,2]

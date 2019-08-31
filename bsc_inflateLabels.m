@@ -1,12 +1,10 @@
-function [inflatedAtlas] =bsc_inflateLabels(fsDir,inflateItr)
-%[inflatedAtlas] =bsc_inflateLabels(fsDir)
+function [inflatedAtlas] =bsc_inflateLabels(atlasPath,inflateItr)
 %
 % This function inflates the DK2009 atlas from freesurfer such that
 % cortical labels are extended into the white matter and in to unknown
 % labels
 %
 % Inputs:
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -inflateItr:  iterations of inflation.  Essentially akin to a radial
 % smoothing kernel.
 % -infTarg: label targets for inflation.  Default is wm, but can also
@@ -15,12 +13,11 @@ function [inflatedAtlas] =bsc_inflateLabels(fsDir,inflateItr)
 %  inflatedAtlas: the inflated version of the atlas.
 % (C) Daniel Bullock, 2019, Indiana University
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 atlasIn=niftiRead(atlasPath);
 fprintf('\n beginning island removal')
 [ olab] = fnDeislandLabels_v2(atlasIn, [],5,999);
-
 
 atlasIter=olab;
 %set relevant ROI indicies

@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_segmentCorpusCallosum_v3(wbfg, fsDir,experimentalBool,varargin)
+function [classificationOut] =bsc_segmentCorpusCallosum_v3(wbfg,atlasPath,experimentalBool,varargin)
 %
 %[RightILF, RightILFIndexes, LeftILF, LeftILFIndexes, RightMdLFspl, RightMdLFsplIndexes, LeftMdLFspl, LeftMdLFsplIndexes,...
 %    RightMdLFang, RightMdLFangIndexes, LeftMdLFang, LeftMdLFangIndexes] =bsc_segmentMdLF_ILF(wbfg, fsDir)
@@ -9,7 +9,6 @@ function [classificationOut] =bsc_segmentCorpusCallosum_v3(wbfg, fsDir,experimen
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
@@ -20,9 +19,7 @@ function [classificationOut] =bsc_segmentCorpusCallosum_v3(wbfg, fsDir,experimen
 
 categoryPrior=varargin{1};
 
-
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
-
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 fullCCROI=bsc_roiFromAtlasNums(atlasPath,[255 254 253 252 251],13);
 [~, excludeCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{fullCCROI}], {'endpoints'}, 'dud');

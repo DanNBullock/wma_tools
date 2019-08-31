@@ -1,13 +1,10 @@
-function [classificationOut] =bsc_segmentCST(wbfg, fsDir,varargin)
-% [classificationOut] =bsc_segmentCST(wbfg, fsDir,varargin)
-%
+function [classificationOut] =bsc_segmentCST(wbfg,atlasPath,varargin)
 % This function automatedly segments the cortico spinal tract
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation. 
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -varargin: priors from previous steps
 
 % Outputs:
@@ -15,27 +12,17 @@ function [classificationOut] =bsc_segmentCST(wbfg, fsDir,varargin)
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlasPath,2);
 
 categoryPrior=varargin{1};
-%categoryPrior=categoryPrior{1};
-
-%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
 
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 
-
-
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 cbROINums=[7 8 46 47];
 lentiLut=[12 13 51 52];
 palLut=[13;52];

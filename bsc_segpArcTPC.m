@@ -1,4 +1,4 @@
-function  [classificationOut] = bsc_segpArcTPC(wbfg, fsDir)
+function  [classificationOut] = bsc_segpArcTPC(wbfg,atlasPath)
 % [classificationOut] = bsc_segpArcTPC(wbfg, fsDir)
 %
 % This function automatedly segments the posterior arcuate and temporo-parietal
@@ -24,7 +24,7 @@ function  [classificationOut] = bsc_segpArcTPC(wbfg, fsDir)
 parietalROIs3=[157, 127, 168, 136, 126, 125];
 temporalROIs3=[121, 161, 137, 162, 138, 173];
 
-atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
 
 %maybe play with this if something isn't to your liking, it corresponds to
 %the smoothing kernel used for the parietal and temporal ROIs

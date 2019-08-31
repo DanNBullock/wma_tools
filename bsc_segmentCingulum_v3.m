@@ -1,5 +1,4 @@
-function [classificationOut] =bsc_segmentCingulum_v3(wbfg, fsDir,varargin)
-%[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
+function [classificationOut] =bsc_segmentCingulum_v3(wbfg,atlasPath,varargin)
 %
 % This function automatedly segments the cingulum
 % from a given whole brain fiber group using the subject's 2009 DK
@@ -7,7 +6,6 @@ function [classificationOut] =bsc_segmentCingulum_v3(wbfg, fsDir,varargin)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -varargin: priors from previous steps
 
 % Outputs:
@@ -15,25 +13,14 @@ function [classificationOut] =bsc_segmentCingulum_v3(wbfg, fsDir,varargin)
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
-
 categoryPrior=varargin{1};
-%categoryPrior=categoryPrior{1};
-
 thalIDs=[10,49];
 
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
-
-
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 %iterates through left and right sides
 for leftright= [1,2]

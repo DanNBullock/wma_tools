@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg, fsDir,categoryPrior)
+function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg,atlasPath,categoryPrior)
 %
 %[RightILF, RightILFIndexes, LeftILF, LeftILFIndexes, RightMdLFspl, RightMdLFsplIndexes, LeftMdLFspl, LeftMdLFsplIndexes,...
 %    RightMdLFang, RightMdLFangIndexes, LeftMdLFang, LeftMdLFangIndexes] =bsc_segmentMdLF_ILF(wbfg, fsDir)
@@ -9,7 +9,6 @@ function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg, fsDir,categoryPrior)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
@@ -24,12 +23,9 @@ caudateLUT=[11,50];
 amygdlaIDs=[18,54];
 thalIDs=[10,49];
 subCortIDs=[5 12 13 17 18 ;44 51 52 53 54];
-
-%create left/right lables
 sideLabel={'left','right'};
 
-
-atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
 
 % obtain midpoints
 allStreams=wbfg.fibers;
@@ -42,7 +38,7 @@ classificationILF=classification;
 classificationMDLFang=classification;
 classificationMDLFspl=classification;
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlasPath,2);
 
 %iterates through left and right sides
 for leftright= [1,2]

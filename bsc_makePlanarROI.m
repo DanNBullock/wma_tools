@@ -1,4 +1,4 @@
-function [planarROI]=bsc_makePlanarROI(referenceNifti,mmPlane, dimension)
+function [planarROI]=bsc_makePlanarROI(referenceNifti,mmPlane,dimension)
 %
 % INPUTS:
 % -referenceNifti:  the nifti (or path to nifti) that the ROI will be

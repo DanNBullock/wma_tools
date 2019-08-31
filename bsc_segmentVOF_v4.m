@@ -1,13 +1,10 @@
-function [classificationOut] =bsc_segmentVOF_v4(wbfg, fsDir,varargin)
-%[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
-%
+function [classificationOut] =bsc_segmentVOF_v4(wbfg,atlasPath,varargin)
 % This function automatedly segments the vertical occipital fasiculus
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.  Subsections may come later.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -varargin: priors from previous steps
 
 % Outputs:
@@ -15,17 +12,8 @@ function [classificationOut] =bsc_segmentVOF_v4(wbfg, fsDir,varargin)
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
-
 categoryPrior=varargin{1};
-%categoryPrior=categoryPrior{1};
-
-%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
 
 %initialize classification structure
 classificationOut=[];
@@ -33,16 +21,10 @@ classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 
 wmLut=[2,41];
-
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
-
-
-%OccipitalROI=[[120 119 111 158 166 143 145 159 152 122 162 161 121 160 102]+11000 [120 119 111 158 166 143 145 159 152 122 162 161 121 160 102]+12000];
-
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 inferiorOccipROInums=[143 102 122 152 161 162];
 superiorOccipROInums=[120 121 158 111 166 159];
 neitherROInums=[145 160];
-
 
 for leftright= [1,2]
     
@@ -50,7 +32,6 @@ for leftright= [1,2]
     %hemispheres of the brain in accordance with freesurfer's ROI
     %numbering scheme. left = 1, right = 2
     sidenum=10000+leftright*1000;
-    
     
     inferiorOccipROI=bsc_roiFromAtlasNums(atlasPath,inferiorOccipROInums+sidenum,1);
     [~, inferiorBool]=  bsc_tractByEndpointROIs(wbfg, [{inferiorOccipROI} {inferiorOccipROI}]);

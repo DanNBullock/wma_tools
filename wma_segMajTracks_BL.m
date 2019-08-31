@@ -15,7 +15,6 @@ function wma_segMajTracks_BL()
 %% Begin Code
 if ~isdeployed
     disp('adding paths');
-    addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
     addpath(genpath('/N/u/brlife/git/jsonlab'))
     addpath(genpath('/N/u/brlife/git/vistasoft'))
     addpath(genpath('/N/u/brlife/git/wma_tools'))
@@ -36,10 +35,10 @@ end
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
+
 tic
 
-
- fprintf('\n creating priors')   
+fprintf('\n creating priors')   
 [categoryPrior] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,2);
 [~, effPrior] =bsc_streamlineGeometryPriors(wbfg);
 

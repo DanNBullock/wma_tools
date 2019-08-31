@@ -1,5 +1,4 @@
-function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg, fsDir,experimentalBool,varargin)
-% [classificationOut] =bsc_segmentCerebellarTracts(wbfg, fsDir,varargin)
+function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg,atlasPath,experimentalBool,varargin)
 %
 % This function automatedly segments cerebellar
 % from a given whole brain fiber group using the subject's 2009 DK
@@ -7,7 +6,6 @@ function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg, fsDir,experim
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -experimentalBool: toggle for experimental tracts
 % -varargin: priors from previous steps
 
@@ -16,19 +14,9 @@ function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg, fsDir,experim
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
-
 categoryPrior=varargin{1};
-%categoryPrior=categoryPrior{1};
 
-%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
-
-%initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
@@ -36,16 +24,14 @@ classificationOut.index=zeros(length(wbfg.fibers),1);
 cbROINums=[7 8;46 47];
 thalamusLut=[10 49];
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlasPath,2);
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 LeftCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(1,:) ,1);
 RightCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(2,:) ,1);
 [~, leftCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{LeftCBRoi}], {'endpoints'}, 'dud');
 [~, rightCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{RightCBRoi}], {'endpoints'}, 'dud');
-%bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_frontal')
-%spinoCebBool=or(categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal_interHemi')),categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal')));
 spinoCebBool=or(bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal_interHemi'),bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal'));
 SpineTop= bsc_planeFromROI_v2(16,'superior',atlasPath);
 [~, SpineTopBool]=wma_SegmentFascicleFromConnectome(wbfg, [{SpineTop}], {'not'}, 'dud');
@@ -108,7 +94,7 @@ for leftright= [1,2]
         otherWM=bsc_roiFromAtlasNums(atlasPath,41 ,1);
     else
         otherCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(1,:) ,1);
-         otherWM=bsc_roiFromAtlasNums(atlasPath,2 ,1);
+        otherWM=bsc_roiFromAtlasNums(atlasPath,2 ,1);
     end
     
     [~,notThese]=wma_SegmentFascicleFromConnectome(wbfg, [{otherWM}], {'and'}, 'dud');
@@ -119,8 +105,6 @@ for leftright= [1,2]
     [~, contrathalCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{otherCBRoi} {ThalROI}, {SpineLimit}], {'endpoints','endpoints','not'}, 'dud');
     [~, contramotorCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{otherCBRoi} {MotorROI}], {'endpoints','endpoints'}, 'dud');
     [~, contrathisCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{otherCBRoi}], {'endpoints'}, 'dud');
-    
-        %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
     
     contramotorCebBool=~notThese&contramotorCebBool&or( bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_frontal_interHemi'), bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_parietal_interHemi'));
     contraAnterioFrontoBool=~notThese&contraAnterioFrontoBool&bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_frontal_interHemi');

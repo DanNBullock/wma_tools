@@ -1,5 +1,4 @@
-function [classificationOut] =bsc_segmentAntPostTracts_v3(wbfg, fsDir,varargin)
-% [classificationOut] =bsc_segmentArc_Cingulum(wbfg, fsDir)
+function [classificationOut] =bsc_segmentAntPostTracts_v3(wbfg, atlasPath,varargin)
 %
 % This function automatedly segments the middle longitudinal fasiculus
 % from a given whole brain fiber group using the subject's 2009 DK
@@ -7,7 +6,7 @@ function [classificationOut] =bsc_segmentAntPostTracts_v3(wbfg, fsDir,varargin)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
+% -atlasPath: path to aparc.a2009s+aseg.nii.gz
 % -varargin: priors from previous steps
 
 % Outputs:
@@ -28,7 +27,7 @@ classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 lentiLut=[12 13; 51 52];
 palLut=[13;52];
@@ -44,7 +43,7 @@ subcort=[10 12 13 17 18; 49 51 52 53 54];
 interHemiNot=bsc_makePlanarROI(atlasPath,0, 'x');
 
 %do it here as a prior
-[classificationOut] =bsc_segmentCingulum_v3(wbfg, fsDir,categoryPrior);
+[classificationOut] =bsc_segmentCingulum_v3(wbfg,atlasPath,categoryPrior);
 cingulumBool=or(classificationOut.index==find(strcmp(classificationOut.names,'rightcingulum')),classificationOut.index==find(strcmp(classificationOut.names,'leftcingulum')));
 
 %iterates through left and right sides
@@ -55,9 +54,6 @@ for leftright= [1,2]
     %numbering scheme. left = 1, right = 2
     sidenum=10000+leftright*1000;
     
-    
-    
-    %%
     thalTop=bsc_planeFromROI_v2(thalLut(leftright), 'superior',atlasPath);
     thalPost=bsc_planeFromROI_v2(thalLut(leftright), 'posterior',atlasPath);
     amigPost=bsc_planeFromROI_v2(amigLut(leftright),'posterior',atlasPath);
@@ -86,8 +82,8 @@ for leftright= [1,2]
     ccCarveOut=bsc_mergeROIs(postCCtopThal,ccInterior2);
     ccCarveOut=bsc_mergeROIs(ccCarveOut,antCCtopThal);
     
-    antTempPlane=bsc_planeFromROI_v2(173+sidenum, 'anterior',atlasPath);
-    infCCLimit=bsc_planeFromROI_v2(255, 'inferior',atlasPath);
+    antTempPlane=bsc_planeFromROI_v2(173+sidenum,'anterior',atlasPath);
+    infCCLimit=bsc_planeFromROI_v2(255,'inferior',atlasPath);
     
     
     [infTempROI]=bsc_modifyROI_v2(atlasPath,antTempPlane, infCCLimit, 'inferior');
@@ -109,7 +105,6 @@ for leftright= [1,2]
     tempTransVTop=bsc_planeFromROI_v2(133+sidenum, 'superior',atlasPath);
      
     postLatFisInf=bsc_modifyROI_v2(atlasPath,latFisInf, ccPostLimit, 'posterior');
-       %neckArcAnd=bsc_modifyROI_v2(atlasPath,latFisInf, insPost, 'posterior');
     
     TopArcAnd=bsc_modifyROI_v2(atlasPath,insPost, tempTransVTop, 'superior');
     
@@ -118,51 +113,22 @@ for leftright= [1,2]
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Arc'),frontoTemporalBool,arcBool,~cingulumBool);
     
-    %Arcuate segmentation complete========================================
-    
-    %[indexBool] = bsc_extractStreamIndByName(classification,tractName)
-    %parietoFrontalBool=(categoryPrior.index==find(strcmp(strcat(sideLabel(leftright),'frontal_to_parietal'),categoryPrior.names)))';
     parietoFrontalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'frontal_to_parietal'));
-    
     ccMidLimit=bsc_planeFromROI_v2(252, 'anterior',atlasPath);
-        
     slf12exclude= bsc_modifyROI_v2(atlasPath,ccInterior2, ccMidLimit, 'posterior');
-    
-    %interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106]+sidenum ,1);
-    
-    %[interiorWallBool]=bsc_endpointAtlasCriteria(wbfg,fsDir,[116 109 108  107 167 147 172 130 110 106 127]+sidenum,'either');
-  %be harsher
-    %interiorWallROI=bsc_roiFromAtlasNums(atlasPath,[116 109 108  107 167 147 172 130 110 106 127 103]+sidenum,1);
-    
-    %bsc_plotROIEndpointsOnFG(fg,interiorWallROI)
-    
     [interiorWallBool]=bsc_endpointAtlasCriteria(wbfg,fsDir,[116 109 108  107 167 147 172 130 110 106]+sidenum,'either');
-  
-    %slf12ROI=bsc_roiFromAtlasNums(atlasPath,[115 114 116 154 155 153]+sidenum,1);
-    
     [SFL3Intersection] = bsc_MultiIntersectROIs(atlasPath,19,112+sidenum, 150+sidenum );
-    
     palAnt=bsc_planeFromROI_v2(palLut(leftright), 'anterior',atlasPath);
     frontSinfLimit=bsc_planeFromROI_v2(155+sidenum, 'inferior',atlasPath);
-    
     slf3Fix= bsc_modifyROI_v2(atlasPath,palAnt, frontSinfLimit, 'superior');
-    
     [~, SLF12segBool]=wma_SegmentFascicleFromConnectome(wbfg, [ {slf12exclude} {TopArcAnd} ], {'not','and'}, 'dud');
-    
     [~, SLF3Bool]=wma_SegmentFascicleFromConnectome(wbfg, [{SFL3Intersection} {postLatFisInf} {slf3Fix} ], {'endpoints','not','not'}, 'dud');
-    
     
     SLF12Bool=SLF12segBool&parietoFrontalBool&~cingulumBool&~IFOFBool&~interiorWallBool;
     SLF3Bool=SLF3Bool&parietoFrontalBool&~IFOFBool&~interiorWallBool;
     
-    
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF1And2'),SLF12Bool);
-    %classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF2'),SLF2Bool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'SLF3'),SLF3Bool);
-    
-    
-    %%
-    
     
 end
 

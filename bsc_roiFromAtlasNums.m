@@ -50,10 +50,6 @@ else
     %do nothing
 end
 
-
-
-
-
 %% begin loop
 fprintf('\n Generating composite roi from region(s) %s', num2str(ROInums))
 %get size of atlasNifti.data and make a blank matrix mask for it

@@ -1,5 +1,4 @@
-function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, fsDir)
-%[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
+function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, atlasPath)
 %
 % This function automatedly segments the supercficial fibers.
 % from a given whole brain fiber group using the subject's 2009 DK
@@ -7,7 +6,6 @@ function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, fsDir)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -varargin: priors from previous steps
 
 % Outputs:
@@ -15,16 +13,7 @@ function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, fsDir)
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
-
-%categoryPrior=categoryPrior{1};
-
-%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
 
 %initialize classification structure
 classificationOut=[];
@@ -35,9 +24,9 @@ wmLut=[2,41];
 
 streamLengthLimit=30;
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlasPath,2);
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 

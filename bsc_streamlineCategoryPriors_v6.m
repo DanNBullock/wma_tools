@@ -1,25 +1,17 @@
-function [classificationOut] =bsc_streamlineCategoryPriors_v6(wbfg, fsDir,inflateITer)
-%
-% [classificationOut] =bsc_segmentCorpusCallosum(wbfg, fsDir)
-%
+function [classificationOut] =bsc_streamlineCategoryPriors_v6(wbfg,atlasPath,inflateITer)
 % This function automatedly segments the middle longitudinal fasiculus
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-
-
-[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, fsDir);
+[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, atlasPath);
 
 allStreams=wbfg.fibers;
 clear wbfg
@@ -28,10 +20,9 @@ classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(allStreams),1);
 
-
 classificationMid=classificationOut;
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz')
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz')
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 leftROIS=[[101:1:175]+11000 26  17 18 7 8 10:13];
@@ -57,14 +48,10 @@ OccipitalROI=[[120 119 111 158 166 143 145 159 152 122 162 161 121 160 102]+1100
 ParietalROI=[[157 127 168 136 126 125 156 128 141 172 147 109 103 130 110]+11000 [157 127 168 136 126 125 156 128 141 172 147 109 103 130 110]+12000];
 
 pericROI=[[167]+11000 [167]+12000];
-
 insulaROI=[[117 149]+11000 [117 149]+12000];
-
-fprintf('\n rois set')
 
 endpoints1=zeros(3,length(allStreams));
 endpoints2=zeros(3,length(allStreams));
-
 
 for icategories=1:length(allStreams)
     curStream=allStreams{icategories};
@@ -75,7 +62,7 @@ end
 fprintf('\n endpoints extracted')
 
 if inflateITer>0
-    [inflatedAtlas] =bsc_inflateLabels(fsDir,inflateITer);
+    [inflatedAtlas] =bsc_inflateLabels(atlasPath,inflateITer);
 else
     inflatedAtlas=niftiRead(atlasPath);
 end
