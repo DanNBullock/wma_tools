@@ -1,14 +1,4 @@
 function bsc_classifiedStreamEndpointCortex_BL
-%bsc_classifiedStreamEndpointCortex(wbFG, classification, fsDir, saveDir,subSelect, decayFunc, decayRadiusThresh)
-
-if ~isdeployed
-    disp('adding paths');
-    addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
-    addpath(genpath('/N/u/brlife/git/jsonlab'))
-    addpath(genpath('/N/u/brlife/git/vistasoft'))
-    addpath(genpath('/N/u/brlife/git/wma_tools'))
-    addpath(genpath('/N/soft/rhel7/mrtrix/3.0/mrtrix3/matlab'))
-end
 
 %% loading from config
 config = loadjson('config.json');

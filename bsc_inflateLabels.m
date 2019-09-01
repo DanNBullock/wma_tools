@@ -1,10 +1,10 @@
-function [inflatedAtlas] =bsc_inflateLabels(atlasPath,inflateItr)
-%
+function [inflatedAtlas] =bsc_inflateLabels(atlas,inflateItr)
 % This function inflates the DK2009 atlas from freesurfer such that
 % cortical labels are extended into the white matter and in to unknown
 % labels
 %
 % Inputs:
+% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -inflateItr:  iterations of inflation.  Essentially akin to a radial
 % smoothing kernel.
 % -infTarg: label targets for inflation.  Default is wm, but can also
@@ -13,11 +13,7 @@ function [inflatedAtlas] =bsc_inflateLabels(atlasPath,inflateItr)
 %  inflatedAtlas: the inflated version of the atlas.
 % (C) Daniel Bullock, 2019, Indiana University
 
-%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
-
-atlasIn=niftiRead(atlasPath);
-fprintf('\n beginning island removal')
-[ olab] = fnDeislandLabels_v2(atlasIn, [],5,999);
+[ olab] = fnDeislandLabels_v2(atlas, [],5,999);
 
 atlasIter=olab;
 %set relevant ROI indicies
@@ -50,7 +46,7 @@ for iIter=1:inflateItr
     inflateROis=bsc_roiFromAtlasNums(atlasIterCur,[greyMatterROIS subcorticalROIS], 3);
     
     %create nifti of the inflated rois
-    [inflateInfo, ~] = dtiRoiNiftiFromMat(inflateROis,atlasPath,'roisInflate',false);
+    [inflateInfo, ~] = dtiRoiNiftiFromMat(inflateROis,atlas,'roisInflate',false);
     
     %extract roi for target rois
     inflationTargets=bsc_roiFromAtlasNums(atlasIterCur,inflateTargROIs, 1);
@@ -60,7 +56,7 @@ for iIter=1:inflateItr
     %create roi intersection of inflation targets and the inflated rois
     inflationMargin=bsc_intersectROIs(inflationTargets,inflateROis);
     %create a nii of the inflation marign, as a mask
-    [ni, ~] = dtiRoiNiftiFromMat(inflationMargin,atlasPath,'atlasInflate',false);
+    [ni, ~] = dtiRoiNiftiFromMat(inflationMargin,atlas,'atlasInflate',false);
     %smooth it, in order to find those voxels which are adjacent to the
     %mask
     niiSmoothedMask=smooth3(inflateInfo.data,'box',3)>=thresholdVal;
@@ -177,6 +173,5 @@ end
     toc
     
     inflatedAtlas=atlasIter;
-    niftiWrite(inflatedAtlas,atlasPath)
-    
+    %niftiWrite(inflatedAtlas,atlas)
 end

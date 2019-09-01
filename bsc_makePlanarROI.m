@@ -1,4 +1,4 @@
-function [planarROI]=bsc_makePlanarROI(referenceNifti,mmPlane,dimension)
+function [planarROI]=bsc_makePlanarROI(referenceNifti,mmPlane, dimension)
 %
 % INPUTS:
 % -referenceNifti:  the nifti (or path to nifti) that the ROI will be
@@ -15,13 +15,6 @@ function [planarROI]=bsc_makePlanarROI(referenceNifti,mmPlane,dimension)
 % -planarROI: the roi structure of the planar ROI
 %
 %  (C) Daniel Bullock 2017 Bloomington
-%% preliminaries
-if ischar(referenceNifti)
-    referenceNifti = niftiRead(referenceNifti);
-else
-end
-
-
 
 sizeLabelNifti=size(referenceNifti.data);
 blankLabelNifti(1:sizeLabelNifti(1),1:sizeLabelNifti(2),1:sizeLabelNifti(3))=false;

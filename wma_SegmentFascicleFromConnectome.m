@@ -74,11 +74,10 @@ keepFG = false(length(fg.fibers),1);
 % before the current operation was applied.
 currentFibIndices = cell(length(rois)+1,1);    
 currentFibIndices{1} = 1:length(keepFG);
-rois
 fprintf('applying %i segmentation criteria\n',length(rois))
 
 for ir = 1:length(rois)
-    fprintf('\n segmenting with roi %i',ir)
+    fprintf('segmenting with roi %i\n',ir)
     %rois{ir}
     
   % Read the rois from disk if paths were passed in
@@ -87,7 +86,6 @@ for ir = 1:length(rois)
   end
   
   % Intersect the wholebrain fiber group with "AND" / "NOT" ROIs
-
   [fg, ~, keep]  = dtiIntersectFibersWithRoi([],operation{ir},[],rois{ir},fg);
   fprintf('%i streams remaining after this iteration\n',sum(~keep==0))
 

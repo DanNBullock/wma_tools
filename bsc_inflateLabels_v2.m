@@ -1,4 +1,4 @@
-function [inflatedAtlas] =bsc_inflateLabels_v2(fsDir,inflateItr)
+function [inflatedAtlas] =bsc_inflateLabels_v2(atlas,inflateItr)
 %[inflatedAtlas] =bsc_inflateLabels(fsDir)
 %
 % This function inflates the DK2009 atlas from freesurfer such that
@@ -15,9 +15,9 @@ function [inflatedAtlas] =bsc_inflateLabels_v2(fsDir,inflateItr)
 %  inflatedAtlas: the inflated version of the atlas.
 % (C) Daniel Bullock, 2019, Indiana University
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlas=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
-atlasIn=niftiRead(atlasPath);
+atlasIn=niftiRead(atlas);
 atlasIter=atlasIn;
 LgreyMatterROIS=[ [101:1:175]+11000];
 RgreyMatterROIS=[[101:1:175]+12000];
@@ -51,10 +51,11 @@ atlasIterNext=atlasIter;
 inflateROis=bsc_roiFromAtlasNums(atlasIterCur,[LgreyMatterROIS LsubcorticalROIS], 3);
 inflationTargets=bsc_roiFromAtlasNums(atlasIterCur,LinflateTargROIs, 1);
 
-[inflateInfo, ~] = dtiRoiNiftiFromMat(inflateROis,atlasPath,'roisInflate',false);
-fprintf('\n %i total voxels to inflate into',length(inflationTargets.coords))
+[inflateInfo, ~] = dtiRoiNiftiFromMat(inflateROis,atlas,'roisInflate',false);
+
+fprintf('%i total voxels to inflate into\n',length(inflationTargets.coords))
 inflationMargin=bsc_intersectROIs(inflationTargets,inflateROis);
-[ni, ~] = dtiRoiNiftiFromMat(inflationMargin,atlasPath,'atlasInflate',false);
+[ni, ~] = dtiRoiNiftiFromMat(inflationMargin,atlas,'atlasInflate',false);
 niiSmoothedMask=smooth3(inflateInfo.data,'box',3)>=thresholdVal;
 marginIndexes=find(ni.data&niiSmoothedMask);
 dataInSize=size(ni.data);
@@ -67,7 +68,7 @@ marginXMod=marginX(~eliminationBool);
 marginYMod=marginY(~eliminationBool);
 marginZMod=marginZ(~eliminationBool);
 
-fprintf('\n %i voxels for iteration %i',length(marginXMod),iIter)
+fprintf('%i voxels for iteration %i\n',length(marginXMod),iIter)
 for iVoxels=1:length(marginXMod)
     
     candidateLabels=unique(atlasIterCur.data(marginXMod(iVoxels)-1:marginXMod(iVoxels)+1,marginYMod(iVoxels)-1:marginYMod(iVoxels)+1,marginZMod(iVoxels)-1:marginZMod(iVoxels)+1));
@@ -111,10 +112,10 @@ end
 inflateROis=bsc_roiFromAtlasNums(atlasIterCur,[RgreyMatterROIS RsubcorticalROIS], 3);
 inflationTargets=bsc_roiFromAtlasNums(atlasIterCur,RinflateTargROIs, 1);
 
-[inflateInfo, ~] = dtiRoiNiftiFromMat(inflateROis,atlasPath,'roisInflate',false);
-fprintf('\n %i total voxels to inflate into',length(inflationTargets.coords))
+[inflateInfo, ~] = dtiRoiNiftiFromMat(inflateROis,atlas,'roisInflate',false);
+fprintf('%i total voxels to inflate into\n',length(inflationTargets.coords))
 inflationMargin=bsc_intersectROIs(inflationTargets,inflateROis);
-[ni, ~] = dtiRoiNiftiFromMat(inflationMargin,atlasPath,'atlasInflate',false);
+[ni, ~] = dtiRoiNiftiFromMat(inflationMargin,atlas,'atlasInflate',false);
 niiSmoothedMask=smooth3(inflateInfo.data,'box',3)>=thresholdVal;
 marginIndexes=find(ni.data&niiSmoothedMask);
 dataInSize=size(ni.data);
@@ -127,7 +128,7 @@ marginXMod=marginX(~eliminationBool);
 marginYMod=marginY(~eliminationBool);
 marginZMod=marginZ(~eliminationBool);
 
-fprintf('\n %i voxels for iteration %i',length(marginXMod),iIter)
+fprintf('%i voxels for iteration %i\n',length(marginXMod),iIter)
 for iVoxels=1:length(marginXMod)
     
     candidateLabels=unique(atlasIterCur.data(marginXMod(iVoxels)-1:marginXMod(iVoxels)+1,marginYMod(iVoxels)-1:marginYMod(iVoxels)+1,marginZMod(iVoxels)-1:marginZMod(iVoxels)+1));
@@ -152,7 +153,6 @@ for iVoxels=1:length(marginXMod)
             tiebreakCount=tiebreakCount+1;
         end
         
-        %fprintf('\n tiebreaker resolved after %i iterations for %i voxels',tiebreakCount-1,length(find(atlasIterCur.data(voxelMask))))
         thisLabel=candidateLabelsClean(max(labelCount)==labelCount);
         % thisLabel=0;
         atlasIterNext.data(marginX(iVoxels),marginY(iVoxels),marginZ(iVoxels))=thisLabel;

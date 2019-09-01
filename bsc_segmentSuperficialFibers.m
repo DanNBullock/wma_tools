@@ -1,4 +1,5 @@
-function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, atlasPath)
+function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, atlas)
+%[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
 %
 % This function automatedly segments the supercficial fibers.
 % from a given whole brain fiber group using the subject's 2009 DK
@@ -6,6 +7,7 @@ function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, atlasPath)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
+% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -varargin: priors from previous steps
 
 % Outputs:
@@ -13,7 +15,16 @@ function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, atlasPath)
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
+%% parameter note & initialization
+
+%create left/right lables
 sideLabel={'left','right'};
+
+%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
+
+%categoryPrior=categoryPrior{1};
+
+%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
 
 %initialize classification structure
 classificationOut=[];
@@ -24,9 +35,9 @@ wmLut=[2,41];
 
 streamLengthLimit=30;
 
-%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlas=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
-[inflatedAtlas] =bsc_inflateLabels(atlasPath,2);
+[inflatedAtlas] =bsc_inflateLabels(atlas,2);
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 
@@ -43,12 +54,12 @@ for leftright= [1,2]
     sidenum=10000+leftright*1000;
     
     wmROIDegrade=bsc_roiFromAtlasNums(inflatedAtlas,wmLut(leftright),1);
-    wmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(leftright),1);
+    wmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(leftright),1);
     
     if leftright==1
-        OtherwmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(2),5);
+        OtherwmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(2),5);
     else
-        OtherwmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(1),5);
+        OtherwmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(1),5);
     end
     z = cellfun(@(x) sum(sqrt(sum((x(:, 1:end-1) - x(:, 2:end)) .^ 2))), wbfg.fibers, 'UniformOutput', true);
     

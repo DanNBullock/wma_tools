@@ -1,17 +1,21 @@
-function [classificationOut] =bsc_streamlineCategoryPriors_v6(wbfg,atlasPath,inflateITer)
+function [classificationOut] =bsc_streamlineCategoryPriors_v6(wbfg,atlas,inflateITer)
+%
+% [classificationOut] =bsc_segmentCorpusCallosum(wbfg, fsDir)
+%
 % This function automatedly segments the middle longitudinal fasiculus
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
+% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, atlasPath);
+[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, atlas);
 
 allStreams=wbfg.fibers;
 clear wbfg
@@ -48,10 +52,14 @@ OccipitalROI=[[120 119 111 158 166 143 145 159 152 122 162 161 121 160 102]+1100
 ParietalROI=[[157 127 168 136 126 125 156 128 141 172 147 109 103 130 110]+11000 [157 127 168 136 126 125 156 128 141 172 147 109 103 130 110]+12000];
 
 pericROI=[[167]+11000 [167]+12000];
+
 insulaROI=[[117 149]+11000 [117 149]+12000];
+
+disp('rois set')
 
 endpoints1=zeros(3,length(allStreams));
 endpoints2=zeros(3,length(allStreams));
+
 
 for icategories=1:length(allStreams)
     curStream=allStreams{icategories};
@@ -59,18 +67,17 @@ for icategories=1:length(allStreams)
     endpoints2(:,icategories)=curStream(:,end);
 end
 
-fprintf('\n endpoints extracted')
+disp('endpoints extracted')
 
 if inflateITer>0
-    [inflatedAtlas] =bsc_inflateLabels(atlasPath,inflateITer);
+    [inflatedAtlas] =bsc_inflateLabels(atlas,inflateITer);
 else
-    inflatedAtlas=niftiRead(atlasPath);
+    inflatedAtlas=atlas
 end
-
 
 [endpoints1Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints1,'acpc');
 [endpoints2Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints2,'acpc');
-fprintf('\n endpoint identities determined')
+disp('endpoint identities determined')
 
 excludeBool=zeros(1,length(allStreams));
 includeBool=excludeBool;
@@ -85,15 +92,12 @@ termination2=cell(1,length(allStreams));
 termination1=cell(1,length(allStreams));
 streamName=termination1;
 
-
-
-fprintf('\n superficial fibers identified')
+disp('superficial fibers identified')
 
 validSideROI= [leftROIS rightROIS] ;
 excludeSideROI=[unknownROIS pericROI ccROIS OpticCROI wmROIS spineROIS ventricleROIS];
   
 for iStreams=1:length(allStreams)
-% disagreeBool(iStreams)=or(and(LeftBool(iStreams),and(ismember(endpoints2Identity(iStreams),leftROIS),ismember(endpoints1Identity(iStreams),leftROIS))),and(RightBool(iStreams),and(ismember(endpoints2Identity(iStreams),rightROIS),ismember(endpoints1Identity(iStreams),rightROIS))))  ;      
 excludeBool(iStreams)=or(ismember(endpoints2Identity(iStreams),excludeSideROI),ismember(endpoints1Identity(iStreams),excludeSideROI));
 includeBool(iStreams)=or(ismember(endpoints2Identity(iStreams),validSideROI),ismember(endpoints1Identity(iStreams),validSideROI));
 validUIndexes(iStreams)=or(ismember(endpoints2Identity(iStreams),greyMatterROIS),ismember(endpoints1Identity(iStreams),greyMatterROIS))&~excludeBool(iStreams);
@@ -103,9 +107,6 @@ interHemiBool(iStreams)=or(and(ismember(endpoints2Identity(iStreams),leftROIS),i
 
 singleLeftBoolproto(iStreams)=xor(ismember(endpoints2Identity(iStreams),leftROIS),ismember(endpoints1Identity(iStreams),leftROIS));
 singleRightBoolproto(iStreams)=xor(ismember(endpoints2Identity(iStreams),rightROIS),ismember(endpoints1Identity(iStreams),rightROIS));
-
-
-
 
 if     ~isempty(find(endpoints1Identity(iStreams)==FrontalROIs, 1))
     termination1{iStreams}='frontal';
@@ -169,7 +170,6 @@ elseif ~isempty(find(endpoints2Identity(iStreams)==OpticCROI, 1))
     termination2{iStreams}='OpticChi';
 end
 
-
 if ~or(isempty(termination1{iStreams}),isempty(termination2{iStreams}))
     terminationNames=sort({termination1{iStreams} termination2{iStreams}});
 else
@@ -177,8 +177,6 @@ else
     endpoints2Identity(iStreams)
     error('streamline identity unaccounted for')
 end
-
-
 
 %hierarchy of categories here
 interhemiFlag(iStreams)=interHemiBool(iStreams)&includeBool(iStreams);
@@ -201,12 +199,11 @@ if interhemiFlag(iStreams)&validUIndexes(iStreams)&~superficialClassification.in
     streamName{iStreams}=strcat('MaskFailure');
 end
 
-
 end
 
 uniqueNames=unique(streamName);
 
-fprintf('\n %i endpoint categories determined', length(uniqueNames))
+fprintf('%i endpoint categories determined\n', length(uniqueNames))
 
 summarizeNames={'CorpusCallosum' 'unlabeled' 'OpticChi' 'ventricle' 'whiteMatter' 'pericallosal'};
 
@@ -224,8 +221,7 @@ for icategories=1:length(uniqueNames)
     end
 end
 
-
 classificationOut = wma_resortClassificationStruc(classificationOut);
 
-fprintf('\n categorical segmentation complete')
+disp('categorical segmentation complete')
 end
