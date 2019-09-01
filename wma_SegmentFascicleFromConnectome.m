@@ -75,7 +75,7 @@ keepFG = false(length(fg.fibers),1);
 currentFibIndices = cell(length(rois)+1,1);    
 currentFibIndices{1} = 1:length(keepFG);
 rois
-fprintf('\n applying %i segmentation criteria',length(rois))
+fprintf('applying %i segmentation criteria\n',length(rois))
 
 for ir = 1:length(rois)
     fprintf('\n segmenting with roi %i',ir)
@@ -89,7 +89,7 @@ for ir = 1:length(rois)
   % Intersect the wholebrain fiber group with "AND" / "NOT" ROIs
 
   [fg, ~, keep]  = dtiIntersectFibersWithRoi([],operation{ir},[],rois{ir},fg);
-  fprintf('\n %i streams remaining after this iteration',sum(~keep==0))
+  fprintf('%i streams remaining after this iteration\n',sum(~keep==0))
 
   % Select the indices fo the fibers that were deleted in the previous
   % loop. The way we address these indices depends on the type of operation.
