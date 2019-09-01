@@ -60,18 +60,32 @@ end
 colorMapping = rand(length(classification.names),3);
 % end
 
+
 % for each name in the classification.names structure finds the
 % corresponding streamlines associated with that classification and creates
 % an fg containg all relevant streamlines
-%disp('makeFGsFromClassification');
-for itracts=1:length(classification.names)
-    tractStruc{itracts} = dtiNewFiberGroup(classification.names{itracts});
-    tractStruc{itracts}.colorRgb=colorMapping(itracts,:);
-    %fprintf('creating tract %i with %i streamlines\n', itracts,sum(classification.index==itracts) );
-    
-    if strcmpi(coordScheme,'acpc')
+if strcmpi(coordScheme,'acpc')
+    for itracts=1:length(classification.names)
+        
+        tractStruc{itracts} = dtiNewFiberGroup(classification.names{itracts});
+        tractStruc{itracts}.colorRgb=colorMapping(itracts,:);
+        fprintf('\n creating tract %i with %i streamlines', itracts,sum(classification.index==itracts) );
+        %tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
+        
         tractStruc{itracts}.fibers=wbFG.fibers(classification.index==itracts);
-    elseif strcmpi(coordScheme,'img')
-        tractStruc{itracts}.fibers=fe.fg.fibers(classification.index==itracts);            
-    end    
+    end
+elseif strcmpi(coordScheme,'img')
+    %fix this later
+    for itracts=1:length(classification.names)
+        
+        tractStruc{itracts} = dtiNewFiberGroup(classification.names{itracts});
+        tractStruc{itracts}.colorRgb=colorMapping(itracts,:);
+        fprintf('\n creating tract %i with %i streamlines', itracts,sum(classification.index==itracts) );
+        %tractStruc(itracts) = dtiNewFiberGroup(classification.names{itracts});
+       
+        tractStruc{itracts}.fibers=fe.fg.fibers(classification.index==itracts);
+    end
+else
+    fprintf('coordScheme input not understood')
+end
 end

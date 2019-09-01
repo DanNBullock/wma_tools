@@ -55,7 +55,7 @@ end
 % if selectPrune is not defined, just assume the user wants to prune all
 % the tracts.
 if notDefined('selectPrune')
-    selectPrune=1:length(classification.names);
+selectPrune=1:length(classification.names);
 end
 
 if notDefined('centroidSD')
@@ -65,6 +65,8 @@ end
 if notDefined('lengthSD')
     lengthSD=4;
 end
+
+%% begin outlier removal
 
 %count number of classified tracts
 classCount=length(find(classification.index>0));
@@ -78,26 +80,26 @@ for itracts=selectPrune
     tractFG.name=classification.names{itracts};
     indexes=find(classification.index==itracts);
     tractFG.fibers=wbFG.fibers(indexes);
-    fprintf('processing %s (%d of %d)\n', tractFG.name, itracts, length(selectPrune));
     [~, keep]=mbaComputeFibersOutliers(tractFG,centroidSD,lengthSD,maxIter);
     
     %count number to be pruned
     trackPrune=length(indexes(~keep));   
+    
     if trackPrune~=0
-        fprintf('   %i streamlines (%.2f%%) pruned\n', length(keep), (trackPrune/length(keep))*100)
-        
-        %find the indexes that were removed (i.e., indexes(~keep)) and set them
-        %to zero, as though they had not been classified in the first place.
-        classification.index(indexes(~keep))=0;
-        
-        %add to running total
-        pruneTotal=(pruneTotal+trackPrune);
+    fprintf('\n %i of %i streamlines (%.2f percent) pruned for the %s',trackPrune, length(keep), (trackPrune/length(keep))*100 ,tractFG.name)
+    
+    %find the indexes that were removed (i.e., indexes(~keep)) and set them
+    %to zero, as though they had not been classified in the first place.
+    classification.index(indexes(~keep))=0;
+    
+    %add to running total
+    pruneTotal=(pruneTotal+trackPrune);
     else 
-        fprintf('   no streamlines removed for for the %s\n', tractFG.name)
+    fprintf('\n no streamlines removed for for the %s', tractFG.name)
     end
 end
 
-fprintf('\n%i total streamlines pruned (%4.2f%% of origional input)\n', pruneTotal, (pruneTotal/classCount)*100)
+fprintf('\n %i total streamlines pruned (%4.2f percent of origional input)', pruneTotal, (pruneTotal/classCount)*100)
 
 end
     

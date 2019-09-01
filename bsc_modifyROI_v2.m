@@ -90,7 +90,6 @@ switch lower(location)
             refCoordSingle=refCoord(1);
             roiOUT.coords=roiIN.coords(roiIN.coords(:,1)>refCoordSingle,:);
         end
-        
 end
 
 %rename ROI
@@ -98,9 +97,7 @@ roiOUT.name=strcat(roiIN.name,'_',num2str(refCoord),'_',location);
 
 %throw warning for empty ROI
 if isempty(roiOUT.coords)
-    warning('\n Empty Output for %s relative to %s of %i',roiIN.name,location,num2str(refCoord))
-else
-    %no problem
+    fprintf('Empty Output.. %s\n', roiIN.name)
 end
 
 end

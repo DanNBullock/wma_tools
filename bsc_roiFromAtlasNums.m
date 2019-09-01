@@ -23,9 +23,6 @@ function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 %  installed and set up properly.
 % % (C) Daniel Bullock 2017 Bloomington, Indiana
 %
-%% preliminaries
-
-
 
 %% set up aparcAsegFile
 
@@ -51,7 +48,7 @@ else
 end
 
 %% begin loop
-fprintf('\n Generating composite roi from region(s) %s', num2str(ROInums))
+fprintf('Generating composite roi from region(s) %s\n', num2str(ROInums))
 %get size of atlasNifti.data and make a blank matrix mask for it
 atlasDataSize=size(atlas.data);
 blankLabelNifti(1:atlasDataSize(1),1:atlasDataSize(2),1:atlasDataSize(3))=false;
@@ -71,10 +68,10 @@ end
 %smooth if you want to
 initROIsize=length(find(ROImask));
 if ~isempty(smoothKernel) & ~smoothKernel==0
-ROImask=~(smooth3(ROImask,'box', smoothKernel))==0;
+    ROImask=~(smooth3(ROImask,'box', smoothKernel))==0;
 end
 increasePct=((length(find(ROImask))/initROIsize)-1)*100;
-fprintf('\nROI size increased by %4.2f percent',increasePct)
+fprintf('ROI size increased by %4.2f percent\n',increasePct)
 %get index coordinates from nifti mask volume
 Roi = find(ROImask);
 [x1,y1,z1] = ind2sub(size(atlas.data), Roi);
