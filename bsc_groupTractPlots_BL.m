@@ -57,7 +57,8 @@ end
 zThresh=config.zThresh;
 zThresh=str2num(zThresh);
 
-bsc_plotTractZscoreMeasures_pathsVersion(csvPaths,plotProperties,pwd)
+bsc_plotZscoreMeasuresFromCSV(csvPaths,plotProperties,pwd)
+%bsc_plotTractZscoreMeasures_pathsVersion(csvPaths,plotProperties,pwd)
 
 if isfield(config,'zThresh')
 bsc_saveTrackCheckList_pathsVersion_v2(csvPaths,plotProperties,zThresh,5,subjects,pwd)
