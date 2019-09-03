@@ -43,11 +43,8 @@ if or(isstring(atlas),ischar(atlas))
     end
     atlas=niftiRead(atlas);
     fprintf('\n atlas loaded')
-else
-    %do nothing
 end
 
-%% begin loop
 fprintf('Generating composite roi from region(s) %s\n', num2str(ROInums))
 %get size of atlasNifti.data and make a blank matrix mask for it
 atlasDataSize=size(atlas.data);
@@ -80,9 +77,12 @@ Roi = find(ROImask);
 mergedROI = dtiNewRoi(['', roiNameString], 'r');
 %apply the qto_xyz transform to transform the mask coordinates to acpc
 %cordinates
-mergedROI.coords = mrAnatXformCoords(atlas.qto_xyz, [x1,y1,z1]);
+mergedROI.coords = single(mrAnatXformCoords(atlas.qto_xyz, [x1,y1,z1]));
 if length(mergedROI.coords)==0
     warning('Empty ROI returned for roi %s', roiNameString)
 else
 end
+
+disp('done bsc_roiFromAtlasNum')
+
 end

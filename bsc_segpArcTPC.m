@@ -1,19 +1,18 @@
 function  [classificationOut] = bsc_segpArcTPC(wbfg,atlas)
-s
 % This function automatedly segments the posterior arcuate and temporo-parietal
 % connection from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.
 %
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 %
 % Outputs:
 % classification:  a classification structure with .name and .indexes
 % fields
 %
 % (C) Daniel Bullock, 2018, Indiana University
-%% parameter note & initialization
+
+disp('bsc_segpArcTPC');
 
 %these 3 digit numbers correspond to the last 3 digits of the DK 2009
 %freesurfer look up table numbers.
@@ -22,8 +21,6 @@ s
 
 parietalROIs3=[157, 127, 168, 136, 126, 125];
 temporalROIs3=[121, 161, 137, 162, 138, 173];
-
-%atlas=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
 
 %maybe play with this if something isn't to your liking, it corresponds to
 %the smoothing kernel used for the parietal and temporal ROIs
@@ -43,8 +40,6 @@ sideLabel={'left','right'};
 %indexes for the putamen
 putInd=[12,51];
 ventInd=[4,43];
-
-%% actual segmentation
 
 %iterates through left and right sides
 for leftright= [1,2]

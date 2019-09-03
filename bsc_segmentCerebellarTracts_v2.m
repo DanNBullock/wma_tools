@@ -1,13 +1,10 @@
 function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg,atlas,experimentalBool,varargin)
-% [classificationOut] =bsc_segmentCerebellarTracts(wbfg, fsDir,varargin)
-%
 % This function automatedly segments cerebellar
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.  Subsections may come later.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -experimentalBool: toggle for experimental tracts
 % -varargin: priors from previous steps
 
@@ -16,19 +13,8 @@ function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg,atlas,experime
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
-
 categoryPrior=varargin{1};
-%categoryPrior=categoryPrior{1};
-
-%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
-
-%initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
@@ -38,14 +24,10 @@ thalamusLut=[10 49];
 
 [inflatedAtlas] =bsc_inflateLabels(atlas,2);
 
-%atlas=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
-
 LeftCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(1,:) ,1);
 RightCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(2,:) ,1);
 [~, leftCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{LeftCBRoi}], {'endpoints'}, 'dud');
 [~, rightCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{RightCBRoi}], {'endpoints'}, 'dud');
-%bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_frontal')
-%spinoCebBool=or(categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal_interHemi')),categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal')));
 spinoCebBool=or(bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal_interHemi'),bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal'));
 SpineTop= bsc_planeFromROI_v2(16,'superior',atlas);
 [~, SpineTopBool]=wma_SegmentFascicleFromConnectome(wbfg, [{SpineTop}], {'not'}, 'dud');

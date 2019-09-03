@@ -1,14 +1,10 @@
 function [classification] =bsc_segmentAslant(wbfg,atlas,varargin)
-%
-%[classification] =bsc_segmentAslant(wbfg, fsDir)
-%
 % This function automatedly segments the middle longitudinal fasiculus
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 % -classification:  A standardly constructed classification structure
@@ -37,13 +33,13 @@ for leftright= [1,2]
     %issue with the parietal ROI as we will see
     sidenum=10000+leftright*1000;
     
-    %superior frontal ROI:
+    disp('superior frontal ROI');
     %generates the roi for the superior frontal termination of the aslant.
     %We inflate in order to be fairly generous with terminations
     [superiorROI] =bsc_roiFromAtlasNums(atlas,[116]+sidenum,7);
     superiorROI.name='superior';
     
-    % lateral frontal roi
+    disp('lateral frontal roi');
     %generates the roi for the lateral frontal termination of the aslant.
     %We inflate in order to be fairly generous with terminations.  The
     %subtraction of 10000 is due to a switch from using the 2009 Destrieux atlas
@@ -53,12 +49,12 @@ for leftright= [1,2]
     [lateralROI] =bsc_roiFromAtlasNums(atlas,[114 112]+sidenum,1);
     lateralROI.name='lateral';
     
+    disp('creating planefromroi');
     %the inflated lateralROI includes some areas near the insula that
     %shouldn't be included.  This border is used to demarcate those regions
     latBorder = bsc_planeFromROI_v2([104]+sidenum, 'medial',atlas);
     
-    %here we modify the lateralROI to remove those parts that are medial to
-    %this border
+    disp('here we modify the lateralROI to remove those parts that are medial to this border')
     [lateralROI]=bsc_modifyROI_v2(atlas,lateralROI,latBorder,'lateral');
     
     %segment those streamlines with endpoints in the aforemenitoned ROIs
@@ -79,11 +75,10 @@ for leftright= [1,2]
     %This is, in essence a set of additional exclusion criteria for
     %streamlines which are included in the initial segmentation, but
     %nonetheless do not meet criteria for being included in the tract
+    disp('running wma_SegmentFascicleFromConnectome');
     [~,boundedInd]=wma_SegmentFascicleFromConnectome(wbfg, [{antPeriCall},{antParSup},{notHemi}], {'not', 'not','not'}, 'exclusions');
     
     %use the positive and negative criteria to make a classification
-    %structure
- 
     frontoFrontalBool=  or( bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal')),   bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber')));
     
     [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,frontoFrontalBool,preventAnteriorBool);

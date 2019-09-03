@@ -8,6 +8,7 @@ function [olab] = fnDeislandLabels_v2(labels,outfile,maxisleSize,replaceVal)
 % Dan Bullock, slight modifications.
 %
 
+fprintf('fnDeislandLabels_v2 maxisleSize:%i replaceVal:%i\n', maxisleSize, replaceVal)
 
 % read in aligned aparc+aseg .nii (read labels)
 if or(ischar(labels),isstr(labels))
@@ -22,7 +23,6 @@ if ~notDefined('outfile')
     olab.fname = outfile;
 end
 
-fprintf('fnDeislandLabels_v2 max:%i relace:%i\n', maxisleSize, replaceVal)
 
 % get list of unique labels (0 is background)
 ulab = unique(labs.data(:));

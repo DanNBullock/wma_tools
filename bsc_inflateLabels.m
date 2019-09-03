@@ -13,6 +13,8 @@ function [inflatedAtlas] =bsc_inflateLabels(atlas,inflateItr)
 %  inflatedAtlas: the inflated version of the atlas.
 % (C) Daniel Bullock, 2019, Indiana University
 
+disp('bsc_inflateLabels');
+
 [ olab] = fnDeislandLabels_v2(atlas, [],5,999);
 
 atlasIter=olab;
@@ -76,7 +78,7 @@ for iIter=1:inflateItr
     marginYMod=marginY(~eliminationBool);
     marginZMod=marginZ(~eliminationBool);
     
-    fprintf('\n %i voxels for iteration %i',length(marginXMod),iIter)
+    fprintf('(bsc_inflateLabels.m) %i voxels for iteration %i\n',length(marginXMod),iIter)
     for iVoxels=1:length(marginXMod)
         
         candidateLabels=unique(atlasIterCur.data(marginXMod(iVoxels)-1:marginXMod(iVoxels)+1,marginYMod(iVoxels)-1:marginYMod(iVoxels)+1,marginZMod(iVoxels)-1:marginZMod(iVoxels)+1));

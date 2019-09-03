@@ -34,11 +34,11 @@ for istreamlines=1:length(fg.fibers)
 end
 
 % compute endpoint distnaces to each ROI
-[~, distr1e1]=nearpoints(endpoint1, rois{1}.coords');
-[~, distr1e2]=nearpoints(endpoint2, rois{1}.coords');
+[~, distr1e1]=nearpoints32(endpoint1, rois{1}.coords');
+[~, distr1e2]=nearpoints32(endpoint2, rois{1}.coords');
 
-[~, distr2e1]=nearpoints(endpoint1, rois{2}.coords');
-[~, distr2e2]=nearpoints(endpoint2, rois{2}.coords');
+[~, distr2e1]=nearpoints32(endpoint1, rois{2}.coords');
+[~, distr2e2]=nearpoints32(endpoint2, rois{2}.coords');
 
 % only keep those streamlines what have one endpoint meeting each criteria.
 keep=or(and(distr1e1<minDist,distr2e2<minDist),and(distr2e1<minDist,distr1e2<minDist));

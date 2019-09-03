@@ -9,15 +9,13 @@ function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg,atlas,categoryPrior)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
 %  Same for the other tracts
 % (C) Daniel Bullock, 201*, Indiana University
 
-%% parameter note & initialization
-
+disp('bsc_segmentMdLF_ILF_v4');
 
 % caudate ROI specification
 caudateLUT=[11,50];
@@ -41,7 +39,7 @@ classificationILF=classification;
 classificationMDLFang=classification;
 classificationMDLFspl=classification;
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlas,2);
 
 %iterates through left and right sides
 for leftright= [1,2]
@@ -70,10 +68,6 @@ for leftright= [1,2]
     %MdLF
     [mergedLatTempROI] =bsc_roiFromAtlasNums(inflatedAtlas,[134, 144, 174,135]+sidenum,9);
     
-    %impliments a cutoff to ensure that the temporal roi coordinates are
-    %anterior of the y=-15 plane
-    %[amygdlaROI] =bsc_roiFromAtlasNums(atlas,[134, 122, 144, 174, 114, 135]+sidenum,1,9);
-    
     %use amygdala to institute planar limit on mergedLatTempROI
     [amygdalaPost] = bsc_planeFromROI_v2(amygdlaIDs(leftright), 'posterior',atlas);
     [mergedLatTempROI]=bsc_modifyROI_v2(atlas,mergedLatTempROI, amygdalaPost, 'anterior');
@@ -95,9 +89,7 @@ for leftright= [1,2]
     
     cingRemoveROI=bsc_roiFromAtlasNums(inflatedAtlas,[109 110]+sidenum,5);
     
-    
     [~, ILFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{TopArcAnd} {cingRemoveROI} ], {'not', 'not'}, 'dud');
-    
     
     [classificationILF]=bsc_concatClassificationCriteria(classificationILF,strcat(sideLabel{leftright},'ILF'),occipitoTemporalBool,ILFAntEndpointBool,ILFPostEndpointBool,ILFBool);
     

@@ -5,7 +5,6 @@ function [classificationOut] =bsc_segmentCST(wbfg,atlas,varargin)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -varargin: priors from previous steps
 
 % Outputs:
@@ -13,25 +12,14 @@ function [classificationOut] =bsc_segmentCST(wbfg,atlas,varargin)
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
 [inflatedAtlas] =bsc_inflateLabels(atlas,2);
-
 categoryPrior=varargin{1};
-%categoryPrior=categoryPrior{1};
 
-%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
-
-%initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
 
-%atlas=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 cbROINums=[7 8 46 47];
 lentiLut=[12 13 51 52];
 palLut=[13;52];
@@ -45,7 +33,7 @@ for leftright= [1,2]
     %numbering scheme. left = 1, right = 2
     sidenum=10000+leftright*1000;
     
-     thalAntPlane=bsc_planeFromROI_v2(thalLut(leftright), 'anterior',atlas);
+    thalAntPlane=bsc_planeFromROI_v2(thalLut(leftright), 'anterior',atlas);
     
     CBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums ,1);
 

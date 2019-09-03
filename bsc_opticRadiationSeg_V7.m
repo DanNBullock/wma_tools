@@ -5,7 +5,6 @@ function [classificationOut] =bsc_opticRadiationSeg_V7(wbfg,atlas,expandSegBool,
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -expandSegBool: boolean value indicating whether to perform segmentation
 % of experimental/unconfirmed tracts.
 %
@@ -14,22 +13,13 @@ function [classificationOut] =bsc_opticRadiationSeg_V7(wbfg,atlas,expandSegBool,
 %
 % (C) Daniel Bullock, 2017, Indiana University
 
-%% parameter note & initialization
-%create left/right lables
 sideLabel={'left','right'};
-
-% obtain midpoints
-%allStreams=wbfg.fibers;
-% obtain midpoints
-
 categoryPrior=varargin{1};
 
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
-
-%atlas=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 lentiLut=[12 13; 51 52];
 palLut=[13;52];

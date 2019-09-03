@@ -14,7 +14,6 @@ function  [midpointsBool] = bsc_midpointROISegment(wbfgORMidpoints,ROI)
 % specified criteria
 %
 % (C) Daniel Bullock, 2019, Indiana University
-%% begin code
 
 distanceCriteria=.5;
 
@@ -39,7 +38,7 @@ end
 
 ROI=bsc_loadAndParseROI(ROI);
 
-[~, distr1e1]=nearpoints( midpoints',ROI.coords');
+[~, distr1e1]=nearpoints32(single(midpoints'),ROI.coords');
 
 midpointsBool=distr1e1<=distanceCriteria;
 midpointsBool=midpointsBool';
