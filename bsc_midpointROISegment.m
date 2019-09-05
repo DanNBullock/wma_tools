@@ -38,7 +38,7 @@ end
 
 ROI=bsc_loadAndParseROI(ROI);
 
-[~, distr1e1]=nearpoints32(single(midpoints'),ROI.coords');
+[~, distr1e1]=nearpoints(single(midpoints'),ROI.coords');
 
 midpointsBool=distr1e1<=distanceCriteria;
 midpointsBool=midpointsBool';
