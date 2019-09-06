@@ -60,6 +60,9 @@ end
 colorMapping = rand(length(classification.names),3);
 % end
 
+if isempty(classification.names) 
+    disp('classification.names is empty.. something went wrong?');
+end
 
 % for each name in the classification.names structure finds the
 % corresponding streamlines associated with that classification and creates
