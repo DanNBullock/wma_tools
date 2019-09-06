@@ -77,7 +77,7 @@ Roi = find(ROImask);
 mergedROI = dtiNewRoi(['', roiNameString], 'r');
 %apply the qto_xyz transform to transform the mask coordinates to acpc
 %cordinates
-mergedROI.coords = single(mrAnatXformCoords(atlas.qto_xyz, [x1,y1,z1]));
+mergedROI.coords = mrAnatXformCoords(atlas.qto_xyz, [x1,y1,z1]);
 if length(mergedROI.coords)==0
     warning('Empty ROI returned for roi %s', roiNameString)
 else

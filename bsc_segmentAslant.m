@@ -57,18 +57,19 @@ for leftright= [1,2]
     disp('here we modify the lateralROI to remove those parts that are medial to this border')
     [lateralROI]=bsc_modifyROI_v2(atlas,lateralROI,latBorder,'lateral');
     
-    %segment those streamlines with endpoints in the aforemenitoned ROIs
+    disp('segment those streamlines with endpoints in the aforemenitoned ROIs');
     [~, keep]=bsc_tractByEndpointROIs(wbfg,[{superiorROI}, {lateralROI}]);
     
-    %create a not ROI to prevent crossing streamlines
+    disp('create a not ROI to prevent crossing streamlines');
     [notHemi]=bsc_makePlanarROI(atlas,0, 'x');
     
-    %institute an anterior border based on the pericallosal sulcus
+    disp('institute an anterior border based on the pericallosal sulcus');
     antPeriCall = bsc_planeFromROI_v2([167]+sidenum, 'anterior',atlas);
     
-    %institute a posterior border based on the paracentral gyrus/sulcus
+    disp('institute a posterior border based on the paracentral gyrus/sulcus');
     antParSup=bsc_planeFromROI_v2([103]+sidenum, 'anterior',atlas);
     
+    disp('running bsc_applyMidpointCriteria');
     preventAnteriorBool= bsc_applyMidpointCriteria(wbfg,antPeriCall,'posterior');
     
     %find those streamlines which run afoul of one of the three criteria.
@@ -81,6 +82,7 @@ for leftright= [1,2]
     %use the positive and negative criteria to make a classification
     frontoFrontalBool=  or( bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal')),   bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber')));
     
+    disp('runnig bsc_concatClassificationCriteria');
     [classification]=bsc_concatClassificationCriteria(classification,strcat(sideLabel{leftright},'Aslant'),keep,boundedInd,frontoFrontalBool,preventAnteriorBool);
 end
 

@@ -97,7 +97,7 @@ roiOUT.name=strcat(roiIN.name,'_',num2str(refCoord),'_',location);
 
 %throw warning for empty ROI
 if isempty(roiOUT.coords)
-    fprintf('Empty Output.. %s\n', roiIN.name)
+    fprintf('bsc_modifyROI_v2: Empty roi.. %s\n', roiIN.name)
 end
 
 end
