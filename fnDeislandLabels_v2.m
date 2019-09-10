@@ -1,5 +1,5 @@
-function [ olab] = fnDeislandLabels_v2(labels, outfile,maxisleSize,replaceVal)
-% [ olab, dbg ] = fnDeislandLabels(labels, deisle) removes spurious labeled
+function [olab] = fnDeislandLabels_v2(labels,outfile,maxisleSize,replaceVal)
+
 % voxles from outside of the largest continuous label (bad freesurfer labels)
 %
 %   Detailed explanation goes here
@@ -8,11 +8,11 @@ function [ olab] = fnDeislandLabels_v2(labels, outfile,maxisleSize,replaceVal)
 % Dan Bullock, slight modifications.
 %
 
-disp('Loading label nifti...');
+fprintf('fnDeislandLabels_v2 maxisleSize:%i replaceVal:%i\n', maxisleSize, replaceVal)
 
 % read in aligned aparc+aseg .nii (read labels)
 if or(ischar(labels),isstr(labels))
-labs = niftiRead(labels);
+    labs = niftiRead(labels);
 else
     labs=labels;
 end
@@ -20,8 +20,10 @@ end
 % create a copy in output
 olab = labs;
 if ~notDefined('outfile')
-olab.fname = outfile;
+    olab.fname = outfile;
 end
+
+
 % get list of unique labels (0 is background)
 ulab = unique(labs.data(:));
 ulab = ulab(ulab > 0);
@@ -38,15 +40,10 @@ for ii = 1:size(ulab, 1)
     
     % create 3d image of the label
     tid = int32(data == ulab(ii));
-
-    
-   
     
     % find islands of label
     cc = bwareaopen(tid,maxisleSize);
    
-    % debug warning
-
     % write the output labels from the largest component
     odat(cc)=ulab(ii);
     
@@ -61,7 +58,7 @@ disp('Saving fixed label nifti...');
 
 % write output
 if ~notDefined('outfile')
-niftiWrite(olab);
+    niftiWrite(olab);
 end
 
 end

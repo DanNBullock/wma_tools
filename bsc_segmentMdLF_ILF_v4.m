@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg, fsDir,categoryPrior)
+function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg,atlas,categoryPrior)
 %
 %[RightILF, RightILFIndexes, LeftILF, LeftILFIndexes, RightMdLFspl, RightMdLFsplIndexes, LeftMdLFspl, LeftMdLFsplIndexes,...
 %    RightMdLFang, RightMdLFangIndexes, LeftMdLFang, LeftMdLFangIndexes] =bsc_segmentMdLF_ILF(wbfg, fsDir)
@@ -9,15 +9,13 @@ function [classificationOut] =bsc_segmentMdLF_ILF_v4(wbfg, fsDir,categoryPrior)
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
 %  Same for the other tracts
 % (C) Daniel Bullock, 201*, Indiana University
 
-%% parameter note & initialization
-
+disp('bsc_segmentMdLF_ILF_v4');
 
 % caudate ROI specification
 caudateLUT=[11,50];
@@ -28,8 +26,7 @@ subCortIDs=[5 12 13 17 18 ;44 51 52 53 54];
 %create left/right lables
 sideLabel={'left','right'};
 
-
-atlasPath=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
+%atlas=fullfile(fsDir,'mri/aparc.a2009s+aseg.nii.gz');
 
 % obtain midpoints
 allStreams=wbfg.fibers;
@@ -42,7 +39,7 @@ classificationILF=classification;
 classificationMDLFang=classification;
 classificationMDLFspl=classification;
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlas,2);
 
 %iterates through left and right sides
 for leftright= [1,2]
@@ -59,8 +56,8 @@ for leftright= [1,2]
     
     %curtail somewhat; provide anterior limit, here we use anterior of IPS
     %as limit
-    [antLimit] = bsc_planeFromROI_v2(157+sidenum, 'anterior',atlasPath);
-    [mergedOCTROI]=bsc_modifyROI_v2(atlasPath,mergedOCTROI, antLimit, 'posterior');
+    [antLimit] = bsc_planeFromROI_v2(157+sidenum, 'anterior',atlas);
+    [mergedOCTROI]=bsc_modifyROI_v2(atlas,mergedOCTROI, antLimit, 'posterior');
     
     %% parietal roi
     %creates ROI just for the Parietal area
@@ -71,34 +68,28 @@ for leftright= [1,2]
     %MdLF
     [mergedLatTempROI] =bsc_roiFromAtlasNums(inflatedAtlas,[134, 144, 174,135]+sidenum,9);
     
-    %impliments a cutoff to ensure that the temporal roi coordinates are
-    %anterior of the y=-15 plane
-    %[amygdlaROI] =bsc_roiFromAtlasNums(atlasPath,[134, 122, 144, 174, 114, 135]+sidenum,1,9);
-    
     %use amygdala to institute planar limit on mergedLatTempROI
-    [amygdalaPost] = bsc_planeFromROI_v2(amygdlaIDs(leftright), 'posterior',atlasPath);
-    [mergedLatTempROI]=bsc_modifyROI_v2(atlasPath,mergedLatTempROI, amygdalaPost, 'anterior');
+    [amygdalaPost] = bsc_planeFromROI_v2(amygdlaIDs(leftright), 'posterior',atlas);
+    [mergedLatTempROI]=bsc_modifyROI_v2(atlas,mergedLatTempROI, amygdalaPost, 'anterior');
     
     %% begin segmenting
     %bsc_extractStreamIndByName(classification,tractName)
-    occipitoTemporalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'occipital_to_temporal'));
+    occipitoTemporalBool=bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'occipital_to_temporal'));
     
     %get rid of ILF streamlines above anterior temporal area
-    [lingGyAnt] = bsc_planeFromROI_v2(162+sidenum, 'anterior',atlasPath);
-    [posteriorILFAnt] = bsc_planeFromROI_v2(110+sidenum, 'posterior',atlasPath);
+    [lingGyAnt] = bsc_planeFromROI_v2(162+sidenum, 'anterior',atlas);
+    [posteriorILFAnt] = bsc_planeFromROI_v2(110+sidenum, 'posterior',atlas);
     
     ILFAntEndpointBool=bsc_applyEndpointCriteria(wbfg,lingGyAnt,'anterior','one');
     ILFPostEndpointBool=bsc_applyEndpointCriteria(wbfg,posteriorILFAnt,'posterior','one');
     
-    insPost=bsc_planeFromROI_v2(150+sidenum, 'posterior',atlasPath);
-    tempTransVTop=bsc_planeFromROI_v2(133+sidenum, 'superior',atlasPath);
-    TopArcAnd=bsc_modifyROI_v2(atlasPath,insPost, tempTransVTop, 'superior');
+    insPost=bsc_planeFromROI_v2(150+sidenum, 'posterior',atlas);
+    tempTransVTop=bsc_planeFromROI_v2(133+sidenum, 'superior',atlas);
+    TopArcAnd=bsc_modifyROI_v2(atlas,insPost, tempTransVTop, 'superior');
     
     cingRemoveROI=bsc_roiFromAtlasNums(inflatedAtlas,[109 110]+sidenum,5);
     
-    
     [~, ILFBool]=wma_SegmentFascicleFromConnectome(wbfg, [{TopArcAnd} {cingRemoveROI} ], {'not', 'not'}, 'dud');
-    
     
     [classificationILF]=bsc_concatClassificationCriteria(classificationILF,strcat(sideLabel{leftright},'ILF'),occipitoTemporalBool,ILFAntEndpointBool,ILFPostEndpointBool,ILFBool);
     
@@ -107,22 +98,21 @@ for leftright= [1,2]
     
     %Make ROI for subcortical areas, later to be used to exclude
     %streamlines passing through these areas
-    [subCortROI] = bsc_roiFromAtlasNums(atlasPath,subCortIDs(leftright,:),1);
+    [subCortROI] = bsc_roiFromAtlasNums(atlas,subCortIDs(leftright,:),1);
     
-    [anteriorMDLFLimit] = bsc_planeFromROI_v2(172+sidenum, 'anterior',atlasPath);
-    [latFis] = bsc_planeFromROI_v2(150+sidenum, 'superior',atlasPath);
-    [mdlfFrontRm]=bsc_modifyROI_v2(atlasPath,anteriorMDLFLimit, latFis, 'superior');
+    [anteriorMDLFLimit] = bsc_planeFromROI_v2(172+sidenum, 'anterior',atlas);
+    [latFis] = bsc_planeFromROI_v2(150+sidenum, 'superior',atlas);
+    [mdlfFrontRm]=bsc_modifyROI_v2(atlas,anteriorMDLFLimit, latFis, 'superior');
     
     [~, removeMDLFIND]=wma_SegmentFascicleFromConnectome(wbfg, [{subCortROI},{mdlfFrontRm}], {'not','not'}, 'dud');
 
-    temporoParietalBool= bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel(leftright),'parietal_to_temporal'))';
-    
+    temporoParietalBool= bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'parietal_to_temporal'))';
     
     %Find WM for spl
     %extreme inflation of precuneus
-    splMid=bsc_roiFromAtlasNums(atlasPath,130+sidenum,27);
+    splMid=bsc_roiFromAtlasNums(atlas,130+sidenum,27);
     %extreme inflation of IPS
-    splLat=bsc_roiFromAtlasNums(atlasPath,157+sidenum,27);
+    splLat=bsc_roiFromAtlasNums(atlas,157+sidenum,27);
     %find out where they intersect to get white matter of superior parietal
     %lobule
     splWM=bsc_intersectROIs(splMid,splLat);
@@ -134,7 +124,7 @@ for leftright= [1,2]
     %midpoints should be below the top of the thalamus if they are posterior to the
     %amygdala and simply should not be anterior of the amygdala in any
     %event.
-    subcortTop=bsc_planeFromROI_v2(subCortROI,'superior',atlasPath) ;
+    subcortTop=bsc_planeFromROI_v2(subCortROI,'superior',atlas) ;
     [badMidpointsA]=bsc_applyMidpointCriteria(wbfg, anteriorMDLFLimit,'anterior',subcortTop,'superior',amygdalaPost,'posterior');
     [badMidpointsB]=bsc_applyMidpointCriteria(wbfg,amygdalaPost,'anterior');
     

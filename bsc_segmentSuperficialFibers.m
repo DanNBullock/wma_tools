@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, fsDir)
+function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, atlas)
 %[classificationOut] =bsc_segmentCingulum(wbfg, fsDir,varargin)
 %
 % This function automatedly segments the supercficial fibers.
@@ -35,9 +35,9 @@ wmLut=[2,41];
 
 streamLengthLimit=30;
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlas=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlas,2);
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 
@@ -54,12 +54,12 @@ for leftright= [1,2]
     sidenum=10000+leftright*1000;
     
     wmROIDegrade=bsc_roiFromAtlasNums(inflatedAtlas,wmLut(leftright),1);
-    wmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(leftright),1);
+    wmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(leftright),1);
     
     if leftright==1
-        OtherwmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(2),5);
+        OtherwmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(2),5);
     else
-        OtherwmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(1),5);
+        OtherwmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(1),5);
     end
     z = cellfun(@(x) sum(sqrt(sum((x(:, 1:end-1) - x(:, 2:end)) .^ 2))), wbfg.fibers, 'UniformOutput', true);
     

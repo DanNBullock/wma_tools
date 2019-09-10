@@ -1,8 +1,8 @@
-function [endZone1, endZone2 ]=bsc_investigateTract(wbfg,fsDir)
+function [endZone1, endZone2 ]=bsc_investigateTract(wbfg,atlas)
 
 allStreams=wbfg.fibers;
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 for icategories=1:length(allStreams)
     curStream=allStreams{icategories};
@@ -10,20 +10,18 @@ for icategories=1:length(allStreams)
     endpoints2(:,icategories)=curStream(:,end);
 end
 
-
-fprintf('\n endpoints extracted')
+fprintf('endpoints extracted\n')
 
 inflateITer=2;
 
 if inflateITer>0
-    [inflatedAtlas] =bsc_inflateLabels(fsDir,inflateITer);
+    [inflatedAtlas] =bsc_inflateLabels(atlas,inflateITer);
 else
-    inflatedAtlas=niftiRead(atlasPath);
+    inflatedAtlas=atlas;
 end
-
 
 [endZone1] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints1,'acpc');
 [endZone2] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints2,'acpc');
-fprintf('\n endpoint identities determined')
+fprintf('endpoint identities determined\n')
 
 end

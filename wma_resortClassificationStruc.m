@@ -1,6 +1,4 @@
 function classificationOut = wma_resortClassificationStruc(classificationIn)
-%classificationOut = wma_resortClassificationStruc(classificationIn)
-%
 %  This function resorts an input classification structure such that left
 %  and right variants of a tract are next to eachother.  Future versions
 %  may attempt to sort singleton tracts to the front and subcategories
@@ -14,7 +12,6 @@ function classificationOut = wma_resortClassificationStruc(classificationIn)
 %  names sorted into pairings, and the index numbering adjusted accordingly
 %
 %  Dan Bullock 2019
-%%
 
 outNames=[];
 outIndex=zeros(1,length(classificationIn.index));

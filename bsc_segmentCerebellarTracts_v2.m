@@ -1,13 +1,10 @@
-function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg, fsDir,experimentalBool,varargin)
-% [classificationOut] =bsc_segmentCerebellarTracts(wbfg, fsDir,varargin)
-%
+function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg,atlas,experimentalBool,varargin)
 % This function automatedly segments cerebellar
 % from a given whole brain fiber group using the subject's 2009 DK
 % freesurfer parcellation.  Subsections may come later.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
 % -experimentalBool: toggle for experimental tracts
 % -varargin: priors from previous steps
 
@@ -16,19 +13,8 @@ function [classificationOut] =bsc_segmentCerebellarTracts_v2(wbfg, fsDir,experim
 %  Same for the other tracts
 % (C) Daniel Bullock, 2019, Indiana University
 
-%% parameter note & initialization
-
-%create left/right lables
 sideLabel={'left','right'};
-
-%[categoryPrior] =bsc_streamlineCategoryPriors_v4(wbfg, fsDir,2)
-
 categoryPrior=varargin{1};
-%categoryPrior=categoryPrior{1};
-
-%[costFuncVec, AsymRat,FullDisp ,streamLengths, efficiencyRat ]=ConnectomeTestQ_v2(wbfg);
-
-%initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 classificationOut.index=zeros(length(wbfg.fibers),1);
@@ -36,23 +22,19 @@ classificationOut.index=zeros(length(wbfg.fibers),1);
 cbROINums=[7 8;46 47];
 thalamusLut=[10 49];
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
-
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+[inflatedAtlas] =bsc_inflateLabels(atlas,2);
 
 LeftCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(1,:) ,1);
 RightCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(2,:) ,1);
 [~, leftCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{LeftCBRoi}], {'endpoints'}, 'dud');
 [~, rightCebBool]=wma_SegmentFascicleFromConnectome(wbfg, [{RightCBRoi}], {'endpoints'}, 'dud');
-%bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_frontal')
-%spinoCebBool=or(categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal_interHemi')),categoryPrior.index==find(strcmp(categoryPrior.names,'cerebellum_to_spinal')));
 spinoCebBool=or(bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal_interHemi'),bsc_extractStreamIndByName(categoryPrior,'cerebellum_to_spinal'));
-SpineTop= bsc_planeFromROI_v2(16,'superior',atlasPath);
+SpineTop= bsc_planeFromROI_v2(16,'superior',atlas);
 [~, SpineTopBool]=wma_SegmentFascicleFromConnectome(wbfg, [{SpineTop}], {'not'}, 'dud');
 
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'leftSpinoCerebellar',leftCebBool,spinoCebBool,SpineTopBool);
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'rightSpinoCerebellar',rightCebBool,spinoCebBool,SpineTopBool);
-SpineLimit= bsc_planeFromROI_v2(16,'anterior',atlasPath);
+SpineLimit= bsc_planeFromROI_v2(16,'anterior',atlas);
 [~, posteriorStreams]=wma_SegmentFascicleFromConnectome(wbfg, [{SpineLimit}], {'not'}, 'dud');
 
 for leftright= [1,2]
@@ -65,8 +47,8 @@ for leftright= [1,2]
     %% Ipsilateral connections
     CBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(leftright,:) ,1);
     ThalROI=bsc_roiFromAtlasNums(inflatedAtlas,thalamusLut(leftright) ,1);
-    antCebSplit= bsc_planeFromROI_v2(thalamusLut(leftright),'anterior',atlasPath);
-    thalTop=bsc_planeFromROI_v2(thalamusLut(leftright),'superior',atlasPath)
+    antCebSplit= bsc_planeFromROI_v2(thalamusLut(leftright),'anterior',atlas);
+    thalTop=bsc_planeFromROI_v2(thalamusLut(leftright),'superior',atlas)
     
     %motorCerebellum
     frontoMotorLimit= bsc_planeFromROI_v2(170+sidenum, 'anterior',inflatedAtlas);
@@ -105,10 +87,10 @@ for leftright= [1,2]
     %% Contralateral connections
     if leftright==1
         otherCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(2,:) ,1);
-        otherWM=bsc_roiFromAtlasNums(atlasPath,41 ,1);
+        otherWM=bsc_roiFromAtlasNums(atlas,41 ,1);
     else
         otherCBRoi=bsc_roiFromAtlasNums(inflatedAtlas,cbROINums(1,:) ,1);
-         otherWM=bsc_roiFromAtlasNums(atlasPath,2 ,1);
+         otherWM=bsc_roiFromAtlasNums(atlas,2 ,1);
     end
     
     [~,notThese]=wma_SegmentFascicleFromConnectome(wbfg, [{otherWM}], {'and'}, 'dud');

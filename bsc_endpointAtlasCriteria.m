@@ -1,4 +1,4 @@
-function [outBool ]=bsc_endpointAtlasCriteria(wbfg,fsDir,roiNums,criteria)
+function [outBool ]=bsc_endpointAtlasCriteria(wbfg,atlas,roiNums,criteria)
 %[outBool ]=bsc_endpointAtlasCriteria(wbfg,fsDir,roiNums,criteria)
 %
 %  This function determines which streamlines end in the spcecified rois.
@@ -21,7 +21,7 @@ function [outBool ]=bsc_endpointAtlasCriteria(wbfg,fsDir,roiNums,criteria)
 %
 %  Dan Bullock 2019
 
-[endZone1, endZone2 ]=bsc_investigateTract(wbfg,fsDir);
+[endZone1, endZone2 ]=bsc_investigateTract(wbfg,atlas);
 
 dualROIVec=[endZone1 endZone2];
 

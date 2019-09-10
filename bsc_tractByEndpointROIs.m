@@ -27,21 +27,26 @@ function [fg, keep]=  bsc_tractByEndpointROIs(fg, rois)
 % hardcode min distance for intersection
 minDist = 0.87;
 
-%cut streamlines to just the first and last node
-for istreamlines=1:length(fg.fibers)
-    endpoint1(:,istreamlines)=fg.fibers{istreamlines}(:,1) ;
-    endpoint2(:,istreamlines)=fg.fibers{istreamlines}(:,end);
+if isempty(rois{1}.coords) || isempty(rois{2}.coords)
+    disp('bsc_tractByEndpointROIs: roi1 or roi2 is empty. clearning fg.fibers');
+    keep = false(1, length(fg.fibers));
+else
+    %cut streamlines to just the first and last node
+    for istreamlines=1:length(fg.fibers)
+        endpoint1(:,istreamlines)=fg.fibers{istreamlines}(:,1) ;
+        endpoint2(:,istreamlines)=fg.fibers{istreamlines}(:,end);
+    end
+
+    % compute endpoint distnaces to each ROI
+    [~, distr1e1]=nearpoints(endpoint1, rois{1}.coords');
+    [~, distr1e2]=nearpoints(endpoint2, rois{1}.coords');
+
+    [~, distr2e1]=nearpoints(endpoint1, rois{2}.coords');
+    [~, distr2e2]=nearpoints(endpoint2, rois{2}.coords');
+
+    % only keep those streamlines what have one endpoint meeting each criteria.
+    keep=or(and(distr1e1<minDist,distr2e2<minDist),and(distr2e1<minDist,distr1e2<minDist));
 end
-
-% compute endpoint distnaces to each ROI
-[~, distr1e1]=nearpoints(endpoint1, rois{1}.coords');
-[~, distr1e2]=nearpoints(endpoint2, rois{1}.coords');
-
-[~, distr2e1]=nearpoints(endpoint1, rois{2}.coords');
-[~, distr2e2]=nearpoints(endpoint2, rois{2}.coords');
-
-% only keep those streamlines what have one endpoint meeting each criteria.
-keep=or(and(distr1e1<minDist,distr2e2<minDist),and(distr2e1<minDist,distr1e2<minDist));
 
 %transfer relevant streamlines in to output fg
 fg.fibers=fg.fibers(keep);
