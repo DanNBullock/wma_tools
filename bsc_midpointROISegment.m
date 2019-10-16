@@ -22,7 +22,10 @@ if isstruct(wbfgORMidpoints)
     midpoints=zeros(length(allStreams),3);
     for iFibers=1:length(allStreams)
         fibSize=size(allStreams{iFibers});
-        fiberNodeNum=round(fibSize/2);
+        fiberNodeNum=floor(fibSize(2)/2);
+        if fiberNodeNum==0
+            fiberNodeNum=1;
+        end
         curStreamline=allStreams{iFibers};
         midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
     end
