@@ -33,7 +33,7 @@ if isstruct(midpointsIn)
     allStreams=midpointsIn.fibers;
     midpoints=zeros(length(allStreams),3);
     for iFibers=1:length(allStreams)
-        fiberNodeNum=round(length(allStreams{iFibers})/2);
+        fiberNodeNum=floor(length(allStreams{iFibers})/2);
         curStreamline=allStreams{iFibers};
         midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
     end
