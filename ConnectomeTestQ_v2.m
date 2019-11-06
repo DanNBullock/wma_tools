@@ -28,32 +28,61 @@ for iFibers=1:totalFib
         fprintf('\n %i percent complete', (iFibers/totalFib)*100)
     end
     fiberNodeNum=round(length(allStreams{iFibers})/2);
-    curStreamline=allStreams{iFibers};
-    midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
-    firstIndex=[1:fiberNodeNum];
-    secondIndex=[fiberNodeNum:length(allStreams{iFibers})];
-    firstHalf{iFibers}=curStreamline(:,firstIndex);
-    secondHalf{iFibers}=curStreamline(:,secondIndex);
-    endpoints1(iFibers,:)=curStreamline(:,1);
-    endpoints2(iFibers,:)=curStreamline(:,end);
-    firstHalfstreamLengths(iFibers)=sum(sqrt(sum(diff(firstHalf{iFibers},1,2).^2)));
-    secondHalfstreamLengths(iFibers)=sum(sqrt(sum(diff(secondHalf{iFibers},1,2).^2)));
-    streamLengths(iFibers)= firstHalfstreamLengths(iFibers)+secondHalfstreamLengths(iFibers);
-    firstDisp(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints1(iFibers,:),midpoints(iFibers,:))))))/2);
-    secondDisp(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints2(iFibers,:),midpoints(iFibers,:))))))/2);
-    firstDispRat(iFibers)=firstDisp(iFibers)/firstHalfstreamLengths(iFibers);
-    secondDispRat(iFibers)=secondDisp(iFibers)/secondHalfstreamLengths(iFibers);
-    
-    FullDisp(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints1(iFibers,:),endpoints2(iFibers,:))))))/2);
-    efficiencyRat(iFibers)=FullDisp(iFibers)/streamLengths(iFibers);
-    %imbalRat(iFibers)=(midEndRat1(iFibers)-midEndRat2(iFibers))/(midEndRat1(iFibers)+midEntRat2(iFibers));
-    
-    AsymRat(iFibers)=(firstDispRat(iFibers)-secondDispRat(iFibers))^2;
-    
-    
-    %midEndRat1(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints1(iFibers,:),midpoints(iFibers,:))))))/2)/streamLengths(iFibers);
-    %midEndRat2(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints2(iFibers,:),midpoints(iFibers,:))))))/2)/streamLengths(iFibers);
+    if fiberNodeNum>=5
+        curStreamline=allStreams{iFibers};
+        midpoints(iFibers,:)=curStreamline(:,fiberNodeNum);
+        firstIndex=[1:fiberNodeNum];
+        secondIndex=[fiberNodeNum:length(allStreams{iFibers})];
+        firstHalf{iFibers}=curStreamline(:,firstIndex);
+        secondHalf{iFibers}=curStreamline(:,secondIndex);
+        endpoints1(iFibers,:)=curStreamline(:,1);
+        endpoints2(iFibers,:)=curStreamline(:,end);
+        firstHalfstreamLengths(iFibers)=sum(sqrt(sum(diff(firstHalf{iFibers},1,2).^2)));
+        secondHalfstreamLengths(iFibers)=sum(sqrt(sum(diff(secondHalf{iFibers},1,2).^2)));
+        streamLengths(iFibers)= firstHalfstreamLengths(iFibers)+secondHalfstreamLengths(iFibers);
+        firstDisp(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints1(iFibers,:),midpoints(iFibers,:))))))/2);
+        secondDisp(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints2(iFibers,:),midpoints(iFibers,:))))))/2);
+        firstDispRat(iFibers)=firstDisp(iFibers)/firstHalfstreamLengths(iFibers);
+        secondDispRat(iFibers)=secondDisp(iFibers)/secondHalfstreamLengths(iFibers);
+        
+        FullDisp(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints1(iFibers,:),endpoints2(iFibers,:))))))/2);
+        efficiencyRat(iFibers)=FullDisp(iFibers)/streamLengths(iFibers);
+        %imbalRat(iFibers)=(midEndRat1(iFibers)-midEndRat2(iFibers))/(midEndRat1(iFibers)+midEntRat2(iFibers));
+        
+        AsymRat(iFibers)=(firstDispRat(iFibers)-secondDispRat(iFibers))^2;
+        
+        
+        %midEndRat1(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints1(iFibers,:),midpoints(iFibers,:))))))/2)/streamLengths(iFibers);
+        %midEndRat2(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints2(iFibers,:),midpoints(iFibers,:))))))/2)/streamLengths(iFibers);
+    else
+        curStreamline=nan;
+        midpoints(iFibers,:)=nan;
+        firstIndex=nan;
+        secondIndex=nan;
+        firstHalf{iFibers}=nan;
+        secondHalf{iFibers}=nan;
+        endpoints1(iFibers,:)=nan;
+        endpoints2(iFibers,:)=nan;
+        firstHalfstreamLengths(iFibers)=nan;
+        secondHalfstreamLengths(iFibers)=nan;
+        streamLengths(iFibers)= nan;
+        firstDisp(iFibers)=nan;
+        secondDisp(iFibers)=nan;
+        firstDispRat(iFibers)=nan;
+        secondDispRat(iFibers)=nan;
+        
+        FullDisp(iFibers)=nan;
+        efficiencyRat(iFibers)=nan;
+        %imbalRat(iFibers)=(midEndRat1(iFibers)-midEndRat2(iFibers))/(midEndRat1(iFibers)+midEntRat2(iFibers));
+        
+        AsymRat(iFibers)=nan;
+        
+        
+        %midEndRat1(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints1(iFibers,:),midpoints(iFibers,:))))))/2)/streamLengths(iFibers);
+        %midEndRat2(iFibers)=(sum(sum(squareform(pdist(vertcat(endpoints2(iFibers,:),midpoints(iFibers,:))))))/2)/streamLengths(iFibers);
+    end
 end
+
 
 
 
