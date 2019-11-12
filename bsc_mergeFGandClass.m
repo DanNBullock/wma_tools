@@ -71,12 +71,19 @@ function [mergedFG, mergedClassification]=bsc_mergeFGandClass(inputFGs,inputClas
 %  (the one that corresponds to the whole brain tractography, should it
 %  exist).  Their names will be derived from the name in the fg.name field.
 %
+%  NOTE ABOUT sourceClassification VARIABLE:
+%
+%  This variable tracks the source of the input fgs in the combined fg.
+%  Ergo, it is mapping the variable <inputFGs> on to the amalgum fg.
+%
 % (C) Daniel Bullock, 2018, Indiana University
 %
 %  Requires vistasoft
 %% Begin function
 % create a blank classification object if one isn't passed
 %doesnt really matter what's in it right now
+
+
 if ~exist('inputClassifications') ==1
     for iInputs=1:length(inputFGs)
         inputClassifications{iInputs}=[];
@@ -90,15 +97,20 @@ sourceClassification.index=[];
 mergedClassification.names=[];
 mergedClassification.index=[];
 
+
+clear iInputs
+
 %% Merge input FGs, determine homology, and create classification structure
 for iInputs=1:length(inputFGs)
     %loads the fg
-    [toMergeFG, ~] = bsc_LoadAndParseFiberStructure(inputFGs{iInputs});
-    
+    %[toMergeFG, ~] = bsc_LoadAndParseFiberStructure(inputFGs{iInputs});
     %checks to see if the .fibers field is empty, or if the thing in the
     %.fibers field is of 0 length (apparently this happens when converting
     %from empty trk files.
-    if ~or(length(toMergeFG.fibers)==0,length(toMergeFG.fibers{1})==0);
+    
+    %would length(toMergeFG.fibers{1})==0 error out in the case of an fg
+    %with no fibers in it?  Do i need a nested if here?
+    if ~or(length(toMergeFG.fibers)==0,length(toMergeFG.fibers{1})==0)
         
         %if the mergedFG structure doesn't exist yet, take the input fg structure
         %and set that as the mergedFG structure, along with a
@@ -135,7 +147,15 @@ for iInputs=1:length(inputFGs)
             %pointless as the names mean nothing from brain-life.  There's
             %no provenance information in the names
             % mergedFG.name=strcat(mergedFG.name,toMergeFG.name);
-            sourceClassification.names=horzcat(sourceClassification.names,strcat('fg',num2str(iInputs)));
+            %previously, the .names bit would mess up if the input only had
+            %one name in it.  It would constantly read it in as a field
+            %rather than a cell array
+            
+            %HERE'S A TEST OF USING DIRECT NAME TRANSFER
+            sourceClassification.names=horzcat(sourceClassification.names,{toMergeFG.name});
+            
+            %ELSE, PREVIOUS VERSION
+            %sourceClassification.names=horzcat(sourceClassification.names,{strcat('fg',num2str(iInputs))});
             sourceClassification.index(length(sourceClassification.index)+1:length(sourceClassification.index)+length(toMergeFG.fibers),1)=iInputs;
         else
             %under the assumption that length(find(isEqualBool))>2, and
@@ -159,6 +179,8 @@ for iInputs=1:length(inputFGs)
     else
         warning('\n fg input number %i contained no streamlines',iInputs)
     end
+    clear isEqualBool
+    
 end
 
 
@@ -176,6 +198,7 @@ end
 for iInputs=1:length(inputFGs)
     
     if ~isempty(inputClassifications{iInputs})
+        fprintf('\n Input classification detected for input %i',iInputs)
         %probably breaks because of this?
         
         if ischar(inputClassifications{iInputs})
@@ -192,21 +215,56 @@ for iInputs=1:length(inputFGs)
         
         
     else
+        fprintf('\n Input classification NOT detected for input %i',iInputs)
         %if the [iInputs]th entry in inputClassifications is empty,
         %just go ahead and make a single tract classification structure
-        %for this fg.
+        %for this fg.  Take the information from the previously generated 
+        %sourceClassification #bigbraintime
         
+        %working with the assumption that the ith fg input is paired with
+        %the ith classification, and thus if no classicfication is input
+        %for the ith fg, we assume that the whole fg is classifed as the
+        %same thing
+        
+        %[singleClassOUT]=bsc_extractClassification(sourceClassification,iInputs)
+        
+        
+        %THIS WILL CAUSE ERRORS IF YOU TRY AND MERGE  2 FGS THAT HAVE
+        %CLASSIFICATIONS WITH FG1, FG2 ETC IN THEM
+        
+       
         %completely uninformative name, but it is the best we can
         %do with brainlife .tck input.
-        toMergeclassification.names{1}=strcat('fg',num2str(iInputs));
+        toMergeclassification.names{1}=sourceClassification.names{iInputs};
         toMergeclassification.index(1:length(toMergeFG.fibers),1)=1;
         
     end
-    if nameMapping(iInputs)==iInputs
+    % 10/12/2019 edit:
+    % had to institute a third case of logic, which utilizes the output in
+    % the case that the previous bit detected a lack of a classification
+    % for this tract input, and thus created a whole tract classification.
+    %currently unclear what to do in case:
+    %and(~nameMapping(iInputs)==iInputs,isempty(inputClassifications{iInputs}))
+    if and(nameMapping(iInputs)==iInputs,~isempty(inputClassifications{iInputs}))
         %% SPLICE the classification structures, as they correspond to unique fg structures
+        fprintf('\n unique input with associated classification detected for fg input %i, performing SPLICE',iInputs)
         
         mergedClassification= bsc_spliceClassifications(mergedClassification,toMergeclassification);
-    else
+    elseif and(nameMapping(iInputs)==iInputs,isempty(inputClassifications{iInputs}))
+        fprintf('\n singleton unique input detected for fg input %i, performing SPLICE',iInputs)
+        %  NOTE: if nameMapping(iInputs)==iInputs then it follows that
+        %  length(find(isEqualBool))==1, meaning that there is only one
+        %  inputfg that corresponds to the current fg.  Thus:  if this is a
+        %  unique FG AND it has no classificaiton structure, it is safe to
+        %  assume that this tract is entirely composed of the same "thing"
+        %  and that none of its constituent streamlines can be found in any
+        %  of the other tracts. 
+        
+        %i guess this is just the same as above...
+        mergedClassification= bsc_spliceClassifications(mergedClassification,toMergeclassification);
+        
+    elseif and(~nameMapping(iInputs)==iInputs,~isempty(inputClassifications{iInputs}))
+        fprintf('\n non unique input with associated classification detected for fg input %i, performing MERGE',iInputs )
         %% RECONCILE the classification structures, as the current fg corresponds to a previous fg structure
         
         %create a blank vector that is as long as the amalgum fg's fiber
@@ -215,12 +273,16 @@ for iInputs=1:length(inputFGs)
         
         %in the amalgum fg structure, these streamlines correspond to the
         %current fg group, under the first streamline identity presumption
+        %NOTE: nameMapping(iInputs) here is basically presumed to be
+        %~=iInputs (in fact the logical statement guarentees it).  
         fgStreamsIndexes=find (sourceClassification.index==nameMapping(iInputs));
         
         %set the entries in the bufferedMergeIndexVec to the appropriate
         %dictionary values
         %dimension mismatch will cause error here.  If classification
         %structure doesn't correspond, likely fail here.
+        %NOTE : HERE WE ARE SPECIFICALLY CHANGING ONLY THE INDEXES
+        %CORRESPONDING TO THE FG ASSOCIATED WITH THIS INPUT FG.
         bufferedMergeIndexVec(fgStreamsIndexes)= toMergeclassification.index;
         
         %set the to merge index to this now modified and buffered
@@ -228,6 +290,8 @@ for iInputs=1:length(inputFGs)
         toMergeclassification.index=bufferedMergeIndexVec;
         
         %name should be set, so now we merge
+        %i think this function successfulyl deals with the correct
+        %extension of the name space
         mergedClassification = bsc_reconcileClassifications(mergedClassification,toMergeclassification);
         
         
