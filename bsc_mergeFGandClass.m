@@ -196,6 +196,8 @@ end
 %iterates for the number of tracts input, now for the purposes of creating
 %an amalgum classification structure
 for iInputs=1:length(inputFGs)
+
+    curStreamNum=length(find(sourceClassification.index==iInputs));
     
     if ~isempty(inputClassifications{iInputs})
         fprintf('\n Input classification detected for input %i',iInputs)
@@ -210,7 +212,7 @@ for iInputs=1:length(inputFGs)
             %completely uninformative name, but it is the best we can
             %do with brainlife .tck input.
             toMergeclassification.names{1}=strcat('fg',num2str(iInputs));
-            toMergeclassification.index(1:length(toMergeFG.fibers),1)=1;
+            toMergeclassification.index(1:curStreamNum,1)=1;
         end
         
         
@@ -236,7 +238,7 @@ for iInputs=1:length(inputFGs)
         %completely uninformative name, but it is the best we can
         %do with brainlife .tck input.
         toMergeclassification.names{1}=sourceClassification.names{iInputs};
-        toMergeclassification.index(1:length(toMergeFG.fibers),1)=1;
+        toMergeclassification.index(1:curStreamNum,1)=1;
         
     end
     % 10/12/2019 edit:
