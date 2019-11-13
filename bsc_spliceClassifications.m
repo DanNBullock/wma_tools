@@ -43,6 +43,11 @@ if uniqueNamesLength==presumeNameNum
     %adjust the indexing numerals of the classification index that is to be
     %added such that the indexes correspond to the new name vector.
     classificationAdd.index(classificationAdd.index>0)=classificationAdd.index(classificationAdd.index>0)+baseNameNum;
+    
+       
+    %ok, but first actually put in the origional ones too
+    classification.index(1:length(baseClassification.index))=baseClassification.index;
+        
     %Basically, leave the dictionary values for the existing tracts (i.e. tracts
     %from baseClassification) alone, but change the dictionary values of the
     %streamline indexes corresponding to the classificationAdd input to
