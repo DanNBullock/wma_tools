@@ -76,6 +76,15 @@ currentFibIndices = cell(length(rois)+1,1);
 currentFibIndices{1} = 1:length(keepFG);
 fprintf('applying %i segmentation criteria\n',length(rois))
 
+%detect node spacing
+nodespacing=mean(sqrt(sum(diff(fg.fibers{1},1,2).^2)));
+if nodespacing>1.2
+    %nodespacing*.6 to ensure appropriate intersection
+    intersectSpacing=nodespacing*.6;
+else
+    intersectSpacing=.87;
+end
+
 for ir = 1:length(rois)
     fprintf('segmenting with roi %i\n',ir)
     %rois{ir}
@@ -86,7 +95,7 @@ for ir = 1:length(rois)
   end
   
   % Intersect the wholebrain fiber group with "AND" / "NOT" ROIs
-  [fg, ~, keep]  = dtiIntersectFibersWithRoi([],operation{ir},[],rois{ir},fg);
+  [fg, ~, keep]  = dtiIntersectFibersWithRoi([],operation{ir},intersectSpacing,rois{ir},fg);
   fprintf('%i streams remaining after this iteration\n',sum(~keep==0))
 
   % Select the indices fo the fibers that were deleted in the previous
