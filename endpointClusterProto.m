@@ -136,8 +136,8 @@ for ifibers= 1:length(fg.fibers)
         cluster2ToEndpoint2=pdist(vertcat(mean(cluster2,1),endpoint2(ifibers,:)));
         cluster1ToEndpoint2=pdist(vertcat(mean(cluster1,1),endpoint2(ifibers,:)));
         
-        Endpoint1ProxVote=find(min([cluster1ToEndpoint1,cluster2ToEndpoint1])==[cluster1ToEndpoint1,cluster2ToEndpoint1]);
-        Endpoint2ProxVote=find(min([cluster1ToEndpoint2,cluster2ToEndpoint2])==[cluster1ToEndpoint2,cluster2ToEndpoint2]);
+        Endpoint1ProxVote=find(min([cluster1ToEndpoint1,cluster2ToEndpoint1])==[cluster1ToEndpoint1,cluster2ToEndpoint1],1,'first');
+        Endpoint2ProxVote=find(min([cluster1ToEndpoint2,cluster2ToEndpoint2])==[cluster1ToEndpoint2,cluster2ToEndpoint2],1,'first');
         
         Qcluster1ToEndpoint1=pdist(vertcat(mean(quarterCluster1,1),quarterPoint1(ifibers,:)));
         Qcluster2ToEndpoint1=pdist(vertcat(mean(quarterCluster2,1),quarterPoint1(ifibers,:)));
@@ -145,8 +145,8 @@ for ifibers= 1:length(fg.fibers)
         Qcluster2ToEndpoint2=pdist(vertcat(mean(quarterCluster2,1),quarterPoint2(ifibers,:)));
         Qcluster1ToEndpoint2=pdist(vertcat(mean(quarterCluster1,1),quarterPoint2(ifibers,:)));
         
-        Qpoint1ProxVote=find(min([Qcluster1ToEndpoint1,Qcluster2ToEndpoint1])==[Qcluster1ToEndpoint1,Qcluster2ToEndpoint1]);
-        Qpoint2ProxVote=find(min([Qcluster1ToEndpoint2,Qcluster2ToEndpoint2])==[Qcluster1ToEndpoint2,Qcluster2ToEndpoint2]);
+        Qpoint1ProxVote=find(min([Qcluster1ToEndpoint1,Qcluster2ToEndpoint1])==[Qcluster1ToEndpoint1,Qcluster2ToEndpoint1],1,'first');
+        Qpoint2ProxVote=find(min([Qcluster1ToEndpoint2,Qcluster2ToEndpoint2])==[Qcluster1ToEndpoint2,Qcluster2ToEndpoint2],1,'first');
         
         %The naming is off here, but whatever
         sixtyClusterToSixtyPoint=pdist(vertcat(mean(sixtyCluster,1),sixtyPoint(ifibers,:)));
@@ -155,8 +155,8 @@ for ifibers= 1:length(fg.fibers)
         fourtyClusterToFourtyPoint=pdist(vertcat(mean(fourtyCluster,1),fourtyPoint(ifibers,:)));
         sixtyClusterToFourtyPoint=pdist(vertcat(mean(sixtyCluster,1),fourtyPoint(ifibers,:)));
         
-        sixtyProxVote=find(min([sixtyClusterToSixtyPoint,fourtyClusterToSixtyPoint])==[sixtyClusterToSixtyPoint,fourtyClusterToSixtyPoint]);
-        fourtyProxVote=find(min([sixtyClusterToFourtyPoint,fourtyClusterToFourtyPoint])==[sixtyClusterToFourtyPoint,fourtyClusterToFourtyPoint]);
+        sixtyProxVote=find(min([sixtyClusterToSixtyPoint,fourtyClusterToSixtyPoint])==[sixtyClusterToSixtyPoint,fourtyClusterToSixtyPoint],1,'first');
+        fourtyProxVote=find(min([sixtyClusterToFourtyPoint,fourtyClusterToFourtyPoint])==[sixtyClusterToFourtyPoint,fourtyClusterToFourtyPoint],1,'first');
         
         
         Agree1Chk=Endpoint1ProxVote==Qpoint1ProxVote==fourtyProxVote;
