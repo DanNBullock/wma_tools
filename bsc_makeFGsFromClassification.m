@@ -54,7 +54,7 @@ for itracts=1:length(classification.names)
     if ~isempty(unique(classificationGrouping.index(find(classification.index==itracts))))
     colorIndex=unique(classificationGrouping.index(find(classification.index==itracts)));
     else
-        warning('\n Color assignment for tract %s skipped', classification.index{itracts});
+        warning('\n Color assignment for tract %s skipped', classification.index(itracts));
     end
     tractStruc(itracts).fg.colorRgb=colorMapping(colorIndex,:);
     tractStruc(itracts).name=classification.names{itracts};
