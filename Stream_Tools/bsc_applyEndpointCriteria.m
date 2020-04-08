@@ -6,24 +6,21 @@ function [booleanOut]=bsc_applyEndpointCriteria(fg, varargin)
 % criteria.
 %
 % INPUTS:
-% -fg:fg s Will extract
-% midpoints from fg structure if that is put in instead.  It is recommended
-% that midpoints be put in if this function is called multiple times within
-% a script in order to increase speed.
+% -fg: the fg the criteria will be applied to 
 %
-% -varargin: interprets sequential pairings of inputs as (1) a coordinate
-% and (2) a relative criteria.  For example
-% bsc_applyEndpointCriteria(midpointsIn, [0 0 0], 'inferior') would output
-% true values for all midpoints below y=0 (in acpc space).
+% -varargin: interprets sequential triplets of inputs such that
+%    (1) a coordinate
+%    (2) a relative criteria
+%    (3) whether this criteria should apply to 'both', 'one', or 'neither' endpoint
 %
-%  ALTERNATIVE INPUT
+%  ALTERNATIVE INPUT for #1
 %
 %  instead of a coordinate a plane can be input.  In such a case the plane
-%  will be interpreted as the singular value of he plane (i.e. the "narrow"
+%  will be interpreted as the singular value of the plane (i.e. the "narrow"
 %  coordinate).
 %
 % OUTPUTS:
-% -booleanOut: boolean vector indicating which midpoints meet all criteria
+% -booleanOut: boolean vector indicating which streamlines meet all criteria
 %
 %  (C) Daniel Bullock 2018 Bloomington
 %
