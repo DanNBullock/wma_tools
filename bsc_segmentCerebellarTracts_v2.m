@@ -73,7 +73,7 @@ for leftright= [1,2]
     parietoCebBool=posteriorStreams&thisCebBool&~motorCebBool&bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'cerebellum_to_parietal'));
     
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'MotorCerebellar'),motorCebBool);
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},' AnterioFrontoCerebellar'),AnterioFrontoBool);
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'AnterioFrontoCerebellar'),AnterioFrontoBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ThalamicoCerebellar'),thalCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'OccipitoCerebellar'),occipitoCebBool);
     classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'ParietoCerebellar'),parietoCebBool);
