@@ -1,19 +1,20 @@
-function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, fsDir)
-%[classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, fsDir,inflateITer)
+function [classificationOut] =bsc_segmentSuperficialFibers(wbfg, atlas)
+%[classificationOut] =bsc_segmentSuperficialFibers(wbfg, fsDir,inflateITer)
 %
 % This function automatedly segments out superficial fibers in a
 % tractogram.  Here, we take supertifical to mean those streamlines which
 % are close to the grey matter.  We use this (along with a lenght criteria)
 % to select putative u-fibers
-%
+
 % Inputs:
 % -wbfg: a whole brain fiber group structure
 % -fsDir: path to THIS SUBJECT'S freesurfer directory
-%
+% -varargin: priors from previous steps
+
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
-%
-% (C) Daniel Bullock, 2020, Indiana University
+%  Same for the other tracts
+% (C) Daniel Bullock, 2019, Indiana University
 
 %% parameter note & initialization
 
@@ -35,9 +36,9 @@ wmLut=[2,41];
 
 streamLengthLimit=30;
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlas=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
-[inflatedAtlas] =bsc_inflateLabels(fsDir,2);
+[inflatedAtlas] =bsc_inflateLabels(atlas,2);
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 
@@ -54,16 +55,16 @@ for leftright= [1,2]
     sidenum=10000+leftright*1000;
     
     wmROIDegrade=bsc_roiFromAtlasNums(inflatedAtlas,wmLut(leftright),1);
-    wmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(leftright),1);
+    wmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(leftright),1);
     
     if leftright==1
-        OtherwmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(2),5);
+        OtherwmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(2),5);
     else
-        OtherwmROIFull=bsc_roiFromAtlasNums(atlasPath,wmLut(1),5);
+        OtherwmROIFull=bsc_roiFromAtlasNums(atlas,wmLut(1),5);
     end
     z = cellfun(@(x) sum(sqrt(sum((x(:, 1:end-1) - x(:, 2:end)) .^ 2))), wbfg.fibers, 'UniformOutput', true);
     
-    [~, superficialFibersDegradeBool]=wma_SegmentFascicleFromConnectome(wbfg, [{wmROIDegrade} {OtherwmROIFull}], {'not','not'}, 'dud');
+    [superficialFibersDegrade, superficialFibersDegradeBool]=wma_SegmentFascicleFromConnectome(wbfg, [{wmROIDegrade} {OtherwmROIFull}], {'not','not'}, 'dud');
     %[superficialFibersFull, superficialFibersFullBool]=wma_SegmentFascicleFromConnectome(wbfg, [{wmROIFull} {OtherwmROIFull}], {'not','not'}, 'dud');
     
     
