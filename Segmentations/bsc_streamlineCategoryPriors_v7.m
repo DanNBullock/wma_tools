@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, fsDir,inflateITer)
+function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflateITer)
 %[classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, fsDir,inflateITer)
 %
 % This function automatedly segments a whole brain tractogram into
@@ -21,7 +21,7 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, fsDir,inflat
 
 %% parameter note & initialization
 
-[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, fsDir);
+[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, atlas);
 
 
 
@@ -54,12 +54,12 @@ insulaROI=[[117 149]+11000 [117 149]+12000];
 
 fprintf('\n rois set')
 
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 if inflateITer>0
-    [inflatedAtlas] =bsc_inflateLabels(fsDir,inflateITer);
+    [inflatedAtlas] =bsc_inflateLabels(atlas,inflateITer);
 else
-    inflatedAtlas=niftiRead(atlasPath);
+    inflatedAtlas=atlas;
 end
 
 
