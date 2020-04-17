@@ -48,7 +48,7 @@ end
 
 %HUGE CHANGE FOR V2 :  USING THE refCoord AS THE DETERMINANT FOR LEFT RIGHT
 %LRflag=mean(roiIN.coords(:,1))<0;
-LRflag=refCoord<0;
+LRflag=refCoord(1)<0;
 
 %create dummy structure
 roiOUT=roiIN;
