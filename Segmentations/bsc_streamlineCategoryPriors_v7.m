@@ -25,7 +25,7 @@ wbfg = fgRead(wbfg);
 else
     %do nothing
 end
-
+fprintf('\n NOTE: All label numbers cited are from DK2009 \n')
 [superficialClassification] =bsc_segmentSuperficialFibers_v3(wbfg, atlas);
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
@@ -97,7 +97,28 @@ fprintf('\n endpoints extracted')
 
 
 [endpoints1Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints1,'acpc');
+[counts1, groups1]=groupcounts(endpoints1Identity);
+for iUnknownRois=1:length(unknownROIS)
+    fprintf('\n %i endpoints for label %i in RAS group',counts1(iUnknownRois),groups1(iUnknownRois))
+end
+unknownSum1= sum(counts1(ismember(groups1,unknownROIS)));
+fprintf('\n')
+if unknownSum1/length(allStreams)>.05
+    warning('Proportion of unknown streamlines exceeds 5% for RAS endpoints')
+end
+
 [endpoints2Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints2,'acpc');
+[counts2, groups2]=groupcounts(endpoints2Identity);
+for iUnknownRois=1:length(unknownROIS)
+    fprintf('\n %i endpoints for label %i in LPI group',counts2(iUnknownRois),groups2(iUnknownRois))
+end
+unknownSum2= sum(counts2(ismember(groups2,unknownROIS)));
+fprintf('\n')
+if unknownSum2/length(allStreams)>.05
+    warning('Proportion of unknown streamlines exceeds 5% for LPI endpoints')
+end
+
+
 fprintf('\n endpoint identities determined')
 
 

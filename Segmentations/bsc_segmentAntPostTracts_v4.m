@@ -72,138 +72,152 @@ for leftright= [1,2]
     %begin segmentation of Uncinate Fasiculus
 %=========================================================================   
     %1.  ESTABLISH CATEGORY CRITERIA
-    %The unicnate is, very straightforwardly, at fronto temporal tract.
-    frontoTemporalMainBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_temporal'));
-   
-    %however, given how short the tract could be, we should also allow for
-    %streamlines that may have fallen into the u-fiber category
-    frontoTemporalUBool=bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber'));
-    
-    %now we take the conjunct of these
-    frontoTemproalAllBool=or(frontoTemporalMainBool,frontoTemproalAllBool);
 %--------------------------------------------------------------------------  
+    %The unicnate is, very straightforwardly, a fronto temporal tract.
+    frontoTemporalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_temporal'));
+%=========================================================================     
 
     %2.  ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA
-    %The category segmentation is insufficient to isolate the uncinate.
-    %Use 
-    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_temporal')
-    %and/or
-    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_frontal_ufiber')
-    % to confirm this for yourself.  Note a.dsf.asdf.as.df.  As such we
-    % need to apply additional criteria
-%=========================================================================    
-        %2.1 extract the relevant rois from the atlas
-        %check function description for more details, leave final integer
-        %input at 1 for no inflation
-        [someROI1] =bsc_roiFromAtlasNums(atlas,[ROInums],1);
-        [someROI2] =bsc_roiFromAtlasNums(atlas,[ROInums],1);
-        
-        %2.2  Use ROIs to find the indexes of streamlines which terminate
-        %in those ROIS.  Consider also using bsc_endpointAtlasCriteria,
-        %which does not require the rois to be extracted first, but does
-        %take a while if you send in the whole brain fiber group.  It may
-        %be possible to make a variant of that function which impliments a
-        %speedup by preselecting using a bolean index input.
-        [~, corticalCriteriaBool] =  bsc_tractByEndpointROIs(wbfg, {someROI1 someROI2});
+    %in order to prevent certian suprrious streamlines (potentially
+    %implausable, and certianly not part of the uncinate) we can include
+    %some additional segmentation logic to exclude these fibers *while also
+    %not being so strict as to make the segmentation brittle*.  Two of
+    %these criteria will be necessary for the uncinate.  Given that we
+    %require the posterior cluster of streamlines to be located in the
+    %anterior temporal region we can implement criteria relative to the
+    %dorso-ventral axis and the rostro-caudal axis
+%=========================================================================  
+     
+%--------------------------------------------------------------------------  
+    %dorso-ventral criteria:
+    %in general, the endpoints of the uncinate are fairly low in the brain.
+    %furthermore, we note that the arc of the uncinate occurs relatively
+    %close to the amygdala.  Because the streamlines of the uncinate
+    %approach from the ventral side of the amygdala (as they then proceed
+    %anteriorly to the frontal lobes), and reach their apex at around the
+    %top of the amygdala, it is necessarily the case that at least one
+    %endpoint of these streamlines (namely the posterior/inferior
+    %endpoint) is below the top of the amygdala.  Therefore, it is
+    %logically necessary that it is *not* the case that both streamline
+    %endpoints are superior to the top of the amygdala (or else it couldn't
+    %engage in the arcing behavior).  Lets translate this into segmentation
+    %logic.
     
-        %2.3 Add aditional criteria if you wish, for example if you want 
-        %endpoints to be above a particular anatomical roi.  Check the
-        %documentation for these functions to see how to apply them with
-        %other anatomical relations (e.g. 'medial', 'lateral', etc.)
-        superiorPlaneROI = bsc_planeFromROI_v2([ROInums], 'superior',atlas);
-        [relativeAnatomicalEndpointCriteriaBool]=bsc_applyEndpointCriteria(wbfg, superiorPlaneROI, 'superior','one');
+    %begin by generating a plane from the top of the amygdala
+    [amygdalaTopPlane] =bsc_planeFromROI_v2(amigLut(leftright), 'superior',atlas);
+    
+    %now we find all streamlines that have both streamline endpoints
+    %above this plane (we'll negate this criteria later, to adhere to our
+    %logic). Note, this is different than requiring neither streamline to
+    %be above this plane.  This logical operation still permits maximally
+    %one endpoint per streamline to be above this plane.
+    bothAboveAmygBool=bsc_applyEndpointCriteria(wbfg,amygdalaTopPlane,'superior','both');
+    
+    %next we apply a similar bit of logic on the rostro-caudal axis
 %--------------------------------------------------------------------------
+    %rostro-caudal criteria:
+    %in general, the endpoints of the uncinate are fairly *anterior* in the brain.
+    %as we noted above the arc of the uncinate occurs relatively
+    %close to the amygdala. This is true of the rostro-caudal axis as well.
+    %The streamlines of the uncinate have all begun to arc forward anterior
+    %of the posterior of the border of the amygdala.  A consequence,
+    %similar to the one noted above, is that it is *not* the case that both
+    %endpoints are anterior of this posterior amygdala border.  Lets
+    %translate this into segmentation logic.
+    
+    %begin by generating a plane from the posterior of the amygdala
+    [amygdalaPosteriorPlane] =bsc_planeFromROI_v2(amigLut(leftright), 'posterior',atlas);
+    
+    %now we find all streamlines that have both streamline endpoints
+    %posterior to this plane (we'll negate this criteria later, to adhere
+    %to our logic). Note, this is different than requiring neither
+    %streamline to be posterior to this plane.  This logical operation
+    %still permits maximally one endpoint per streamline to be posterior to
+    %this plane.
+    bothPosteriorAmygBool=bsc_applyEndpointCriteria(wbfg,amygdalaPosteriorPlane,'posterior','both');
+    
+    %a third criteria specific to the midpoint and the rostro-caudal plane
+    %will also be necessary.
 
+%=========================================================================   
 
     %3.  APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
-    %at this point in the segmentation, you've already established where
-    %you want the streamlines to terminate, but this may still
-    %underdetermine the tract of interest.  For example, I could be
-    %interested in fronto occipital streamlines, but these could go via a
-    %ventral (i.e. IFOF) or dorsal (i.e. the putative "SFOF", which probably
-    %doesn't really exist).  To further subselect, we can apply additional
-    %criteria.  We'll use an example of putting a plane above the posterior
-    %limit  of the thalamus thalamus, such that we are (to some extent)
-    %selecting for streamlines taking the 
-%==========================================================================    
-        %3.1  Application of anatomically informed planes
-        [superiorThalPlane]= bsc_planeFromROI_v2(thalLut(leftright), 'superior',atlas);
-        [posteriorThalPlane] = bsc_planeFromROI_v2(thalLut(leftright), 'posterior',atlas);
-        %now that we have the two planes we use the function
-        %bsc_modifyROI_v2 to use the superior plane to slice the posterior
-        %plane.  Note: this would result in a different output if you
-        %switched the input rois.  Check the function documentation for
-        %more details.
-        [superiorPosteriorThalPlane]=bsc_modifyROI_v2(atlasPath,posteriorThalPlane, superiorThalPlane, 'superior');
-        %ALSO NOTE: this function is fairly versitile.  You could instead
-        %input a roi number for the first roi input (input 2) and then cut
-        %it using the second roi input (which could instead be a specific
-        %3d coordinate rather than a full plane, if one wished).  In this
-        %way you can further subsegment rois if they are too large for your
-        %purposes.
+    %two additional (non-endpoint) anatomically informed criteria are
+    %necessary.
+    %the first of these is a reflection of the endpoint rostro-caudal
+    %criteria, while the other is a reflection of the
+    %category-segmentation.  Specifically, the category segmentation is
+    %insufficient to isolate the uncinate.
+    %Use 
+    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_temporal')
+    % to confirm this for yourself.  Note that the majority of the
+    % non-uncinate fibers appear to be arcuate fibers .  As such we need to
+    % apply additional criteria to exclude these arcuate-related
+    % streamlines
+%========================================================================= 
+    %--------------------------------------------------------------------------
+    %midpointrostro-caudal criteria:
+    %if the arc of the uncinate occurs anterior to the posterior border of
+    %the amygdala, it stands to reason that the midpoint of those
+    %streamlines would also occur anterior to this border.  Even in the
+    %case of more sigmoidally shaped streamlines (as opposed to u or j
+    %shaped), which do occur and have their endpoints potentially posterior
+    %to the posterior amygdala, the midpoint would still be anterior of
+    %this border if the anterior endpoint is to terminate in the anterior
+    %frontal lobes.  This can rather straightforwardly be translated into
+    %segmentation logic.
+    
+    %we already have the amygdalaPosteriorPlane so we don't need to
+    %generate it again
+
+    %now we find all streamlines that the midpoint anterior of this plane.
+    midpointAntOfPosteriorAmygBool=bsc_applyMidpointCriteria(wbfg,amygdalaPosteriorPlane,'anterior');
+ %--------------------------------------------------------------------------   
+  
+    %subcortical structures like the thalamus (and amygdala) tend to be relatively
+    %invariant in their location across subjects.  This is fortunate
+    %for us, because it looks like all of the arcuate-like fibers
+    %extend *past* the posterior of the thalamus.  Lets generate a
+    %planar roi that we can use as an exclusion criterion.
+    [posteriorThalPlane] =bsc_planeFromROI_v2(thalLut(leftright), 'posterior',atlas);
         
-        %now that you have the plane, you can use whatever roi criteria
-        %function you prefer.  Here we use a modified version of
-        %feSegmentFascicleFromConnectome.  This function variant likely
-        %needs to be refactored and updated itself.  Also remember, this
-        %could be applied as a exclusion criteria as well (via 'not')
-        [~, superiorPosteriorThalCriteriaBool] = wma_SegmentFascicleFromConnectome(wbfg, {superiorPosteriorThalPlane}, {'and'}, 'arbitraryName');
-%--------------------------------------------------------------------------        
-        %3.2  Application of anatomically informed volumetric rois
-        %One potential desired application might be that you wish to select
-        %streamlines which travel along or near a particular gyrus.  We can
-        %use wma tools to select these white matter volumes.
-        
-        %note that we are inflating the cortical rois so that they will
-        %expand into the white matter.  The inflation kernel (last
-        %variable) can be modified as needed.
-        [inflatedROI1] =bsc_roiFromAtlasNums(atlas,[ROInums],5);
-        [inflatedROI2] =bsc_roiFromAtlasNums(atlas,[ROInums],5);
-        [wmROI] =bsc_roiFromAtlasNums(atlas,wmLut{leftright},1);
-        
-        %here we take the intersection of the rois
-        [roi1WMintersection] = bsc_intersectROIs(inflatedROI1, wmROI);
-        [roi2WMintersection] = bsc_intersectROIs(inflatedROI2, wmROI);
-        
-        %now we take the volumetric overlap of the wm areas
-        [roi1and2WMintersection] = bsc_intersectROIs(roi1WMintersection, roi2WMintersection);
-        
-        %the resultant roi can now be used as a segmentation criteria
-        [~, wmVolumeCriteriaBool] = wma_SegmentFascicleFromConnectome(wbfg, {roi1and2WMintersection}, {'and'}, 'arbitraryName');
-%--------------------------------------------------------------------------        
-        %3.3  Application of other anatomically informed criteria
-        %One additional set of criteria that one might like to apply
-        %relates to the midpoints of the streamlines for the tract.  For
-        %example may want the midpoints to be superior (or medial, lateral,
-        %etc.) to some plane.  We can do this as well.
-        
-        %say we wanted to require our midpoints to be above the thalamus.
-        %We could use the planar roi generated in section 3.1 to do this
-        [superiorThalMidpointCriteriaBool]=bsc_applyMidpointCriteria(wbfg, superiorThalPlane,'superior');       
-%--------------------------------------------------------------------------         
+    %now lets use that plane as an exclusion criteria 
+    [~, posteriorThalExcludedBool] = wma_SegmentFascicleFromConnectome(wbfg, {posteriorThalPlane}, {'not'}, 'arbitraryName');
+ 
+%=========================================================================          
     %4.  APPLY ALL BOOLEAN CRITERIA
         %now that we have obtained all of our desired criteria, in the form
         %of several boolean vectors, it's time to apply them as a conjunct
         %(many ands) to obtain a classification structure featuring this
         %tract
-    tractNameVar=strcat(sideLabel{leftright},'TractName');
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoFrontalBool,corticalCriteriaBool,relativeAnatomicalEndpointCriteriaBool,superiorPosteriorThalCriteriaBool,wmVolumeCriteriaBool,superiorThalMidpointCriteriaBool);
+    tractNameVar=strcat(sideLabel{leftright},'_uncinate');
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,posteriorThalExcludedBool,frontoTemporalBool,~bothPosteriorAmygBool,~bothAboveAmygBool,midpointAntOfPosteriorAmygBool);    
+%% Arcuate
+%as we noted when segmenting the uncinate, the fronto temporal category
+%seems to be primarily composed of uncinate and arcuate streamlines.  Lets
+%use what we genrated for the uncinate to get the arcuate
+%========================================================================= 
+    %1.  ESTABLISH CATEGORY CRITERIA
+    %The arcuate is also, very straightforwardly, a fronto temporal tract.
+    %we dont need to regenerate the frontoTemporalBool, we still have it.
+%=========================================================================       
+    %3.  APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
+    %we'll skip to using anatomically informed criteria for now, and come
+    %back to endpoint-related criteria if we need to.
+    %
+    %as before, the category segmentation is insufficient to isolate the
+    %arcuate.
+    %as before, you can use 
+    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_temporal')
+    % to confirm this for yourself.  Note that the majority of the
+    % non-uncinate fibers appear to be arcuate fibers (and vice-versa.  All
+    % we have to do is negate the boolean vector we got for the posterior
+    % thalamus exclusion plane segmentation.  In this way we will obtain
+    % the indexes of streamlines that *do* pass through that posterior
+    % plane.
+    posteriorThalExcludedBool=~posteriorThalExcludedBool;
 
-%% TRACT 2
-% now you can apply a similar series of requirements as above in order to
-% segment another tract within this function.  Why would you want to
-% segment multiple tracts in one function?  In some cases you may be using
-% the same roi multiple times in order to segment several tracts.  It would
-% thus be useful to segment them in the same function and reuse the roi so
-% that you don't have to keep regenerating it.  Also, it may be the case
-% that once you segment a tract, you can then exclude those tracts from a
-% subsequent segmentation.  In this way, you would be applying a criteria
-% of [not a member of this previous tract] to some subsequent tract.
 
-%SPECIAL NOTE:  Be sure to use bsc_concatClassificationCriteria after
-%you've generated all of your boolean criteria for each tract.  If you
-%don't do this, it won't be added to the classification structure that is
-%eventually output from this function
 end
 
 

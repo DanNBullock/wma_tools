@@ -28,8 +28,6 @@ end
 %use some old code to make a singleton tract object
 tractStruc = bsc_makeFGsFromClassification_v5(currentSignleClass, wbfg);
 
-%creat figure object
-figure
 %go ahead and plot
 bsc_plotEndpointsOnFG_v2(tractStruc{1})
 end

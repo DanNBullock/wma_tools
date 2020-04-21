@@ -35,7 +35,7 @@ if isfield(fg, 'name')
         %replace underscores, because matlab does weird things in title
         %names with underscores
         nameHold=strrep(fg.name,'_',' ');
-        title(strcat('Plot of ', nameHold));
+        title(['Plot of ', nameHold]);
     end
 end
 

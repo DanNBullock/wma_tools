@@ -37,7 +37,7 @@ if ~isempty( fg.fibers)
     plot3([0 0],[0 0],[50 -50],'b','LineWidth',1)
     
     bsc_quickPlot(fg,'m')
-    hold on
+
     
     %get the midpoints, for labeling
     for iFibers=1:length(fg.fibers)
