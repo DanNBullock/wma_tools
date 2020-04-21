@@ -80,11 +80,11 @@ for leftright= [1,2]
     %2.  ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA
     %in order to prevent certian suprrious streamlines (potentially
     %implausable, and certianly not part of the uncinate) we can include
-    %some additional segmentation logic to exclude these fibers *while also
-    %not being so strict as to make the segmentation brittle*.  Two of
-    %these criteria will be necessary for the uncinate.  Given that we
-    %require the posterior cluster of streamlines to be located in the
-    %anterior temporal region we can implement criteria relative to the
+    %some additional segmentation logic to exclude these streamlines *while
+    %also not being so strict as to make the segmentation brittle*.  Two of
+    %these endpoint  criteria will be necessary for the uncinate.  Given
+    %that we require the posterior cluster of streamlines to be located in
+    %the anterior temporal region we can implement criteria relative to the
     %dorso-ventral axis and the rostro-caudal axis
 %=========================================================================  
      
@@ -117,12 +117,12 @@ for leftright= [1,2]
 %--------------------------------------------------------------------------
     %rostro-caudal criteria:
     %in general, the endpoints of the uncinate are fairly *anterior* in the brain.
-    %as we noted above the arc of the uncinate occurs relatively
+    %as we noted above, the arc of the uncinate occurs relatively
     %close to the amygdala. This is true of the rostro-caudal axis as well.
     %The streamlines of the uncinate have all begun to arc forward anterior
     %of the posterior of the border of the amygdala.  A consequence,
     %similar to the one noted above, is that it is *not* the case that both
-    %endpoints are anterior of this posterior amygdala border.  Lets
+    %endpoints are posterior of this posterior amygdala border.  Lets
     %translate this into segmentation logic.
     
     %begin by generating a plane from the posterior of the amygdala
