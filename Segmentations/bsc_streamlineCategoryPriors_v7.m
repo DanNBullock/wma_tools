@@ -58,9 +58,10 @@ insulaROI=[[117 149]+11000 [117 149]+12000];
 fprintf('\n rois set')
 
 %atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+inflateITer=2;
 
 if inflateITer>0
-    [inflatedAtlas] =bsc_inflateLabels(atlas,inflateITer);
+    [inflatedAtlas] =bsc_inflateLabels_v3(atlas,inflateITer);
 else
     inflatedAtlas=atlas;
 end
@@ -68,7 +69,7 @@ end
 
 %to account for streamlines that cross and then come back
 leftROI=bsc_roiFromAtlasNums(inflatedAtlas,leftROIS,1);
-rightROI=bsc_roiFromAtlasNums(inflatedAtlas,leftROIS,1);
+rightROI=bsc_roiFromAtlasNums(inflatedAtlas,rightROIS,1);
 [~, leftStreamsBool]=wma_SegmentFascicleFromConnectome(wbfg, {leftROI}, {'and'}, 'dud');
 [~, rightStreamsBool]=wma_SegmentFascicleFromConnectome(wbfg, {rightROI}, {'and'}, 'dud');
 
@@ -105,7 +106,7 @@ excludeBool=zeros(1,length(allStreams));
 includeBool=excludeBool;
 LeftBool=excludeBool;
 RightBool=excludeBool;
-implausBool=excludeBool
+implausBool=excludeBool;
 interHemiBool=excludeBool;
 validUIndexes=excludeBool;
 bothSides=excludeBool;
