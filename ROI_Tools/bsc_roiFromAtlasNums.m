@@ -15,9 +15,7 @@ function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 %
 %  OUTPUTS:
 %  -mergedROI: a merged ROI which has coordinates corresponding to each of
-%  the fs regions associated with a number entered in the fsROInums.  For
-%  example [3,42] would create a grey matter mask roi, while [2, 41] would
-%  create a white matter mask roi
+%  the atlas regions from the passed in label indexes
 %
 %  NOTE:  Makes a call to mri_convert, so requires that FreeSurfer be
 %  installed and set up properly.
@@ -25,7 +23,7 @@ function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 %
 
 %% set up aparcAsegFile
-
+%probably won't work any more, but at least it will throw an error.
 if or(isstring(atlas),ischar(atlas))
     [fpath,fname,EXT] = fileparts(atlas);
     if strcmp(EXT,'.mgz')
@@ -82,7 +80,5 @@ if length(mergedROI.coords)==0
     warning('Empty ROI returned for roi %s', roiNameString)
 else
 end
-
-disp('done bsc_roiFromAtlasNum')
 
 end
