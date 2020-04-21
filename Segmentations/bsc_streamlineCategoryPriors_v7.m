@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas)
+function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflateITer)
 %[classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, fsDir,inflateITer)
 %
 % This function automatedly segments a whole brain tractogram into
@@ -58,7 +58,6 @@ insulaROI=[[117 149]+11000 [117 149]+12000];
 fprintf('\n rois set')
 
 %atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
-inflateITer=2;
 
 if inflateITer>0
     [inflatedAtlas] =bsc_inflateLabels_v3(atlas,inflateITer);
