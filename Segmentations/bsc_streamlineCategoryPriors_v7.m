@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflateITer)
+function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas)
 %[classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, fsDir,inflateITer)
 %
 % This function automatedly segments a whole brain tractogram into
@@ -10,9 +10,7 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflat
 %
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
-% -inflateITer:  the number of inflation iterations to go through for the
-% rois.  This fills in islands/holes.  Recommend 2.
+% -atlas: path to THIS SUBJECT'S freesurfer directory
 %
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
@@ -21,9 +19,14 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflat
 
 %% parameter note & initialization
 
-[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, atlas);
+% loads object if path passed
+if ischar(wbfg)
+wbfg = fgRead(wbfg);
+else
+    %do nothing
+end
 
-
+[superficialClassification] =bsc_segmentSuperficialFibers_v3(wbfg, atlas);
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 leftROIS=[[101:1:175]+11000 26  17 18 7 8 10:13];
@@ -224,9 +227,9 @@ for iStreams=1:length(allStreams)
     end
     
     if or(LeftBool(iStreams),singleLeftBoolproto(iStreams))&includeBool(iStreams)&~interhemiFlag(iStreams)
-        streamName{iStreams}=strcat('left',streamName{iStreams});
+        streamName{iStreams}=strcat('left_',streamName{iStreams});
     elseif or(RightBool(iStreams),singleRightBoolproto(iStreams))&includeBool(iStreams)&~interhemiFlag(iStreams)
-        streamName{iStreams}=strcat('right',streamName{iStreams});
+        streamName{iStreams}=strcat('right_',streamName{iStreams});
     end
     
     if interhemiFlag(iStreams)&validUIndexes(iStreams)&~superficialClassification.index(iStreams)==0

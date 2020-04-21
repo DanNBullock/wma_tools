@@ -1,14 +1,13 @@
-function [classificationOut] =bsc_genericSegmentFunction(wbfg, atlas, categoryClassification)
-% [classificationOut] = bsc_genericSegmentFunction(wbfg, fsDir, categoryClassification)
+function [classificationOut] =bsc_segmentAntPostTracts_v4(wbfg,atlas,categoryClassification)
+% [classificationOut] = bsc_segmentAntPostTracts_v4(wbfg, atlas, categoryClassification)
 %
-% This is the template segmentation script for the refactored version of
-% wma tools segmentations.  This is being provided to serve as a basic
-% framework for future segmentation functions and to illustrate the basic
-% logic of this format.
+% This function segments several anterior-posterior oriented tracts.
+% Because many of the planes and anatomical references are shared amongst
+% these tracts, they are segmented here together.
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -atlas: path to the atlas  used in the segmentation 
+% -atlas: path to the atlas  used in the segmentation  
 % -categoryClassification: the classification structure resulting from the
 % classification segmentation.  Done outside of this function to avoid
 % doing it repeatedly
@@ -19,6 +18,12 @@ function [classificationOut] =bsc_genericSegmentFunction(wbfg, atlas, categoryCl
 % (C) Daniel Bullock, 2020, Indiana University
 
 %% parameter notes & initialization
+
+if ischar(wbfg)
+wbfg=fgRead(wbfg);
+else
+    %do nothing
+end
 
 %create left/right labels.  For use with naming conventions later.
 sideLabel={'left','right'};
@@ -63,21 +68,29 @@ for leftright= [1,2]
     %numbering scheme. left = 1, right = 2
     sidenum=10000+leftright*1000;
     
-    %% Tract 1
-    %begin segmentation of tract 1
+    %% Uncinate
+    %begin segmentation of Uncinate Fasiculus
 %=========================================================================   
     %1.  ESTABLISH CATEGORY CRITERIA
-    %usingthe category segmentation output, go ahead and establish a
-    %boolean index of the streamlines meeting this criteria.  Will be used
-    %as part of a later logical conjunct.  Here we use the example of
-    %within frontal lobe streamlines.
-    frontoFrontalBool=  or( bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_frontal')),   bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber')));
+    %The unicnate is, very straightforwardly, at fronto temporal tract.
+    frontoTemporalMainBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_temporal'));
+   
+    %however, given how short the tract could be, we should also allow for
+    %streamlines that may have fallen into the u-fiber category
+    frontoTemporalUBool=bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber'));
+    
+    %now we take the conjunct of these
+    frontoTemproalAllBool=or(frontoTemporalMainBool,frontoTemproalAllBool);
 %--------------------------------------------------------------------------  
 
-
     %2.  ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA
-    %if you have more specific criteria (positive or negative) for the
-    %cortical terminations of your tract, do that here.
+    %The category segmentation is insufficient to isolate the uncinate.
+    %Use 
+    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_temporal')
+    %and/or
+    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_frontal_ufiber')
+    % to confirm this for yourself.  Note a.dsf.asdf.as.df.  As such we
+    % need to apply additional criteria
 %=========================================================================    
         %2.1 extract the relevant rois from the atlas
         %check function description for more details, leave final integer
