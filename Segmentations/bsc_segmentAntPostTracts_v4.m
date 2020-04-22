@@ -131,7 +131,7 @@ for leftright= [1,2]
     %now we find all streamlines that have both streamline endpoints
     %posterior to this plane (we'll negate this criteria later, to adhere
     %to our logic). Note, this is different than requiring neither
-    %streamline to be posterior to this plane.  This logical operation
+    %streamline to be anterior to this plane.  This logical operation
     %still permits maximally one endpoint per streamline to be posterior to
     %this plane.
     bothPosteriorAmygBool=bsc_applyEndpointCriteria(wbfg,amygdalaPosteriorPlane,'posterior','both');
@@ -142,18 +142,10 @@ for leftright= [1,2]
 %=========================================================================   
 
     %3.  APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
-    %two additional (non-endpoint) anatomically informed criteria are
-    %necessary.
-    %the first of these is a reflection of the endpoint rostro-caudal
-    %criteria, while the other is a reflection of the
-    %category-segmentation.  Specifically, the category segmentation is
-    %insufficient to isolate the uncinate.
-    %Use 
-    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_temporal')
-    % to confirm this for yourself.  Note that the majority of the
-    % non-uncinate fibers appear to be arcuate fibers .  As such we need to
-    % apply additional criteria to exclude these arcuate-related
-    % streamlines
+    %Two additional (non-endpoint) anatomically informed criteria are
+    %necessary. The first of these is related to the endpoint rostro-caudal
+    %criteria, while the other is retlated to  the category-segmentation.
+
 %========================================================================= 
     %--------------------------------------------------------------------------
     %midpointrostro-caudal criteria:
@@ -174,6 +166,15 @@ for leftright= [1,2]
     midpointAntOfPosteriorAmygBool=bsc_applyMidpointCriteria(wbfg,amygdalaPosteriorPlane,'anterior');
  %--------------------------------------------------------------------------   
   
+    %As it should have been clear by now the category segmentation is
+    %insufficient to isolate the uncinate.
+    %Use 
+    % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_temporal')
+    % to confirm this for yourself.  Note that the majority of the
+    % non-uncinate fibers appear to be arcuate fibers.  How can we exclude
+    % these fibers?  By applying a plane that selectively targets the
+    % arcuate streamlines.
+ 
     %subcortical structures like the thalamus (and amygdala) tend to be relatively
     %invariant in their location across subjects.  This is fortunate
     %for us, because it looks like all of the arcuate-like fibers
@@ -189,6 +190,7 @@ for leftright= [1,2]
         %now that we have obtained all of our desired criteria, in the form
         %of several boolean vectors, it's time to apply them as a conjunct
         %(many ands) to obtain a classification structure featuring this
+       
         %tract
     tractNameVar=strcat(sideLabel{leftright},'_uncinate');
     classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,posteriorThalExcludedBool,frontoTemporalBool,~bothPosteriorAmygBool,~bothAboveAmygBool,midpointAntOfPosteriorAmygBool);    
@@ -216,8 +218,27 @@ for leftright= [1,2]
     % the indexes of streamlines that *do* pass through that posterior
     % plane.
     posteriorThalExcludedBool=~posteriorThalExcludedBool;
+    
+        %begin by generating a plane from the posterior of the amygdala
+    [lateralThalPlane] =bsc_planeFromROI_v2(thalLut(leftright), 'lateral',atlas);
+    
+    %now we find all streamlines that have both streamline endpoints
+    %posterior to this plane (we'll negate this criteria later, to adhere
+    %to our logic). Note, this is different than requiring neither
+    %streamline to be anterior to this plane.  This logical operation
+    %still permits maximally one endpoint per streamline to be posterior to
+    %this plane.
+   eitherLatThalBool=bsc_applyEndpointCriteria(wbfg,lateralThalPlane,'medial','either');
+   
+   [postVentPlane] =bsc_planeFromROI_v2(ventricleLut(leftright), 'posterior',atlas);
+   
+      eitherPostVentBool=bsc_applyEndpointCriteria(wbfg,postVentPlane,'posterior','either');
+      
+      %midpoint amigdala
 
-
+  tractNameVar=strcat(sideLabel{leftright},'_arcuate');
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,~posteriorThalExcludedBool,frontoTemporalBool,~eitherLatThalBool,~eitherPostVentBool);    
+   %bsc_quickPlotClassByName(wbfg,classificationOut,'left_arcuate')
 end
 
 
