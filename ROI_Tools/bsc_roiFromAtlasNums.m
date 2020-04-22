@@ -1,4 +1,5 @@
 function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
+%  [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 %
 %  INPUTS:
 %  -atlas:  path to the atlas nii.gz that you would like to use.
@@ -17,32 +18,31 @@ function [mergedROI] =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel)
 %  -mergedROI: a merged ROI which has coordinates corresponding to each of
 %  the atlas regions from the passed in label indexes
 %
-%  NOTE:  Makes a call to mri_convert, so requires that FreeSurfer be
-%  installed and set up properly.
+%  NOTE:  Previously atlas input was fsDir input, and had a case for
+%  converting .mgz.nii.gz.  Now we will presume .nii.gz (path or object) being passed in
+%  this field and throw an error otherwise.
 % % (C) Daniel Bullock 2017 Bloomington, Indiana
 %
 
-%% set up aparcAsegFile
-%probably won't work any more, but at least it will throw an error.
+%% get the nifti
 if or(isstring(atlas),ischar(atlas))
-    [fpath,fname,EXT] = fileparts(atlas);
-    if strcmp(EXT,'.mgz')
-        fprintf('\n .mgz file entered.  Creating .nii.gz using mri_convert')
-        %apaprently necessary for matlab?
-        spaceChar={' '};
-        %I dont know why this is necessary
-        quoteString=strcat('mri_convert',spaceChar, atlas ,spaceChar, fullfile(fpath,fname,'.nii.gz'));
-        quoteString=quoteString{:};
-        [status result] = system(quoteString, '-echo');
-        if status~=0
-            warning('/n Error generating aseg nifti file.  There may be a problem finding the file. Output: %s ',result)
-            
-        end
-    end
+    %fileparts doesn't work too well here. handles either compressed or
+    %uncompressed
+     niftiBool= or(strcmp(atlas(end-5:end),'nii.gz'),strcmp(atlas(end-2:end),'nii'));
+    %if a nifti is detected load it
+    if niftiBool
     atlas=niftiRead(atlas);
+    %yell at the user for being inefficeint.  Actually the coder.
+    warning('pass a pre-loaded nifti to speed up processing')
     fprintf('\n atlas loaded')
+    else %not actually a nifti
+        error('Atlas path input (%s) does not point to a nifti',atlas)
+    end
+else
+    %do nothing, its already an object
 end
 
+%% generate inermediary nifti mask from requested labels
 fprintf('Generating composite roi from region(s) %s\n', num2str(ROInums))
 %get size of atlasNifti.data and make a blank matrix mask for it
 atlasDataSize=size(atlas.data);
@@ -52,12 +52,20 @@ ROImask=blankLabelNifti;
 roiNameString=[];
 for iRois = ROInums
     ROImask=or(ROImask,atlas.data==iRois);
+    %warn the user if that index isn't found in this nifti
+    if ~any(atlas.data==iRois)
+        warning('no voxels for %i found in this atlas',iRois)
+        fprintf('\n fname: %s',atlas.fname)
+        fprintf('\n descrip: %s',atlas.descrip)
+    end
+        
     if iRois==ROInums(end)
         roiNameString=strcat(roiNameString,num2str(iRois));
     else
         roiNameString=strcat(roiNameString,num2str(iRois),'_');
     end
 end
+
 
 %% converts nifti formatting to roi formatting
 %smooth if you want to
