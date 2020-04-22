@@ -24,9 +24,7 @@ function [outAtlas] = fnDeislandLabels_v3(atlas,maxisleSize,replaceVal)
 %  outAtlas: an modified version of the input atlas with the islands
 %  removed
 %
-% voxles from outside of the largest continuous label (bad freesurfer labels)
-%
-%   Detailed explanation goes here
+%  Adapted from code first by https://github.com/bcmcpher
 %
 % Brent McPherson, (c) 2019, Indiana University
 % Dan Bullock, slight modifications.
