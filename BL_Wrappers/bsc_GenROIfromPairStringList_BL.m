@@ -2,7 +2,7 @@ function bsc_GenROIfromPairStringList_BL()
 % bsc_genNiftiROIfromStringList(feORwbfg,atlas,ROIstring, smoothKernel)
 %
 % Given a string list of rois (in the specified format) loops over
-% the list and generates nifti ROI files for each 
+% the list and generates nifti ROI files for each
 %
 %  INPUTS:
 %  -feORwbfg: either a string or an object, to either a wbFG or an FE
@@ -15,8 +15,8 @@ function bsc_GenROIfromPairStringList_BL()
 %  654 \n 25 45 56; 23 \n 456 34; 35 75'.  Must correspond to the values in
 %  the atlas nifti itself.
 %
-%  OUTPUTS: 
-% -classification: 
+%  OUTPUTS:
+% -classification:
 %  The strucure has a field "names" with (N) names of the tracts classified
 %  while the field "indexes" has a j long vector (where  j = the nubmer of
 %  streamlines in wbFG (i.e. length(wbFG.fibers)).  This j long vector has
@@ -30,26 +30,31 @@ function bsc_GenROIfromPairStringList_BL()
 %  (C) Daniel Bullock 2018 Bloomington, Indiana
 %% Begin code
 
- if ~isdeployed
-     disp('adding paths');
-     addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
-     addpath(genpath('/N/u/brlife/git/jsonlab'))
-     addpath(genpath('/N/u/brlife/git/vistasoft'))
-     addpath(genpath('/N/u/brlife/git/wma_tools'))
- end
+if ~isdeployed
+    disp('adding paths');
+    addpath(genpath('/N/soft/rhel7/spm/8')) %spm needs to be loaded before vistasoft as vistasoft provides anmean that works
+    addpath(genpath('/N/u/brlife/git/jsonlab'))
+    addpath(genpath('/N/u/brlife/git/vistasoft'))
+    addpath(genpath('/N/u/brlife/git/wma_tools'))
+end
 
 %config = loadjson('/N/dc2/projects/lifebid/HCP/Dan/GitStoreDir/ROIs2ROIsSegment/config.json');
 config = loadjson('config.json')
 
 ROIstring=config.roiPairs;
-smoothKernel=config.smoothKernel;
+
+if isfield(config,'smoothKernel')
+    smoothKernel=config.smoothKernel;
+else
+    smoothKernel=1
+end
 
 if isfield(config,'atlas')
-       atlas=config.atlas
+    atlas=config.atlas
 end
 
 if isfield(config,'ROI')
-      ROIdir=config.ROI
+    ROIdir=config.ROI
 end
 
 %% gen ROI
@@ -60,24 +65,12 @@ ROIstring=strrep(ROIstring,';',newline);
 stringCells = splitlines(ROIstring);
 mkdir('roi/')
 
-for iROIs=1:length(stringCells)
-    ROInums=str2num(stringCells{iROIs});
-    %% run the merge roi function
-    if ~notDefined('atlas')
-        mergedROI =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel);
-               currROIName=fullfile(pwd,strcat('/roi/ROI',num2str(iROIs),'.nii.gz'));
-        [~, ~]=dtiRoiNiftiFromMat (mergedROI,atlas,currROIName,1);
-    elseif ~notDefined('ROIdir')
-        for iROInums=1:length(ROInums)
-            niiPaths{iROInums}=strcat(ROIdir,'ROI',num2str(ROInums(iROInums)),'.nii.gz');
-        end
-        if length(ROInums)>1
-            
-            mergedROI = niftiMerge(niiPaths, strcat('rois/ROI',strrep(num2str(ROInums),'  ','_'),'.nii.gz'));
-        end
-        currROIName=fullfile(pwd,strcat('/roi/ROI',num2str(iROIs),'.nii.gz'));
-        fprintf('\n saving %s',currROIName)
-        niftiWrite(mergedROI,currROIName)
-    end
+mergedROIs=amalgumROIsFromInput(atlas,stringCells,smoothKernel)
+
+for iROIs=1:length(mergedROIs)
+    currentROI=mergedROIs;
+    %set this up to have the correct output path and name
+    currROIName=fullfile(pwd,'roi',strcat((currentROI.name),'.nii.gz'));
+    niftiWrite(mergedROI,currROIName)
 end
 end
