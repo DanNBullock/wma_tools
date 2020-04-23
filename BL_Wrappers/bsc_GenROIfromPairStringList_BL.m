@@ -65,12 +65,12 @@ ROIstring=strrep(ROIstring,';',newline);
 stringCells = splitlines(ROIstring);
 mkdir('roi/')
 
-mergedROIs=amalgumROIsFromInput(atlas,stringCells,smoothKernel)
+mergedROIs=amalgumROIsFromInput(atlas,stringCells,smoothKernel);
 
 for iROIs=1:length(mergedROIs)
-    currentROI=mergedROIs;
+    currentROI=mergedROIs{iROIs};
     %set this up to have the correct output path and name
     currROIName=fullfile(pwd,'roi',strcat((currentROI.name),'.nii.gz'));
-    niftiWrite(mergedROI,currROIName)
+    niftiWrite(currentROI,currROIName)
 end
 end
