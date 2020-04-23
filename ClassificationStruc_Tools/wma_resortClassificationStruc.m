@@ -102,7 +102,7 @@ for itracts=groupOrdering
         warning('\n %s has no associated streamlines', classificationGrouping.names{itracts})
     end
     
-    classificationIn.names
+
     %find which indexes in the input classification correspond to this group
     uniqueIndexes=unique(candidateIndexes);
     %find the cooresponding names
