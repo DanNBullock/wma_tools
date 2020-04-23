@@ -33,11 +33,12 @@ function outputROIS=amalgumROIsFromInput(atlasORroiDir,multipleRequestedAmalgums
 %% begin code
 
 %load the atlas if an atlas is passed
-if strcmp(atlasORroiDir(end-5:end),'.nii.gz')
-    atlas=niftiRead(atlasORroiDir);
-elseif isstruct(atlasORroiDir)
+
+if isstruct(atlasORroiDir)
     %maybe implement more checks here at a later date
     atlas=atlasORroiDir;
+elseif strcmp(atlasORroiDir(end-5:end),'.nii.gz')
+    atlas=niftiRead(atlasORroiDir);
 else
     %do nothing
 end
@@ -46,46 +47,49 @@ outputROIS=[];
 
 %iterate across input requests
 for iROIsOut=1:length(multipleRequestedAmalgums)
-    %roiDirCase
-    if isDir(atlasORroiDir)
-        currentRoisRequested=splitlines(compose(strrep(multipleRequestedAmalgums{iROIsOut},' ','\n')));
-        %drop the empty cells
-        currentRoisRequested=currentRoisRequested(~cellfun(@isempty,(currentRoisRequested)));
-        for iROIrequest=1:length(currentRoisRequested)
-            currentRequest=currentRoisRequested{iROIrequest};
-            %avoiding indexing the end of the string, will just use
-            %contains
-            if contains(currentRequest,'nii.gz')
-                currentRequestFname=fullfile(atlasORroiDir,currentRequest);
-            else %in the case that nii.gz isn't on the end of the name
-                currentRequestFname=fullfile(atlasORroiDir,strcat(currentRequest,'.nii.gz'));
+    %roiDirCase, shouldn't be char at this point if it isn't a folder
+    if ischar(atlasORroiDir)
+        if isfolder(atlasORroiDir)
+            currentRoisRequested=splitlines(compose(strrep(multipleRequestedAmalgums{iROIsOut},' ','\n')));
+            %drop the empty cells
+            currentRoisRequested=currentRoisRequested(~cellfun(@isempty,(currentRoisRequested)));
+            for iROIrequest=1:length(currentRoisRequested)
+                currentRequest=currentRoisRequested{iROIrequest};
+                %avoiding indexing the end of the string, will just use
+                %contains
+                if contains(currentRequest,'nii.gz')
+                    currentRequestFname=fullfile(atlasORroiDir,currentRequest);
+                else %in the case that nii.gz isn't on the end of the name
+                    currentRequestFname=fullfile(atlasORroiDir,strcat(currentRequest,'.nii.gz'));
+                end
+                %now try and load it... maybe
+                if isfile (currentRequestFname)
+                    currentROI=niftiRead(currentRequestFname);
+                else
+                    error('file %s does not exist',currentRequestFname)
+                end
+                
+                %now merge them if the input specified to do so
+                %kind of elegant, actually
+                if iROIrequest==1
+                    outputROIS{iROIsOut}=currentROI;
+                else
+                    outputROIS{iROIsOut}=bsc_mergeROIs(outputROIS{iROIsOut},currentROI);
+                end
+                outputROIS{iROIsOut}.data=smooth3(outputROIS{iROIsOut}.data,'box',smoothKernel);
+                
             end
-            %now try and load it... maybe
-            if isfile (currentRequestFname)
-                currentROI=niftiRead(currentRequestFname);
-            else
-                error('file %s does not exist',currentRequestFname)
-            end
-            
-            %now merge them if the input specified to do so
-            %kind of elegant, actually
-            if iROIrequest==1
-                outputROIS{iROIsOut}=currentROI;
-            else
-                outputROIS{iROIsOut}=bsc_mergeROIs(outputROIS{iROIsOut},currentROI);
-            end
-            outputROIS{iROIsOut}.data=smooth3(outputROIS{iROIsOut}.data,'box',smoothKernel);
-            
+            %is char but isn't a folder?
         end
         %if the atlas exists and has been loaded
     elseif exist('atlas','var')
         %extract current label requests
-        if or(ischar(multipleRequestedAmalgums{iLines}),isstr(multipleRequestedAmalgums{iLines}))
-            currentAtlasLabelsRequested=str2num(multipleRequestedAmalgums{iLines});
-        elseif isnumeric(multipleRequestedAmalgums{iLines})%if its a number
-            currentAtlasLabelsRequested=multipleRequestedAmalgums{iLines};
+        if or(ischar(multipleRequestedAmalgums{iROIsOut}),isstr(multipleRequestedAmalgums{iROIsOut}))
+            currentAtlasLabelsRequested=str2num(multipleRequestedAmalgums{iROIsOut});
+        elseif isnumeric(multipleRequestedAmalgums{iROIsOut})%if its a number
+            currentAtlasLabelsRequested=multipleRequestedAmalgums{iROIsOut};
         else
-            multipleRequestedAmalgums{iLines}
+            multipleRequestedAmalgums{iROIsOut}
             error('Input not recognized')
         end
         % because of how bsc_roiFromAtlasNums handles inputs, we dont need
@@ -93,7 +97,7 @@ for iROIsOut=1:length(multipleRequestedAmalgums)
         % vector should be fine
         currentROI =dtiRoiFromNiftiObjectSmoothWrapper(atlas,currentAtlasLabelsRequested, smoothKernel);
         
-        outputROIS{iLines}=currentROI;
+        outputROIS{iROIsOut}=currentROI;
         
     else %if you don't recognize the input
         fprintf('\n %s',atlasORroiDir)
