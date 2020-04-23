@@ -48,6 +48,8 @@ ROIstring=config.roiPairs;
 
 if isfield(config,'smoothKernel')
     smoothKernel=config.smoothKernel;
+else
+    smoothKernel=1;
 end
 
 if isfield(config,'atlas')
@@ -61,54 +63,20 @@ if isfield(config,'ROIs')
       ROIdir=config.ROI;
 end
 
-%% parse the input ROI information
+%% This just is  bsc_GenROIfromPairStringList_V3_BL
 
 ROIstring=strrep(ROIstring,'\n',newline);
 ROIstring=strrep(ROIstring,';',newline);
 stringCells = splitlines(ROIstring);
 
-%you shouldn't have an roi field and an atlas field in your config
-if and(isfield(config,'atlas'),~or(isfield(config,'ROI'),isfield(config,'ROIs')))
-    %extract rois from atlas
-    for iLines=1:length(stringCells)
-        %extract current label requests
-        currentAtlasLabelsRequested=str2num(stringCells{iLines});
-        % because of how bsc_roiFromAtlasNums handles inputs, we dont need
-        % to split lines or do anythign complex, just passing in an integer
-        % vector should be fine
-        currentROI =dtiRoiFromNiftiObjectSmoothWrapper(atlas,currentAtlasLabelsRequested, smoothKernel);
-        
-        mergedROIs{iLines}=currentROI; 
-    end
-elseif and(~isfield(config,'atlas'),or(isfield(config,'ROI'),isfield(config,'ROIs')))
-    for iLines=1:length(stringCells)
-        currentRoisRequested=splitlines(strrep(stringCells{iLines},' ','\n'));
-        for iROIrequest=1:length(currentRoisRequested)
-            currentRequest=currentRoisRequested{iROIrequest};
-            %avoiding indexing the end of the string, will just use
-            %contains
-            if contains(currentRequest,'nii.gz')
-                currentRequestFname=fullfile(ROIdir,currentRequest);
-            else %in the case that nii.gz isn't on the end of the name
-                currentRequestFname=fullfile(ROIdir,strcat(currentRequest,'.nii.gz'));
-            end
-            %now try and load it... maybe
-            if isfile (currentRequestFname)
-                currentROI=niftiRead(currentRequestFname);
-            else
-                error('file %s does not exist',currentRequestFname)
-            end
-            
-            %now merge them if the input specified to do so
-            %kind of elegant, actually
-            if iROIrequest==1
-            mergedROIs{iLines}=currentROI;
-            else
-            mergedROIs{iLines}=bsc_mergeROIs(mergedROIs{iLines},currentROI);
-            end
-        end
-    end     
+%input the atlas if you have one, or the roi directory if you have that
+if isfield(config,'atlas')
+mergedROIs=amalgumROIsFromInput(atlas,stringCells,smoothKernel);
+elseif isfield(config,'ROI')
+mergedROIs=amalgumROIsFromInput(ROIdir,stringCells,smoothKernel);
 end
+
+%segment between the rois
 [classification]=multiROIpairSeg(wbfg,mergedROIs);
 save('/classification/classification.mat','classification')
 fprintf('\n classification structure stored with %i streamlines identified across %i tracts',...
