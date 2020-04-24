@@ -38,39 +38,39 @@ LRflag=mean(roiIN.coords(:,1))<0;
 switch lower(location)
     case 'top'
         roiCoord=max(roiIN.coords(:,3));
-        roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'z');
+        roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'z');
     case 'superior'
         roiCoord=max(roiIN.coords(:,3));
-        roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'z');
+        roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'z');
     case 'bottom'
         roiCoord=min(roiIN.coords(:,3));
-        roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'z');
+        roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'z');
     case 'inferior'
         roiCoord=min(roiIN.coords(:,3));
-        roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'z');
+        roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'z');
     case 'anterior'
         roiCoord=max(roiIN.coords(:,2));
-        roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'y');
+        roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'y');
     case 'posterior'
         roiCoord=min(roiIN.coords(:,2));
-        roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'y');
+        roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'y');
     case 'medial'
         if LRflag
             roiCoord=max(roiIN.coords(:,1));
-            roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'x');
+            roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'x');
         else
             roiCoord=min(roiIN.coords(:,1));
-            roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'x');
+            roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'x');
         end
     case 'lateral'
         if LRflag
             roiCoord=min(roiIN.coords(:,1));
-            roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'x');
+            roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'x');
         else
             roiCoord=max(roiIN.coords(:,1));
-            roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'x');
+            roiOUT=bsc_makePlanarROI_v3(atlas,roiCoord, 'x');
         end    
 end
-roiOUT.name=strcat(roiIN.name,'_',location,'_border_',roiOUT);
+roiOUT.name=strcat(roiIN.name,'_',location,'_border_',roiOUT.name);
 end
             
