@@ -53,11 +53,12 @@ roiNameString=[];
 for iRois = ROInums
     ROImask=or(ROImask,atlas.data==iRois);
     %warn the user if that index isn't found in this nifti
-    if ~any(atlas.data==iRois)
-        warning('no voxels for %i found in this atlas',iRois)
-        fprintf('\n fname: %s',atlas.fname)
-        fprintf('\n descrip: %s',atlas.descrip)
-    end
+    %don't do this, its too noisy
+%     if ~any(atlas.data==iRois)
+%         warning('no voxels for %i found in this atlas',iRois)
+%         fprintf('\n fname: %s',atlas.fname)
+%         fprintf('\n descrip: %s',atlas.descrip)
+%     end
         
     if iRois==ROInums(end)
         roiNameString=strcat(roiNameString,num2str(iRois));
@@ -74,7 +75,11 @@ if ~isempty(smoothKernel) & ~smoothKernel==0
     ROImask=~(smooth3(ROImask,'box', smoothKernel))==0;
 end
 increasePct=((length(find(ROImask))/initROIsize)-1)*100;
-fprintf('ROI size increased by %4.2f percent\n',increasePct)
+if increasePct>0
+    fprintf('ROI size increased by %4.2f percent\n',increasePct)
+else
+    %     %no need to report
+end
 %get index coordinates from nifti mask volume
 Roi = find(ROImask);
 [x1,y1,z1] = ind2sub(size(atlas.data), Roi);
