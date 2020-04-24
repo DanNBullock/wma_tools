@@ -69,9 +69,8 @@ switch lower(location)
         else
             roiCoord=max(roiIN.coords(:,1));
             roiOUT=bsc_makePlanarROI(atlas,roiCoord, 'x');
-        end
-        
+        end    
 end
-
+roiOUT.name=strcat(roiIN.name,'_',location,'_border_',roiOUT);
 end
             
