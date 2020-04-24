@@ -55,6 +55,24 @@ pericROI=[[167]+11000 [167]+12000];
 
 insulaROI=[[117 149]+11000 [117 149]+12000];
 
+roiGroupNames={'subcorticalROIS','spineROIS','cerebellumROIS','ventricleROIS','wmROIS','ccROIS','unknownROIS','OpticCROI','FrontalROIs','TemporalROIs','OccipitalROI','ParietalROI','pericROI','insulaROI'};
+roiGroups={subcorticalROIS,spineROIS,cerebellumROIS,ventricleROIS,wmROIS,ccROIS,unknownROIS,OpticCROI,FrontalROIs,TemporalROIs,OccipitalROI,ParietalROI,pericROI,insulaROI};
+labelsPresent=unique(atlas.data);
+
+%do a one time warning about which rois are missing
+fprintf('\n freesurfer ROI report for:')
+fprintf('\n %s \n',atlas.fname)
+for iRoiGroups=1:length(roiGroups)
+    currentRoiNums=roiGroups{iRoiGroups};
+    currentMissing=~ismember(currentRoiNums,labelsPresent);
+    if any(currentMissing)
+        fprintf('\n labels %s missing for roi group %s',num2str(currentRoiNums(currentMissing)),roiGroupNames{iRoiGroups})
+    else
+        %do nothing, they are all there
+    end
+end
+fprintf('\n')
+
 fprintf('\n rois set')
 
 %atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
