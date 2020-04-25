@@ -205,36 +205,60 @@ for leftright= [1,2]
 %=========================================================================       
     %3.  APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
     %we'll skip to using anatomically informed criteria for now, and come
-    %back to endpoint-related criteria if we need to.
+    %back to endpoint-related criteria if we need to.  The arcuate has been
+    %claimed to have a fairly broad termination area in the frontal and
+    %temoral lobes, so lets just be agnostic about that.
     %
-    %as before, the category segmentation is insufficient to isolate the
-    %arcuate.
-    %as before, you can use 
+    %As before, the category segmentation is insufficient to isolate the
+    %arcuate. also as before, you can use:
     % bsc_quickPlotClassByName(wbfg,categoryClassification,'frontal_to_temporal')
     % to confirm this for yourself.  Note that the majority of the
-    % non-uncinate fibers appear to be arcuate fibers (and vice-versa.  All
+    % non-uncinate fibers appear to be arcuate fibers (and vice-versa).  All
     % we have to do is negate the boolean vector we got for the posterior
     % thalamus exclusion plane segmentation.  In this way we will obtain
     % the indexes of streamlines that *do* pass through that posterior
     % plane.
+    
+    %lets do that now
     posteriorThalExcludedBool=~posteriorThalExcludedBool;
     
-        %begin by generating a plane from the posterior of the amygdala
+    %One thing you may also notice is that we appear to be getting some
+    %cingulum-like streamlines here, which isn't entirely surprising as
+    %there are some cingulum components which arc similarly to the arcuate,
+    %but are clearly more medial.  
+    
+    %to adress this lets take a reliable subcortical structure, the
+    %thalamus, which sits fairly centrally in the brain, and has a lateral
+    %border that could help us differentiate between the more lateral
+    %arcuate and the more medial cingulum
     [lateralThalPlane] =bsc_planeFromROI_v2(thalLut(leftright), 'lateral',atlas);
     
     %now we find all streamlines that have both streamline endpoints
-    %posterior to this plane (we'll negate this criteria later, to adhere
-    %to our logic). Note, this is different than requiring neither
-    %streamline to be anterior to this plane.  This logical operation
-    %still permits maximally one endpoint per streamline to be posterior to
-    %this plane.
+    %medial to this plane (we'll negate this criteria later, to adhere
+    %to our logic). This is what we would expect of the cingulum, but not
+    %the arcuate.  This border is quite medial, and so requiring that that
+    %neither endpoint be medial to this is not particularly stringent and
+    %is entirely consitent with existing understanding of the arcuate
    eitherLatThalBool=bsc_applyEndpointCriteria(wbfg,lateralThalPlane,'medial','either');
    
+   %in a similar sense, we want to get rid of streamines which may still be
+   %fronto-temporal (and meet our other criteria) but none the less still
+   %end far too posterior/rostrally to be plausable candidates for the
+   %arcuate.  We can use the posterior border of the venticle as our
+   %landmark.  One might consider using the posterior border of the lateral
+   %fisure ([11/12]141 in this atlas), however, given that the arcuate arcs
+   %around this (and thus its body necessarily extends posterior to it)
+   %this might, in practice, be a somewhat stringent criteria.  Instead, we
+   %use the posterior border of the lateral ventricle given that this is
+   %far more posterior, and thus shouldn't be particularly stringent.  
    [postVentPlane] =bsc_planeFromROI_v2(ventricleLut(leftright), 'posterior',atlas);
    
-      eitherPostVentBool=bsc_applyEndpointCriteria(wbfg,postVentPlane,'posterior','either');
+   %now find any streamlines which have endpoints posterior to this.  We'll
+   %negate this later.  This would be equivalent to requiring 'both' to be
+   %'anterior'.
+   eitherPostVentBool=bsc_applyEndpointCriteria(wbfg,postVentPlane,'posterior','either');
       
-      %midpoint amigdala
+   %midpoint amigdala
 
   tractNameVar=strcat(sideLabel{leftright},'_arcuate');
     classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,~posteriorThalExcludedBool,frontoTemporalBool,~eitherLatThalBool,~eitherPostVentBool);    
