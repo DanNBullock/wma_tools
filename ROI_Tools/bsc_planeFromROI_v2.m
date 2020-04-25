@@ -1,4 +1,6 @@
 function [roiOUT] = bsc_planeFromROI_v2(roiIN,location,atlas)
+%  [roiOUT] = bsc_planeFromROI_v2(roiIN,location,atlas)
+%
 % DESCRIPTION:
 % This function creates a plane using a specified component of an input ROI
 % as 
