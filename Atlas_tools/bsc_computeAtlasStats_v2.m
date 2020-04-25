@@ -58,7 +58,7 @@ for iROIs=1:length(uniqueNoZero)
     
     %each roi coord is taken from an image space voxel, as such, you need
     %to take into account the voxel dim in order to get the roi volume
-    actualVol=currentROI.coords*prod(atlas.pixdim);
+    actualVol=length(currentROI.coords)*prod(atlas.pixdim);
     
     computeCentroid=mean(currentROI.coords,1);
     centroidx=computeCentroid(1);
