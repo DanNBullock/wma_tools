@@ -35,7 +35,7 @@ uniqueNoZero = uniqueLables(find(uniqueLables~=0));
 %  volume
 %  NOTE:  YOU PROBABLY WANT TO EXCLUDE SOME OF THESE ROIS, BUT WE CAN TAKE
 %  CARE OF THAT IN A LATER VERSION
-[wholeBrainRoi] =bsc_roiFromAtlasNums(atlasPath,uniqueNoZero',1);
+[wholeBrainRoi] =bsc_roiFromAtlasNums(atlas,uniqueNoZero',1);
 %kind of like a proxy for whole brain volume, except the units her are kind
 %of ambiguous.  When you devide a roi's coordinate number by this, the
 %units cancel out and you get the appropriate proportion.
