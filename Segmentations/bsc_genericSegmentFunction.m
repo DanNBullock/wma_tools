@@ -65,6 +65,8 @@ for leftright= [1,2]
     
     %% Tract 1
     %begin segmentation of tract 1
+    %DOIs of reference papers:
+    %...
 %=========================================================================   
     %1.  ESTABLISH CATEGORY CRITERIA
     %usingthe category segmentation output, go ahead and establish a
