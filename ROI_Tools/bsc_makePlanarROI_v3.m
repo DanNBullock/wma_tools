@@ -21,9 +21,9 @@ function [planarROI]=bsc_makePlanarROI_v3(referenceNifti,mmPlane, dimension)
 %still can't detect it the brain is rotated in subject space.
 %detect non-orthogonality of inputAtlas
 %for these to be violated things would have to be quite wonky
-sumNon1Row1=sum(referenceNifti.qto_xyz(1,abs(referenceNifti.qto_xyz(1,1:3))~=1));
-sumNon1Row2=sum(referenceNifti.qto_xyz(2,abs(referenceNifti.qto_xyz(2,1:3))~=1));
-sumNon1Row3=sum(referenceNifti.qto_xyz(3,abs(referenceNifti.qto_xyz(3,1:3))~=1));
+sumNon1Row1=sum(referenceNifti.qto_xyz(1,abs(referenceNifti.qto_xyz(1,1:3))~=max(abs(referenceNifti.qto_xyz(1,1:3)))));
+sumNon1Row2=sum(referenceNifti.qto_xyz(2,abs(referenceNifti.qto_xyz(2,1:3))~=max(abs(referenceNifti.qto_xyz(1,1:3)))));
+sumNon1Row3=sum(referenceNifti.qto_xyz(3,abs(referenceNifti.qto_xyz(3,1:3))~=max(abs(referenceNifti.qto_xyz(1,1:3)))));
 allRotationSum=sum([sumNon1Row1,sumNon1Row2,sumNon1Row3]);
 %arbitrary tolerance
 if allRotationSum>.001
@@ -31,10 +31,12 @@ if allRotationSum>.001
 end
 
 %taken from modified version of vistasoft's dtiRoiNiftiFromMat.m
-bb = mrAnatXformCoords(referenceNifti.qto_xyz, [-(size(referenceNifti.data).*referenceNifti.pixdim)/2; (size(referenceNifti.data).*referenceNifti.pixdim)/2-1]);
+%bb = mrAnatXformCoords(referenceNifti.qto_xyz, [-(size(referenceNifti.data).*referenceNifti.pixdim)/2; (size(referenceNifti.data).*referenceNifti.pixdim)/2-1]);
+%or is it supposed to be:
+bb = mrAnatXformCoords(referenceNifti.qto_xyz, [[1,1,1];size(referenceNifti.data).*referenceNifti.pixdim]);
 
 %change this to change the spacing of roi coordinates
-spacingParameter=.5;
+spacingParameter=1;
 %enumerate coordinates for a flat plane plane at the specified coordinate
 switch lower(dimension)
     case 'x' 
