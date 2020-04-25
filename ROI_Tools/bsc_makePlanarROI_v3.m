@@ -17,18 +17,8 @@ function [planarROI]=bsc_makePlanarROI_v3(referenceNifti,mmPlane, dimension)
 %  (C) Daniel Bullock 2017 Bloomington
 %  4/24/2020  edit:  no longer assumes apcp?  Will yell tho...
 %% begin code
-
-%still can't detect it the brain is rotated in subject space.
-%detect non-orthogonality of inputAtlas
-%for these to be violated things would have to be quite wonky
-sumNon1Row1=sum(referenceNifti.qto_xyz(1,abs(referenceNifti.qto_xyz(1,1:3))~=max(abs(referenceNifti.qto_xyz(1,1:3)))));
-sumNon1Row2=sum(referenceNifti.qto_xyz(2,abs(referenceNifti.qto_xyz(2,1:3))~=max(abs(referenceNifti.qto_xyz(1,1:3)))));
-sumNon1Row3=sum(referenceNifti.qto_xyz(3,abs(referenceNifti.qto_xyz(3,1:3))~=max(abs(referenceNifti.qto_xyz(1,1:3)))));
-allRotationSum=sum([sumNon1Row1,sumNon1Row2,sumNon1Row3]);
-%arbitrary tolerance
-if allRotationSum>.001
-    error('orthogonality assumption violated, \n creation of planar rois assumes orthogonal orientation')
-end
+%this plane will be oblique to the subject's anatomy if they aren't
+%oriented orthogonally. 
 
 %taken from modified version of vistasoft's dtiRoiNiftiFromMat.m
 %bb = mrAnatXformCoords(referenceNifti.qto_xyz, [-(size(referenceNifti.data).*referenceNifti.pixdim)/2; (size(referenceNifti.data).*referenceNifti.pixdim)/2-1]);
