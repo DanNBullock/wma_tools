@@ -257,11 +257,20 @@ for leftright= [1,2]
    %negate this later.  This would be equivalent to requiring 'both' to be
    %'anterior'.
    eitherPostVentBool=bsc_applyEndpointCriteria(wbfg,postVentPlane,'posterior','either');
-      
-   %midpoint amigdala
-
-  tractNameVar=strcat(sideLabel{leftright},'_arcuate');
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,~posteriorThalExcludedBool,frontoTemporalBool,~eitherLatThalBool,~eitherPostVentBool);    
+   
+   %In certian cases, with probabalistic tractography it is possible to
+   %obtain (a slight few) streamlines which follow a path similar to the
+   %IFOF (or reflect the diffusion algorithm being influenced by this
+   %adjacent structure) but nonetheless terminate in the frontal and
+   %temporal lobes.  To eliminate these we can apply a midpoint criteria,
+   %and require that our streamlines have midpoints above the top of the
+   %paladium, which would be relatively superior to the midpoints of any
+   %IFOF-like streamlines.
+   [palTopPlane] =bsc_planeFromROI_v2(palLut(leftright), 'superior',atlas);
+   midpointSupOfPalBool=bsc_applyMidpointCriteria(wbfg,palTopPlane,'superior');
+   
+   tractNameVar=strcat(sideLabel{leftright},'_arcuate');
+   classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,~posteriorThalExcludedBool,frontoTemporalBool,~eitherLatThalBool,~eitherPostVentBool,midpointSupOfPalBool);
    %bsc_quickPlotClassByName(wbfg,classificationOut,'left_arcuate')
 end
 
