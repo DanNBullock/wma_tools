@@ -97,11 +97,7 @@ sourceClassification.index=[];
 mergedClassification.names=[];
 mergedClassification.index=[];
 
-
 clear iInputs
-
-keyboard
-
 
 %% Merge input FGs, determine homology, and create classification structure
 for iInputs=1:length(inputFGs)
