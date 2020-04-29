@@ -205,7 +205,7 @@ for leftright= [1,2]
     classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,posteriorThalExcludedBool,frontoTemporalBool,~bothPosteriorAmygBool,~bothAboveAmygBool,midpointAntOfPosteriorAmygBool);    
 % Run this commented line to visualize
 %bsc_quickPlotClassByName(wbfg,classificationOut,strcat(sideLabel{leftright},'_uncinate'))
-    %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %% Arcuate
 % As we noted when segmenting the uncinate, the fronto temporal category
 % seems to be primarily composed of uncinate and arcuate streamlines.  Lets
@@ -269,7 +269,7 @@ for leftright= [1,2]
    eitherPostVentBool=bsc_applyEndpointCriteria(wbfg,postVentPlane,'posterior','either');
 
 %=========================================================================  
-    %3. ARCUATE - APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
+%3. ARCUATE - APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
 % Given the general arcing morphology of the arcuate, there are some
 % general, non endpoint-related criteria that we can make.
 %-------------------------------------------------------------------------- 
@@ -317,17 +317,75 @@ for leftright= [1,2]
    classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,~posteriorThalExcludedBool,frontoTemporalBool,~eitherLatThalBool,~eitherPostVentBool,midpointSupOfPalBool);
 % Run this commented line to visualize
 %bsc_quickPlotClassByName(wbfg,classificationOut,strcat(sideLabel{leftright},'_arcuate'))
-   
-   
+%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   
 %========================================================================= 
- %  IFOF
-% posterior of amigdala,
-% top of paladium
+%%  IFOF
+%  The IFOF is a anterior-posterior tract that runs inferior to the
+%  arcuate, but has terminations in the frontal lobe (just as the uncinate
+%  and arcuate do
+%========================================================================= 
+%1.  IFOF - ESTABLISH CATEGORY CRITERIA
+% The IFOF is the paradigmatic (and perhaps only) example of a
+% fronto-occipital track
+%--------------------------------------------------------------------------
 
 frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_occipital'));
- tractNameVar=strcat(sideLabel{leftright},'_IFOF');
-   classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,~midpointSupOfPalBool);
-   %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+%=========================================================================  
+
+%2.  IFOF - ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA
+% Given the lack of other major structures which exibit similar
+% morphologies or trajectories to the IFOF, we do not need to specify any
+% more specific endpoint criteria
+%=========================================================================  
+
+%3. IFOF - APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
+% Here, we're going to use a somehat more advanced strategy.  One of the
+% most characteristic features of the IFOF is the 'dip' that occurs
+% adjacent to the lenticular nucleus.  Overall, our goal will be to apply
+% an exclusion plane to prevent streamlines from traversing a particular
+% region of the brain.  In order to enshrine that as a criteria we have
+% approach it in several steps.
+%--------------------------------------------------------------------------
+% lenticular-dip criteria:
+% First we have to specify the anterior-posterior location of where we
+% want to do this.  We'll do this at the posterior border of the
+% lenticular nucleus, where the dip is near to its lowest.
+posteriorLentiPlane=bsc_planeFromROI_v2(thalLut(leftright),'anterior',atlas);
+
+% We can reuse the plane generated earlier for the top of the globus paladus to
+% specifiy the height we'd like to apply this plane at
+% palTopPlane
+
+% Now we cut the anterior-posterior plane (posteriorLentiPlane), such that we only take the part
+% that is superior to the top of the globus paladus (palTopPlane)
+superiorExclusionCutPlane=bsc_modifyROI_v2(atlas,posteriorLentiPlane, palTopPlane, 'superior');
+
+% Now we can apply the exclusion plane
+[~, superiorExclusionBool] = wma_SegmentFascicleFromConnectome(wbfg, {superiorExclusionCutPlane}, {'not'}, 'arbitraryName');
+%--------------------------------------------------------------------------
+% ventral traversal criteria:
+% to invert the logic we applied to the arcuate, we can negate the
+% midpointSupOfPalBool variable to require our streamlines to have a
+% midpoint that is lower in the brain (as is appropriate for the IFOF)
+%midpointSupOfPalBool
+
+%=========================================================================  
+%4.  IFOF - APPLY ALL BOOLEAN CRITERIA
+% Now that we have obtained all of our desired criteria, in the form
+% of several boolean vectors, it's time to apply them as a conjunct
+% (many ands) to obtain a classification structure featuring this  
+
+% frontoOccipitalBool - category criteria 
+% superiorExclusionBool - lenticular-dip criteria
+% midpointSupOfPalBool - ventral traversal criteria
+
+   tractNameVar=strcat(sideLabel{leftright},'_IFOF');
+   classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,superiorExclusionBool,~midpointSupOfPalBool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+
+
+tractStruc = bsc_makeFGsFromClassification_v5(classificationOut, wbfg)
+bsc_plotROIandFG(tractStruc{1},superiorExclusionCutPlane,'r')
    
 %=========================================================================  
 %SFOF?
