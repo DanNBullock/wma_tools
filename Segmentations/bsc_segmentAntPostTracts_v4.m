@@ -347,9 +347,10 @@ frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(s
 % approach it in several steps.
 %--------------------------------------------------------------------------
 % lenticular-dip criteria:
-% First we have to specify the anterior-posterior location of where we
-% want to do this.  We'll do this at the posterior border of the
-% lenticular nucleus, where the dip is near to its lowest.
+% First we have to specify the anterior-posterior location of where we want
+% to do this.  The dip is near to its lowest takes place around the middle
+% (in the anterior-posterior axis) of the lenticular nucleus, which, as it
+% turns out, is about the anterior border of the thalamus. .
 posteriorLentiPlane=bsc_planeFromROI_v2(thalLut(leftright),'anterior',atlas);
 
 % We can reuse the plane generated earlier for the top of the globus paladus to
@@ -367,14 +368,14 @@ superiorExclusionCutPlane=bsc_modifyROI_v2(atlas,posteriorLentiPlane, palTopPlan
 % to invert the logic we applied to the arcuate, we can negate the
 % midpointSupOfPalBool variable to require our streamlines to have a
 % midpoint that is lower in the brain (as is appropriate for the IFOF)
-%midpointSupOfPalBool
+% midpointSupOfPalBool
 
 %=========================================================================  
 %4.  IFOF - APPLY ALL BOOLEAN CRITERIA
 % Now that we have obtained all of our desired criteria, in the form
 % of several boolean vectors, it's time to apply them as a conjunct
 % (many ands) to obtain a classification structure featuring this  
-
+%--------------------------------------------------------------------------
 % frontoOccipitalBool - category criteria 
 % superiorExclusionBool - lenticular-dip criteria
 % midpointSupOfPalBool - ventral traversal criteria
@@ -383,30 +384,154 @@ superiorExclusionCutPlane=bsc_modifyROI_v2(atlas,posteriorLentiPlane, palTopPlan
    classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,superiorExclusionBool,~midpointSupOfPalBool);
 %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
 
+%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   
+%=========================================================================  
+%% SFOF
+% The existance of a corresponding superior occipital fasiculus has been a
+% subject of debate.  Regardless of the actual anatomical validity of this
+% structure, we can nonetheless segment those streamlines (should any exist
+% in an input connectome) that would constitute this putative tract.  Our
+% abilitiy to segment a tract from a whole brain connectome is not to be
+% taken as evidence for the existance of a tract.  Creedance for the
+% existance of a tract can only be conferred relative to the degree to
+% which the source whole brain connectome accurately recreates the
+% connective archetecture of the brain.
+%========================================================================= 
+%1.  SFOF - ESTABLISH CATEGORY CRITERIA
+% The SFOF, like the IFOF, is a fonto occipital tract (hence the name)
+%--------------------------------------------------------------------------
+% category criteria
+% We don't need to reacquire this category boolean vector, as we already
+% have it from the IFOF segmentation
+%frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_occipital'));
+%=========================================================================  
+%2.  SFOF - ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA 
+%--------------------------------------------------------------------------
+% medial-lateral division criteria
+% In order to separate the more coherent lateral aspect of the putative
+% SFOF, which would traverse a similar path as parts of the SLF x, from more
+% medial streamlines, which would traverse a similar path to SLF x or the
+% cingulum, we can use the lateral border of the thalamus once more
+ bothLatThalBool=bsc_applyEndpointCriteria(wbfg,lateralThalPlane,'lateral','both');
+%=========================================================================  
+%4.  SFOF - APPLY ALL BOOLEAN CRITERIA
+% Now that we have obtained all of our desired criteria, in the form
+% of several boolean vectors, it's time to apply them as a conjunct
+% (many ands) to obtain a classification structure featuring this  
+%--------------------------------------------------------------------------
 
-tractStruc = bsc_makeFGsFromClassification_v5(classificationOut, wbfg)
-bsc_plotROIandFG(tractStruc{1},superiorExclusionCutPlane,'r')
-   
+% frontoOccipitalBool - category criteria
+% bothLatThalBool - medial-lateral division criteria
+
+tractNameVar=strcat(sideLabel{leftright},'_Putative_Lateral_SFOF');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,midpointSupOfPalBool,bothLatThalBool);
+
+tractNameVar=strcat(sideLabel{leftright},'_Putative_Medial_SFOF');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,midpointSupOfPalBool,~bothLatThalBool);
+ %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+ %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+ %% ILF
+ 
 %=========================================================================  
-%SFOF?
-frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_occipital'));
- tractNameVar=strcat(sideLabel{leftright},'_Putative_SFOF');
-   classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,midpointSupOfPalBool);
-   %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+%1.  ILF - ESTABLISH CATEGORY CRITERIA
+%--------------------------------------------------------------------------
+% category criteria
+% The ILF is straightforwardly a occiptio temporal tact
+
+occipitoTemporalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_occipital_to_temporal'));
 %=========================================================================  
-%SFOF?
-occpitialTemporalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_occipital_to_temporal'));
- tractNameVar=strcat(sideLabel{leftright},'_ILF');
-   classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,occpitialTemporalBool,~midpointSupOfPalBool);
-   %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
-%
+%2.  ILF - ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA 
+% In order to separate the more coherent lateral aspect of the putative
+% SFOF, which would traverse a similar path as parts of the SLF x, from more
+% medial streamlines, which would traverse a similar path to SLF x or the
+% cingulum, we can use the lateral border of the thalamus once more
+%--------------------------------------------------------------------------
+% posterior termination criteria
+% The post central cingular gyrus tends to be a good indicator of the
+% furtherst extent of the middle (as opposed to the further reaching
+% inferior sections) occipital lobe.  This will be as far forward as we
+% want our posterior endpoints proceeding
+posteriorCingGyPlane=bsc_planeFromROI_v2(110+sidenum,'posterior',atlas);
+% Although it may not be clear how, we will use this as a negative
+% criteria.  We don't want streamlines that are extermely short, connecting
+% to the medial temporal, lingual and fusiform gyri (such connections
+% aren't consistent with traditional reports of the ILF).  Given that we
+% are already requiring the streamlines to be Occipito-temporal, we can
+% exclude streamlines that are too far anterior, because they would have
+% both endpoints anterior of the plane we just made.
+bothAntBool=bsc_applyEndpointCriteria(wbfg,posteriorCingGyPlane,'anterior','both');
+%--------------------------------------------------------------------------
+% anterior termination criteria
+% To further be consistent with established reports, we'll require one
+% endpoint to be sufficiently anterior to extend past the posterior border
+% of the midbrain (fs region DC)
+
+posteriorMBPlane=bsc_planeFromROI_v2(DCLut(leftright),'posterior',atlas);
+antDCBool=bsc_applyEndpointCriteria(wbfg,posteriorMBPlane,'anterior','one');
+%=========================================================================  
+%3. ILF - APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
+% In some tractography samples we get spurrious fibers traveling underneath
+% the thalamus.  These are not consistent with established reports (as they
+% are far too medial) and so we we will use a plane based on the thalamus
+% to exclude these.
+%--------------------------------------------------------------------------
+% inferior-medial exclusion criteria
+% We can use the posterior thalamus plane we made earlier for the uncinate
+% and the lateral thalamus plane we made for the arcuate:
+% posteriorThalPlane lateralThalPlane
+
+% And clip this at the medial border of the thalamus
+subThalPreventPlane=bsc_modifyROI_v2(atlas, posteriorThalPlane, lateralThalPlane, 'medial');
+
+[~, inferiorExclusionBool] = wma_SegmentFascicleFromConnectome(wbfg, {subThalPreventPlane}, {'not'}, 'arbitraryName');
+%=========================================================================  
+%4.  ILF - APPLY ALL BOOLEAN CRITERIA
+% Now that we have obtained all of our desired criteria, in the form
+% of several boolean vectors, it's time to apply them as a conjunct
+% (many ands) to obtain a classification structure featuring this 
+
+% occipitoTemporalBool - category criteria
+% bothAntBool - posterior termination criteria
+% antDCBool - anterior termination criteria
+% inferiorExclusionBool - inferior-medial exclusion criteria
+
+tractNameVar=strcat(sideLabel{leftright},'_ILF');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,occipitoTemporalBool,~bothAntBool,antDCBool,inferiorExclusionBool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+
    
    
+   
+   %last criteria = sub lat hal exclude
+   testFG=bsc_makeFGsFromClassification_v5(classificationOut,wbfg)
+   bsc_plotROIandFG(testFG{1},subThalPreventPlane,'r')
+ 
+ 
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
 %make sure it is the same length as the input
 classificationOut.index=zeros(length(wbfg.fibers),1);
+
+
+
+
+%% TODO
+
+%aslant vert
+%slf ant
+%CC  cc
+%cingulum  sub
+% Thalamic  sub
+% Parcvert 
+% TPC  vert 
+% MdLF -spl vert 
+% MdLF -ang  vert
+% VOF  vert
+% OPTIC  sub
+% Cerebellar  cere
+% forceps Major  CC
+% forceps Minor  CC
 
 end
 
