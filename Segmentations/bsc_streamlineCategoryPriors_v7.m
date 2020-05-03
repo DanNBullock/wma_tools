@@ -168,7 +168,7 @@ streamName=termination1;
 fprintf('\n superficial fibers identified')
 
 validSideROI= [leftROIS rightROIS] ;
-excludeSideROI=[unknownROIS ccROIS OpticCROI wmROIS spineROIS ventricleROIS];
+excludeSideROI=[unknownROIS ccROIS OpticCROI wmROIS spineROIS ventricleROIS pericallosal];
 
 for iStreams=1:length(allStreams)
     %disagreeBool(iStreams)=or(and(rightStreamsBool(iStreams),and(ismember(endpoints2Identity(iStreams),leftROIS),ismember(endpoints1Identity(iStreams),leftROIS))),and(leftStreamsBool(iStreams),and(ismember(endpoints2Identity(iStreams),rightROIS),ismember(endpoints1Identity(iStreams),rightROIS))))  ;
@@ -196,11 +196,11 @@ for iStreams=1:length(allStreams)
     elseif ~isempty(find(endpoints1Identity(iStreams)==subcorticalROIS, 1))
         termination1{iStreams}='subcortical';
     elseif ~isempty(find(endpoints1Identity(iStreams)==thalamicROI, 1))
-        termination1{iStreams}='thalamicROI';
+        termination1{iStreams}='thalamic';
     elseif ~isempty(find(endpoints1Identity(iStreams)==caudateNAcROI, 1))
-        termination1{iStreams}='caudateNAcROI';
+        termination1{iStreams}='caudateNAc';
     elseif ~isempty(find(endpoints1Identity(iStreams)==lenticularNROI, 1))
-        termination1{iStreams}='lenticularNROI';
+        termination1{iStreams}='lenticularN';
     elseif ~isempty(find(endpoints1Identity(iStreams)==hippAmig, 1))
         termination1{iStreams}='hippAmig';
     elseif ~isempty(find(endpoints1Identity(iStreams)==spineROIS, 1))
@@ -235,11 +235,11 @@ for iStreams=1:length(allStreams)
     elseif ~isempty(find(endpoints2Identity(iStreams)==subcorticalROIS, 1))
         termination2{iStreams}='subcortical';
     elseif ~isempty(find(endpoints2Identity(iStreams)==thalamicROI, 1))
-        termination2{iStreams}='thalamicROI';
+        termination2{iStreams}='thalamic';
     elseif ~isempty(find(endpoints2Identity(iStreams)==caudateNAcROI, 1))
-        termination2{iStreams}='caudateNAcROI';
+        termination2{iStreams}='caudateNAc';
     elseif ~isempty(find(endpoints2Identity(iStreams)==lenticularNROI, 1))
-        termination2{iStreams}='lenticularNROI';
+        termination2{iStreams}='lenticularN';
     elseif ~isempty(find(endpoints2Identity(iStreams)==hippAmig, 1))
         termination2{iStreams}='hippAmig';
     elseif ~isempty(find(endpoints2Identity(iStreams)==spineROIS, 1))
@@ -309,7 +309,7 @@ uniqueNames=unique(streamName);
 
 fprintf('\n %i endpoint categories determined', length(uniqueNames))
 
-summarizeNames={'CorpusCallosum' 'unlabeled' 'OpticChi' 'ventricle' 'whiteMatter'};
+summarizeNames={'CorpusCallosum' 'unlabeled' 'OpticChi' 'ventricle' 'whiteMatter' 'pericallosal'};
 
 for icategories=1:length(uniqueNames)
     
