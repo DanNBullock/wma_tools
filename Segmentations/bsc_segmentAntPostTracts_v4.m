@@ -333,7 +333,43 @@ frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(s
 %=========================================================================  
 
 %2.  IFOF - ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA
-% Given the lack of other major structures which exibit similar
+% Given the lack of other major strufrontoParietalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_parietal'));
+
+   frontalGyrusROI=bsc_roiFromAtlasNums(atlas,116+sidenum,1);
+[~, frontalGyrusBool] = wma_SegmentFascicleFromConnectome(wbfg, {frontalGyrusROI}, {'endpoints'}, 'arbitraryName');
+
+antThalPlane=bsc_planeFromROI_v2(thalLut(leftright),'anterior',atlas)
+posteriorFrontalGyrus=bsc_modifyROI_v2(atlas,frontalGyrusROI,antThalPlane,'posterior');
+
+inferiorBorderPosteriorFrontalGyrus=bsc_planeFromROI_v2(posteriorFrontalGyrus,'inferior',atlas)
+
+thirdVentPosterior=bsc_planeFromROI_v2(14,'posterior',atlas)
+
+coronalExclusion=bsc_modifyROI_v2(atlas,thirdVentPosterior,inferiorBorderPosteriorFrontalGyrus,'superior')
+transverseExclusion=bsc_modifyROI_v2(atlas,inferiorBorderPosteriorFrontalGyrus,thirdVentPosterior,'anterior')
+superiorToCingExclusionROI=bsc_mergeROIs(coronalExclusion,transverseExclusion)
+
+[~, noSuperiortraversalBool] = wma_SegmentFascicleFromConnectome(wbfg, {superiorToCingExclusionROI}, {'not'}, 'arbitraryName');
+
+cingAnteriorMidpoints=bsc_applyMidpointCriteria(wbfg,thirdVentPosterior,'anterior')
+
+periCTop=bsc_planeFromROI_v2(167+sidenum,'superior',atlas);
+periClatBorder=bsc_planeFromROI_v2(167+sidenum,'lateral',atlas)
+bsc_modifyROI_v2
+
+lowMidpointsBool=bsc_applyMidpointCriteria(wbfg,periCTop,'inferior');
+
+tractNameVar=strcat(sideLabel{leftright},'_SLF_Lat');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,bothLatThalBool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+
+tractNameVar=strcat(sideLabel{leftright},'_SLF_Med');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,eitherLatThalBool,frontalGyrusBool,noSuperiortraversalBool);
+
+tractNameVar=strcat(sideLabel{leftright},'_SLF_Cing');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,eitherLatThalBool,~cingAnteriorMidpoints,noSuperiortraversalBool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)ctures which exibit similar
 % morphologies or trajectories to the IFOF, we do not need to specify any
 % more specific endpoint criteria
 %=========================================================================  
@@ -498,13 +534,54 @@ subThalPreventPlane=bsc_modifyROI_v2(atlas, posteriorThalPlane, lateralThalPlane
 tractNameVar=strcat(sideLabel{leftright},'_ILF');
 classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,occipitoTemporalBool,~bothAntBool,antDCBool,inferiorExclusionBool);
 %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+ %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+%%  SLF
+   
+%=========================================================================  
+%1.  SLF - ESTABLISH CATEGORY CRITERIA
+%--------------------------------------------------------------------------
+% category criteria
+% SLF 1 2 and 3 are all fronto-parietal tracts
+frontoParietalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_parietal'));
 
-   
-   
-   
+   frontalGyrusROI=bsc_roiFromAtlasNums(atlas,116+sidenum,1);
+[~, frontalGyrusBool] = wma_SegmentFascicleFromConnectome(wbfg, {frontalGyrusROI}, {'endpoints'}, 'arbitraryName');
+
+posteriorFrontalGyrus=bsc_modifyROI_v2(atlas,frontalGyrusROI,antThalPlane,'posterior');
+
+inferiorBorderPosteriorFrontalGyrus=bsc_planeFromROI_v2(posteriorFrontalGyrus,'inferior',atlas)
+
+thirdVentPosterior=bsc_planeFromROI_v2(14,'posterior',atlas)
+
+coronalExclusion=bsc_modifyROI_v2(atlas,thirdVentPosterior,inferiorBorderPosteriorFrontalGyrus,'superior')
+transverseExclusion=bsc_modifyROI_v2(atlas,inferiorBorderPosteriorFrontalGyrus,thirdVentPosterior,'anterior')
+superiorToCingExclusionROI=bsc_mergeROIs(coronalExclusion,transverseExclusion)
+
+[~, noSuperiortraversalBool] = wma_SegmentFascicleFromConnectome(wbfg, {superiorToCingExclusionROI}, {'not'}, 'arbitraryName');
+
+cingAnteriorMidpoints=bsc_applyMidpointCriteria(wbfg,thirdVentPosterior,'anterior')
+
+periCTop=bsc_planeFromROI_v2(167+sidenum,'superior',atlas);
+periClatBorder=bsc_planeFromROI_v2(167+sidenum,'lateral',atlas)
+bsc_modifyROI_v2
+
+lowMidpointsBool=bsc_applyMidpointCriteria(wbfg,periCTop,'inferior');
+
+tractNameVar=strcat(sideLabel{leftright},'_SLF_Lat');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,bothLatThalBool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+
+tractNameVar=strcat(sideLabel{leftright},'_SLF_Med');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,eitherLatThalBool,frontalGyrusBool,noSuperiortraversalBool);
+
+tractNameVar=strcat(sideLabel{leftright},'_SLF_Cing');
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,eitherLatThalBool,~cingAnteriorMidpoints,noSuperiortraversalBool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+
    %last criteria = sub lat hal exclude
    testFG=bsc_makeFGsFromClassification_v5(classificationOut,wbfg)
-   bsc_plotROIandFG(testFG{1},subThalPreventPlane,'r')
+   bsc_plotROIandFG(testFG{1},periCTop,'r')
  
  
 %initialize classification structure
