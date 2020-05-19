@@ -47,23 +47,42 @@ imgdim = size(atlas.data);
 for iIslands=1:islandList.NumObjects
     % create a blank object for this island
     currentVoxels=islandList.PixelIdxList{iIslands};
-    %iterate over the voxels
-    voteVec=[];
-    for iVoxels=1:length(currentVoxels)
-        %get the ind for the current voxel
-       currentVoxel=currentVoxels(iVoxels);
-       %convert to a coordinate
-       [curX, curY, curZ]=ind2sub(imgdim,currentVoxel);
-       %probably shouldn't need to worry about padding
-       voxelVote=outAtlas.data([curX-1:curX+1],[curY-1:curY+1],[curZ-1:curZ+1]);
-    %concatonate the voxel votes  
-    voteVec=vertcat(voteVec,voxelVote(:));
+    
+    %arbitrarily set it to two entries, which should cause the while check
+    %to fail
+    voteWinner=[0 0];
+    %run counter
+    runCounter=0;
+    while length(voteWinner)>1
+        runCounter=runCounter+1;
+        %iterate over the voxels
+        voteVec=[];
+        for iVoxels=1:length(currentVoxels)
+            %get the ind for the current voxel
+            currentVoxel=currentVoxels(iVoxels);
+            %convert to a coordinate
+            [curX, curY, curZ]=ind2sub(imgdim,currentVoxel);
+            %probably shouldn't need to worry about padding
+            voxelVote=outAtlas.data([curX-runCounter:curX+runCounter],[curY-runCounter:curY+runCounter],[curZ-runCounter:curZ+runCounter]);
+            %concatonate the voxel votes
+            voteVec=vertcat(voteVec,voxelVote(:));
+        end
+        %get the counts for each label
+        [counts, labels]=groupcounts(voteVec(all(voteVec~=[trashLabel 0],2)));
+        %the one iwth the most votes wins
+        voteWinner=labels(find(max(counts)));
+        %it can't be set to 0 under normal circumstances, but here we'll allow
+        %it there's no other option
+        if isempty(voteWinner)
+            voteWinner=0;
+        else
+            %do nothing
+        end
+        
     end
-    %get the counts for each label
-    [counts, labels]=groupcounts(voteVec(all(voteVec~=[trashLabel 0],2)));
-    %the one iwth the most votes wins
-    voteWinner=labels(find(max(counts)));
+    
     %change the output
     outAtlas.data(currentVoxels)=voteWinner;
+    
 end
 end
