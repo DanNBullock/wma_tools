@@ -76,7 +76,7 @@ postCCinferiorROIcut=bsc_modifyROI_v2(atlas,posteriorCCInfLimit, LatTempPostLimi
 
 [posteriorCC, posteriorCCBool]=wma_SegmentFascicleFromConnectome(wbfg, [{postCCinferiorROIcut}], {'not'}, 'dud');
 
-posteriorCCBool=or(bsc_extractStreamIndByName(categoryPrior,'occipital_to_occipital_interHemi'),bsc_extractStreamIndByName(categoryPrior,'MaskFailure'));
+posteriorCCBool=bsc_extractStreamIndByName(categoryPrior,'occipital_to_occipital_interHemi');
 
 forcepsMajorBool=ccPostMidpoints&posteriorCCBool&posteriorCCBool;
 classificationOut=bsc_concatClassificationCriteria(classificationOut,'forcepsMajor',forcepsMajorBool);
