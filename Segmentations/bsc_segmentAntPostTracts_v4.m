@@ -506,10 +506,56 @@ classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVa
 %--------------------------------------------------------------------------
 % category criteria
 % SLF 1 2 and 3 are all fronto-parietal tracts
+
+% We'll use the anterior border of the thalamus to clip the frontal gyrus
+% ROI
+    antThalPlane=bsc_planeFromROI_v2(thalLut(leftright),'anterior',atlas);
+    posteriorFrontalGyrus=bsc_modifyROI_v2(atlas,frontalGyrusROI,antThalPlane,'posterior');
+% Now we use the clipped frontal gyrus ROI to establish a ceiling limit for
+% the cingulum
+    inferiorBorderPosteriorFrontalGyrus=bsc_planeFromROI_v2(posteriorFrontalGyrus,'inferior',atlas);
+    cingulumExclusionBool=bsc_applyMidpointCriteria(wbfg,inferiorBorderPosteriorFrontalGyrus,'superior');
+
+    % Begin by generating a plane from the posterior of the amygdala
+    [amygdalaAnteriorPlane] =bsc_planeFromROI_v2(amigLut(leftright), 'anterior',atlas);
+    %posteriorThalPlane
+    
+    anteriorSLF3Requirement=bsc_applyEndpointCriteria(wbfg,amygdalaAnteriorPlane,'anterior','one')
+     posteriorSLF3Requirement=bsc_applyEndpointCriteria(wbfg,posteriorThalPlane,'posterior','one')
+    
 frontoParietalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_parietal'));
+
+latFisMedialBorder=bsc_planeFromROI_v2(141+sidenum,'medial',atlas);
+medialEndpointsExclusion2=bsc_applyEndpointCriteria(wbfg,latFisMedialBorder,'medial','both');
+
+frontGyrusLatBorder=bsc_planeFromROI_v2(116+sidenum,'lateral',atlas);
+medialEndpointsExclusion=bsc_applyEndpointCriteria(wbfg,frontGyrusLatBorder,'medial','neither');
+
+slf2MidpointCriteria=bsc_applyMidpointCriteria(wbfg,latFisMedialBorder,'medial',frontGyrusLatBorder,'lateral')
 
    frontalGyrusROI=bsc_roiFromAtlasNums(atlas,116+sidenum,1);
 [~, frontalGyrusBool] = wma_SegmentFascicleFromConnectome(wbfg, {frontalGyrusROI}, {'endpoints'}, 'arbitraryName');
+
+  infLatFrontGyrus=bsc_roiFromAtlasNums(atlas,[114 112 153]+sidenum,1);
+  [~,infLatFrontGyrusBool] = wma_SegmentFascicleFromConnectome(wbfg, {infLatFrontGyrus}, {'endpoints'}, 'arbitraryName');
+
+   middlefrontalGyrusROI=bsc_roiFromAtlasNums(atlas,[115 155]+sidenum,1);
+[~, middlefrontalGyrusBool] = wma_SegmentFascicleFromConnectome(wbfg, {middlefrontalGyrusROI}, {'endpoints'}, 'arbitraryName');
+
+   ventricleTopPlane=bsc_planeFromROI_v2(ventricleLut(leftright),'superior',atlas)
+streamsAboveVent=bsc_applyMidpointCriteria(wbfg,ventricleTopPlane,'superior');
+streamsBelowVent=bsc_applyMidpointCriteria(wbfg,ventricleTopPlane,'inferior');
+
+posteriorPeriCBorder= bsc_planeFromROI_v2(167+sidenum,'posterior',atlas)
+anteriorExclusionStreams=bsc_applyEndpointCriteria(wbfg,posteriorPeriCBorder,'anterior','both');
+
+marginalisInfBorder= bsc_planeFromROI_v2(147+sidenum,'inferior',atlas)
+slf2IncPlane=bsc_modifyROI_v2(atlas,posteriorPeriCBorder,marginalisInfBorder,'inferior')
+
+[~, slf2PosteriorStreamBool] = wma_SegmentFascicleFromConnectome(wbfg, {slf2IncPlane}, {'and'}, 'arbitraryName');
+
+
+[~, slf3AntEndpointBool] = wma_SegmentFascicleFromConnectome(wbfg, {infLatFrontGyrus}, {'endpoints'}, 'arbitraryName');
 
 posteriorFrontalGyrus=bsc_modifyROI_v2(atlas,frontalGyrusROI,antThalPlane,'posterior');
 
@@ -527,21 +573,36 @@ cingAnteriorMidpoints=bsc_applyMidpointCriteria(wbfg,thirdVentPosterior,'anterio
 
 periCTop=bsc_planeFromROI_v2(167+sidenum,'superior',atlas);
 periClatBorder=bsc_planeFromROI_v2(167+sidenum,'lateral',atlas)
-bsc_modifyROI_v2
+
+
+anteriorSubParBorder=bsc_planeFromROI_v2(172+sidenum,'anterior',atlas);
+
 
 lowMidpointsBool=bsc_applyMidpointCriteria(wbfg,periCTop,'inferior');
+infCurveExclude=bsc_applyEndpointCriteria(wbfg,periCTop,'inferior','both');
 
-tractNameVar=strcat(sideLabel{leftright},'_SLF_Lat');
-classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,bothLatThalBool);
+tractNameVar=strcat(sideLabel{leftright},'_SLF1');
+slf1bool=all([frontoParietalBool,~superiorExclusionBool,cingulumExclusionBool,eitherLatThalBool,anteriorSLF3Requirement,anteriorSLF3Requirement],2);
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,slf1bool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+%slf3starbool=all([frontoParietalBool,~superiorExclusionBool,medialEndpointsExclusion,~infCurveExclude,~lowMidpointsBool,anteriorSLF3Requirement,~posteriorSLF3Requirement],2);
+
+tractNameVar=strcat(sideLabel{leftright},'_SLF2');
+slf2bool=all([frontoParietalBool,~superiorExclusionBool,medialEndpointsExclusion,~infCurveExclude,slf2MidpointCriteria],2);
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,slf2bool);
+
+%bothLatThalBool
+tractNameVar=strcat(sideLabel{leftright},'_SLF3');
+slf3bool=all([frontoParietalBool,bothLatThalBool,lowMidpointsBool,anteriorSLF3Requirement,posteriorSLF3Requirement],2);
+%slf3bool=all([frontoParietalBool,bothLatThalBool,infLatFrontGyrusBool,anteriorSLF3Requirement,posteriorSLF3Requirement],2);
+
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,slf3bool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
 %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
 
-tractNameVar=strcat(sideLabel{leftright},'_SLF_Med');
-classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,eitherLatThalBool,frontalGyrusBool,noSuperiortraversalBool);
-
-tractNameVar=strcat(sideLabel{leftright},'_SLF_Cing');
-classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoParietalBool,eitherLatThalBool,~cingAnteriorMidpoints,noSuperiortraversalBool);
-%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
-%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
+tractNameVar=strcat(sideLabel{leftright},'_SLFConflcit');
+slf4bool=all([slf1bool,slf2bool],2);
+classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,slf4bool);
 
    %last criteria = sub lat hal exclude
    testFG=bsc_makeFGsFromClassification_v5(classificationOut,wbfg)
