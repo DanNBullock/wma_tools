@@ -59,11 +59,14 @@ for leftright= [1,2]
     thalPost=bsc_planeFromROI_v2(thalLut(leftright), 'posterior',atlas);
     amigPost=bsc_planeFromROI_v2(amigLut(leftright),'posterior',atlas);
     
+    %ensure endpoints are anterior of specified planes
+    uncEndpointCriteria=bsc_applyEndpointCriteria(wbfg,thalTop,'inferior','both',amigPost,'anterior','both');
+    
     [~, UncSegBool]=wma_SegmentFascicleFromConnectome(wbfg, [{thalTop} {amigPost} {thalPost}], {'not','not','not'}, 'dud');
     
     frontoTemporalBool=or(bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_temporal')), bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_temporal_ufiber')));    
     
-    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Uncinate'),frontoTemporalBool,UncSegBool);
+    classificationOut=bsc_concatClassificationCriteria(classificationOut,strcat(sideLabel{leftright},'Uncinate'),frontoTemporalBool,UncSegBool,uncEndpointCriteria);
     
     %UNCINATE DONE ========================================================
     
