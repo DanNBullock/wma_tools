@@ -47,7 +47,7 @@ end
 % just for asthetic purposes, selects colors and applies to them to the
 % tract
 classificationGrouping = wma_classificationStrucGrouping(classification);
-colorMapping = colormap(hsv(max(classificationGrouping.index)));
+colorMapping = hsv(max(classificationGrouping.index));
 % end
 
 if isempty(classification.names)
