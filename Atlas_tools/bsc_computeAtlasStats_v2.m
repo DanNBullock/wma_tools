@@ -14,7 +14,7 @@ function [atlasGeometryStats] =bsc_computeAtlasStats_v2(atlas)
 % doing it repeatedly
 
 % Outputs:
-% -fsStats:  A table with relevant freesurfer data
+% -atlasGeometryStats:  A table with relevant parcel data for this atlas
 
 % (C) Daniel Bullock, 2020, Indiana University
 %%
