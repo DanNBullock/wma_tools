@@ -1,7 +1,7 @@
 function [atlasGeometryStats] =bsc_computeAtlasStats_v2(atlas)
 % [atlasGeometryStats] =bsc_computeAtlasStats_v2(atlas)
 %
-% This function computes two primary groups of geometric stats: 
+% This function computes three primary groups of geometric stats: 
 %  (1) volume based (i.e. actual volume and total brain proportion)
 %  (2) centroid based
 %  (3) boundary based (i.e. the 3D bounding box coordinates for each roi)
