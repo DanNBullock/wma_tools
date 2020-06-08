@@ -43,7 +43,7 @@ uniqueNoZero = uniqueLables(find(uniqueLables~=0));
 wholeBrainCoordNumber=length(wholeBrainRoi.coords);
 
 %set the column names for the table now
-columnNames={'ROI_name','actual_vol','BrainVol_proportion','centroid_x','centroid_y','centroid_z','medialBorder','lateralBorder','anteriorBorder','posteriorBorder','superiorBorder','inferiorBorder'};
+columnNames={'ROI_name','actual_vol','BrainVol_proportion','centroid_x','centroid_y','centroid_z','medialBorder','lateralBorder','anteriorBorder','posteriorBorder','superiorBorder','inferiorBorder','boxyness'};
 %createROINameVec
 
 tableData=cell([length(uniqueNoZero),length(columnNames)]);
@@ -97,6 +97,16 @@ for iROIs=1:length(uniqueNoZero)
     [counts, labels]=groupcounts(reshape(inferiorBorder.coords,numel(inferiorBorder.coords),1));
     inferiorBorderCoord=labels(find(max(counts)==counts));
     
+    %compute the "boxyness" of the roi.  The "boxyness" is the ratio of the
+    %roi's volume to the volume of the box bounded by it's borders.  In the
+    %event that a particular roi has an extreme island value (a voxel that
+    %is detached from he main body and far removed from the main body of
+    %the roi) this value will be uniquely low relative to the "normal"
+    %(i.e. group mean) value for this measure.
+    %note: only in the case of the lateral medial dimension would you ever
+    %expect to get a negative value, and thus need to apply abs.
+    boxyness=actualVol/[abs(lateralBorderCoord-medialBorderCoord)*(anteriorBorderCoord-posteriorBorderCoord)*(superiorBorderCoord-inferiorBorderCoord)];
+    
     %transparancy
     tableData{iROIs,1}=currentName;
     tableData{iROIs,2}=actualVol;
@@ -110,6 +120,8 @@ for iROIs=1:length(uniqueNoZero)
     tableData{iROIs,10}=posteriorBorderCoord;
     tableData{iROIs,11}=superiorBorderCoord;
     tableData{iROIs,12}=inferiorBorderCoord;
+    tableData{iROIs,13}=boxyness;
+    
 end
 
 %set it in a table
