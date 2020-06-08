@@ -103,9 +103,11 @@ for iROIs=1:length(uniqueNoZero)
     %is detached from he main body and far removed from the main body of
     %the roi) this value will be uniquely low relative to the "normal"
     %(i.e. group mean) value for this measure.
-    %note: only in the case of the lateral medial dimension would you ever
-    %expect to get a negative value, and thus need to apply abs.
-    boxyness=actualVol/[abs(lateralBorderCoord-medialBorderCoord)*(anteriorBorderCoord-posteriorBorderCoord)*(superiorBorderCoord-inferiorBorderCoord)];
+    %note:  you could get a senario where both values are negative (i.e.
+    %left side of brain, both borders posterior anterior comisure,etc),
+    %hence the need for abs.
+    
+    boxyness=actualVol/[abs(lateralBorderCoord-medialBorderCoord)*abs(anteriorBorderCoord-posteriorBorderCoord)*abs(superiorBorderCoord-inferiorBorderCoord)];
     
     %transparancy
     tableData{iROIs,1}=currentName;
