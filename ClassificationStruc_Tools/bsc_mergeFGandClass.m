@@ -155,7 +155,7 @@ for iInputs=1:length(inputFGs)
             
             %ELSE, PREVIOUS VERSION
             %sourceClassification.names=horzcat(sourceClassification.names,{strcat('fg',num2str(iInputs))});
-            sourceClassification.index(length(sourceClassification.index)+1:length(sourceClassification.index)+length(toMergeFG.fibers),1)=iInputs;
+            sourceClassification.index(1,length(sourceClassification.index)+1:length(sourceClassification.index)+length(toMergeFG.fibers))=iInputs;
         else
             %under the assumption that length(find(isEqualBool))>2, and
             %thus indicative of this streamline being found in a
@@ -214,7 +214,7 @@ for iInputs=1:length(inputFGs)
             %completely uninformative name, but it is the best we can
             %do with brainlife .tck input.
             toMergeclassification.names{1}=strcat('fg',num2str(iInputs));
-            toMergeclassification.index(1:curStreamNum,1)=1;
+            toMergeclassification.index(1,1:curStreamNum)=1;
         end
         
         
@@ -240,7 +240,7 @@ for iInputs=1:length(inputFGs)
         %completely uninformative name, but it is the best we can
         %do with brainlife .tck input.
         toMergeclassification.names{1}=sourceClassification.names{iInputs};
-        toMergeclassification.index(1:curStreamNum,1)=1;
+        toMergeclassification.index(1,1:curStreamNum)=1;
         
     end
     % 10/12/2019 edit:
@@ -273,7 +273,7 @@ for iInputs=1:length(inputFGs)
         
         %create a blank vector that is as long as the amalgum fg's fiber
         %field
-        bufferedMergeIndexVec=zeros(length(sourceClassification.index),1);
+        bufferedMergeIndexVec=zeros(1,length(sourceClassification.index));
         
         %in the amalgum fg structure, these streamlines correspond to the
         %current fg group, under the first streamline identity presumption
