@@ -20,7 +20,7 @@ The development of this code was directly supported by the following funding sou
 
 [![NIMH-T32-5T32MH103213-05](https://img.shields.io/badge/NIMH_T32-5T32MH103213--05-blue.svg)](https://projectreporter.nih.gov/project_info_description.cfm?aid=9725739)  
 
-[![NICT-ITP-2016/17](https://img.shields.io/badge/NICT_ITP-2016/17-Internship_Trainee_Program-9cf.svg](https://www.nict.go.jp/en/global/internship.html)
+[![NICT-ITP-2016&17](https://img.shields.io/badge/NICT_ITP-2016&17-ITP-9cf.svg)](https://www.nict.go.jp/en/global/internship.html)
 
 ### References 
 
@@ -36,7 +36,7 @@ The following table provides an overview of the types of code tools contained wi
 
 | Directory                 | Description                                                                                                                                       |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| Analysis                  | Analysis tools for segmented tracts; both individual and group level                                                                              |
+| [Analysis](#analysis)                  | Analysis tools for segmented tracts; both individual and group level                                                                              |
 | Atlas_tools               | Tools for working with NIfTI atlases/parcellations; both processing and analysis                                                                  |
 | BL_Wrappers               | Wrappers for interacting with brainlife.io apps                                                                                                   |
 | ClassificationStruc_Tools | Tools for working with [White matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)                     |
@@ -49,14 +49,16 @@ The following table provides an overview of the types of code tools contained wi
 
 ## Detailed (but summarized/non-exhaustive) directory content descriptions
 
-Below, the sections will discuss the specific tools/functions contained within each directory.  Parenthetical comment(s) in section headings will be used to indicate relevant data domain(s).  Toolkit designations (i.e. "wma_[function name]", for white matter anatomy, and "bsc_[function name]", for bloomington script compilation) are dropped when designating function names.  "Version descrepancies/differences will not be discussed.  Higher numbered versions should be presumed to be the latest iteration of a tool/function.
+Below, the sections will discuss the specific tools/functions contained within each directory.  Relevant data domain(s) will be designated below general-form function name.  Toolkit designations (i.e. "wma_[function name]", for white matter anatomy, and "bsc_[function name]", for bloomington script compilation) are dropped when designating function names.  "Version descrepancies/differences will not be discussed.  Higher numbered versions should be presumed to be the latest iteration of a tool/function.
 
 ### Analysis
 
-#### ConnectomeTestQ (tractography)
-Connectome quality test
+This directory contains several functions/tools which are generally used to compute derived statistics or summaries from other data objects (i.e. CSVs and tractomes/[white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b))
 
-A function which computes moderately obscure quantative features of streamlines from an input tract (or tractome)
+#### ConnectomeTestQ
+Relevant data domain(s):  tractography
+A connectome quality test.  
+A function which computes moderately obscure quantative features of streamlines from an input tract (or tractome).
 
 | Output Characteristic/Var | Description                                                                                                                                       |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -67,44 +69,53 @@ A function which computes moderately obscure quantative features of streamlines 
 | [costFuncVec](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L91)               | The inverse of 1-**AsymRat** .  As such, inf in cases of perfect asymmetry, 0 in cases of minmal asymetry (i.e. straight line).  Considered as a biological prior/cost function for efficient/sensible wiring.                                           |
 
 #### csvTables2DataStruc (csv, general data)
+Relevant data domain(s):  csv, general data
 
 A function for merging multiple 2-D data tables into a 3-D data structure.  It is assumed that the individual csv tables are storing information in rougly identical layouts (i.e. subject data).  Robust against row ("Domain") and column ("Property") droppage (i.e. absence in some files).  Essentially designed to amalgamate subject level data (ostensibly stored in distinct csv files) into a group level data structure.  Possibly a hacky variant of a [pandas](https://pandas.pydata.org/) function/method.
 
-#### feAndAFQqualityCheck (tractography)
+#### feAndAFQqualityCheck
+Relevant data domain(s):  tractography
  
-A function for visualizing (for a single tractome/[LiFE input](https://brainlife.io/datatype/58d15eaee13a50849b258844)) **many** quantative tractography traits.  Adaptively alters analyses, quantative output, and figure layout depending on input.  If optional [LiFE structure](https://brainlife.io/datatype/58d15eaee13a50849b258844) and/or [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) are input, will generate statistics specific to those structures as well (i.e. "surviving streamlines" and "white matter tracts", respectively) and the combination thereof (surviving streamlines in segmented white matter tracts).  **quantAllWMNorm** and **quantWBFG** constitute workhorse functions.  
+A function for visualizing (for a single tractome/[LiFE input](https://brainlife.io/datatype/58d15eaee13a50849b258844)) **many** quantative tractography traits.  Adaptively alters analyses, quantative output, and figure layout depending on input.  If optional [LiFE structure](https://brainlife.io/datatype/58d15eaee13a50849b258844) and/or [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) are input, will generate statistics specific to those structures as well (i.e. "surviving streamlines" and "white matter tracts", respectively) and the combination thereof (surviving streamlines in segmented white matter tracts).  [quantAllWMNorm](#quantallwmnorm) and [quantWBFG](quantwbfg) constitute workhorse functions.  
 See [this readme](https://github.com/brainlife/app-tractographyQualityCheck/tree/1.2) for an explicit listing, description, and code linkage of each quantative feature computed.  
 Featured on Brainlife.io as a standalone app:  
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.189-blue.svg)](https://doi.org/10.25663/brainlife.app.189)
 
-#### normalizeStatMeasures_pathsVersion (csv, general data)
+#### normalizeStatMeasures_pathsVersion
+Relevant data domain(s):  csv, general data
 
-Computes group-level normalized statistics for all rows ("Domains") and columns ("Properties") in a multi-subject (i.e. csv) dataset.  Cross-subject average computed with **tableAverages**.  Associated with functionality of **csvTables2DataStruc**.  Likely a hacky version of a [pandas](https://pandas.pydata.org/) or SQL function/method.
+Computes group-level normalized statistics for all rows ("Domains") and columns ("Properties") in a multi-subject (i.e. csv) dataset.  Cross-subject average computed with [tableAverages](#tableaverages).  Associated with functionality of [csvTables2DataStruc](csvtables2datattruc).  Likely a hacky version of a [pandas](https://pandas.pydata.org/) or SQL function/method.
 
-#### plotZscoreMeasuresFromCSV (csv, general data)
+#### plotZscoreMeasuresFromCSV
+Relevant data domain(s):  csv, general data
 
-Essentially (though not actually), computes, saves, and plots the Z-score normalized output of **normalizeStatMeasures_pathsVersion** . Good for publication figure generation.  Optional inputs **plotProperties** and **subSelect** allow for selection of particular rows ("Domains") and columns ("Properties") (and combinations thereof) for plotting/computation.
+Essentially (though not actually), computes, saves, and plots the Z-score normalized output of [normalizeStatMeasures_pathsVersion](#normalizestatmeasures_pathsversion) . Good for publication figure generation.  Optional inputs **plotProperties** and **subSelect** allow for selection of particular rows ("Domains") and columns ("Properties") (and combinations thereof) for plotting/computation.
 
-#### streamlineGeometryPriors (tractography)
+#### streamlineGeometryPriors
+Relevant data domain(s):  (tractography)
 
-Runs the analysis performed by **ConnectomeTestQ** in order to create a [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) for both the _Asymmetry Ratio_ and _Efficiency Ratio_ , wherein the distinct streamline identification categories contained within the [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) constitute the .05 incrimented bins of those quantative features (thus resulting in 20 distinct streamline categories per structure).  Intended to be used as a biological/geometric prior for segmentation algorithms.
+Runs the analysis performed by [ConnectomeTestQ](#connectometestq) in order to create a [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) for both the [_Asymmetry Ratio_](#connectometestq) and [_Efficiency Ratio_](#connectometestq) , wherein the distinct streamline identification categories contained within the [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) constitute the .05 incrimented bins of those quantative features (thus resulting in 20 distinct streamline categories per structure).  Intended to be used as a biological/geometric prior for segmentation algorithms.
 
-#### bsc_tableAverages (csv, general data)
+#### bsc_tableAverages
+Relevant data domain(s):  csv, general data
 
 Workhorse function for computing averages across tables with roughly identical data layouts (i.e. subject data).  Robust against row ("Domain") and column ("Property") droppage (i.e. absence in some files).  Likely a hacky version of a [pandas](https://pandas.pydata.org/) or SQL function/method.
 
-#### endpointMapsDecay (tractography)
+#### endpointMapsDecay
+Relevant data domain(s):  tractography
 
 Generates [smoothed/inflated](https://www.mathworks.com/help/matlab/ref/smooth3.html) NIfTI **density** (i.e. count) masks **for the streamline endpoints** of tracts identified in the input [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  Requires a reference NIfTI (to establish mask NIfTI dimensions) and a refrence tract/tractome (to extract identified streamlines from).  Relies on **endpointClusterProto** in order to ensure streamline endpoints are associated with appropriate endpoint group/NIfTI output.
 
 #### quantAllWMNorm
+Relevant data domain(s):  tractography
 
-Quantifies more common quantative traits associated with white matter.  Underwrites **feAndAFQqualityCheck**.  **quantAllWMNorm** is predicated upon the assumption of an associated [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) and computes a number of stats relative to the (presumed) source whole-brain tractome.  This is as opposed to quantWBFG which makes no presumptions regarding associated [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  
+Quantifies more common quantative traits associated with white matter.  Underwrites [feAndAFQqualityCheck](#feandafqqualitycheck).  [quantAllWMNorm](#quantallwmnorm) is predicated upon the assumption of an associated [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) and computes a number of stats relative to the (presumed) source whole-brain tractome.  This is as opposed to [quantWBFG](#quantwbfg) which makes no presumptions regarding associated [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  
 See [this readme](https://github.com/brainlife/app-tractographyQualityCheck/tree/1.2) for an explicit listing, description, and code linkage of each quantative feature computed.
 
 #### quantWBFG
+Relevant data domain(s):  tractography
 
-The standalone quantification function for a singleton (presumed whole-brain tractome) tract structure.  Quantifies more common quantative traits associated with white matter.  Associated with **quantAllWMNorm**.  
+The standalone quantification function for a singleton (presumed whole-brain tractome) tract structure.  Quantifies more common quantative traits associated with white matter.  Associated with [quantAllWMNorm](#quantallwmnorm).  
 See [this readme](https://github.com/brainlife/app-tractographyQualityCheck/tree/1.2) for an explicit listing, description, and code linkage of each quantative feature computed.
 
 
