@@ -142,7 +142,7 @@ This function iterates across the unique label values (presumed integer, as woul
 | inferiorBorderCoord  | z coordinate of inferior border                                                                                                                                           |
 | boxyness             | the ratio of the actual ROI volume to the rectangular prism/cuboid formed by its borders.  A perfectly rectangular prism/cuboid ROI = 1, a perfectly spherical ROI = π/6 |
 
-This function is featured as a component of an app on [brainlife.io](https://brainlife.io/):
+This function is featured as a component of an app on [brainlife.io](https://brainlife.io/):  
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.272-blue.svg)](https://doi.org/10.25663/brainlife.app.272)  
 (although this app is specific to [freesurfer output](https://brainlife.io/datatype/58cb22c8e13a50849b25882e) this function can be run on any [atlas/parcellation](https://brainlife.io/datatype/5c1a7489f9109beac4a88a1f)
 
@@ -167,5 +167,64 @@ A modified version of the fnDeislandLabels code originally written by [Brent McP
 
 A utility function which loads one of the .aseg parcellation options ('orig' or '2009') output from [freesurfer](https://surfer.nmr.mgh.harvard.edu/).  If the .nii.gz version of the parcellation isn't found, this function will attempt to use [mri_convert](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_convert).  As such, some of the adaptive functionality of this function is predicated upon freesurfer/freeview being installed on the local file structure.
 
+### ClassificationStruc_Tools
 
+The **ClassificationStruc_Tools** directory contains functions which are used for generating, modifying and/or interacting with [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).
+
+#### concatClassificationCriteria
+
+This function essentially applies a logical _and_ operation across a set of input boolean vectors (each with length equal to the number of streamlines in the structure associated with the source tractogram) and creates a new entry in the input [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) using the specified name.  The presumption/use case for this is that the input boolean vectors represent a number of criteria that have been applied to a sourcetractogram such that the TRUE values are associated with streamlines that meet the criteria and FALSE values do not.  In this way, the resultant tract classification added to the classification structure represents those streamlines which meet all criteria.  This function exists because not all criteria used in segmentation are based on the standard ROI intersection method.
+
+#### extractClassification
+
+This function creates a new classification structure with the **only** tract labeled being the specified tract or index.  The use case for this is to avoid  having to pass around segmented tracts in order to modify them.  Instead you pass around the whole tractogram and the classification structure.  Allows for lightweight tract representation and non-duplication of streamlines
+
+#### extractStreamIndByName
+
+This function to a extract boolean vector indexing the the streamlines associated with the associated string label.  Used to improve robustness and facilitate error handling.  Outputs only a boolean vector, not a [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)
+
+#### makeFGsFromClassification
+
+Extremely important/useful function which creates a stucture containing *all* of the identified/labeled streamline groups contained within a classification structure.  This facilitates secondary uses like postprocessing, plotting, or other visualization/analysis.  
+NOTE: the output tractStruc is a structure wherein each row corresponds to a diffrent classification group. Previous versions of this function added a layer of complexity to this, such there were .fg and .name fields.  This was redundant because there is a .name field within .fg by default.  As such, this is now just a basic [cell structure](https://www.mathworks.com/help/matlab/cell-arrays.html) (wherein each cell contains a distinct "fg object"), and thus there are no fields.
+
+#### makeWBFGandClassFromList
+
+Conceptually, this function is the inverse of [makeFGsFromClassification](makefgsfromclassification).  Instead of generating separate tract structures/files from an input tractome and [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b), this function takes in a list of [.tck format files](https://brainlife.io/datatype/5dcf0047c4ae28d7f2298f48) and combines them into a single tract structure ([vistasoft](https://github.com/vistalab/vistasoft) fg format) and also creates a corresponding classification structure which identifies the inherited tract identies of the new structure's streamlines.  Used to convert from use cases wherein distinct tracts are stored as separate file objects.
+
+#### mergeFGandClass
+
+This function merges input fiber goups and classification structures.  A deceptively complicated function which relies on [reconcileClassifications](#reconcileclassifications), [spliceClassifications](#spliceclassifications) to handle subtly distinct use cases.   
+Example use cases:
+
+- 1.  Merging a tracking parameter sweep:  If you have several different fiber groups generated by different tractography parameter settings, this will provide a merged fg structure along with a classification structure indicating which streamlines came from which source tractography method (as specified by the file name input)
+
+-  2.  Merging multiple segmentations:  By inputting multiple source whole brain fiber groups (from the same subject, one assumes), along with the classification structure from each corresponding segmentation, you can create a "merged replication segmentation" which presumably has more streamlines representing each
+ particular tract, or better represents distinct sets of tracts (e.g. if tailored source tractography methods were used).
+ 
+-  3.  Incorporating tracts generated from other methods into an exsting whole brain fiber group and segmentation:  if one already has a whole brain tractome (and corresponding segmentation) it is possible to "append" more tracts to the source tractome and classification structure.  The tracts to be appended *do not need corresponding classification structures* and will be added to the existing classification structure (the one that corresponds to the whole brain tractography, should it exist).  Their names will be derived from the name in the fg.name field.
+
+#### reconcileClassifications
+
+This function is for reconciling two [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  In reconciling, the presumption is that these correspond to the **same** source tractography entities (i.e. collections of streamlines / source tractogram) _but the entities classified be the WMC structure could be the same or different in the two input structures_.
+
+#### spliceClassifications
+
+This function is for splicing two [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  When splicing, the presumption is that these correspond to **separate** tractography entities (i.e. collections of streamlines), _but which may nonetheless correspond to the same anatomical (and thus the same named) structure_ .
+
+#### resortClassificationStruc
+
+This function resorts an input [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) such that left and right variants of a tract are next to eachother.  Future versions may attempt to sort singleton tracts to the front and subcategories (i.e. interhemispheric or ufibers) in an additional fashion.
+
+#### classificationStrucGrouping
+
+Conceptually similar to [resortClassificationStruc](resortclassificationstruc), but merges them into a non-hemisphere specific category.  Uses a more birtle method than [resortClassificationStruc](resortclassificationstruc), [likely needs update](https://github.com/DanNBullock/wma_tools/issues/22)
+
+#### removeOutliersClassification
+
+A [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)-specific implementation of [mbaComputeFibersOutliers](https://github.com/francopestilli/mba/blob/master/compute/mbaComputeFibersOutliers.m), a cleaning method for tracts which removes streamlines that are some number of deviations to long or too far away from the tract centroid.  Iterates across the tract identies contained within the [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) and performs the cleaning step with the same parameter settings for all.
+
+#### clearNonvalidClassifications
+
+Using a pairing of a [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) and a [LiFE structure](https://brainlife.io/datatype/58d15eaee13a50849b258844) this function removes those streamlines from the classification labeling schema such that only those streamlines with evidence maintain their identity.
 
