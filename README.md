@@ -167,6 +167,10 @@ A modified version of the fnDeislandLabels code originally written by [Brent McP
 
 A utility function which loads one of the .aseg parcellation options ('orig' or '2009') output from [freesurfer](https://surfer.nmr.mgh.harvard.edu/).  If the .nii.gz version of the parcellation isn't found, this function will attempt to use [mri_convert](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_convert).  As such, some of the adaptive functionality of this function is predicated upon freesurfer/freeview being installed on the local file structure.
 
+### BL_Wrappers
+
+The contents of the **BL_Wrappers** will not be discussed in this overview.  Previously, this directory contained wrappers that were needed to interface with earlier versions of the [brainlife.io] platform and/or generate appropraite output.  These functionalities are now typically handled by distinct scripts which depend on the datatypes involved.
+
 ### ClassificationStruc_Tools
 
 The **ClassificationStruc_Tools** directory contains functions which are used for generating, modifying and/or interacting with [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).
@@ -247,3 +251,84 @@ Lightweight streamline plotting function that undelies the streamline debugging 
 #### quickPlotClassByName
 
 iterates across the entries in a [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) and quickly plots the associated structures.  Good for doing QC on a segmentation.  Be wary of using this on a classification structure with a large number of categories/names.
+
+### ROI_Tools
+
+This directory contains the "meat" of the wma_tools library.  Here, there are the majority of the ROI extraction and modification functions that facilitate wma_tools anatomically guided segmentations.
+
+#### amalgumROIsFromInput
+
+This function extracts either amalgum (in that there are multiple requested labels), or singular (in that there is a single label) ROIs fom an input atlas/parcellation NIfTI; **OR** if a input directory is passed, this function will produce either singular (in that a single ROI file is requested; i.e. simple passthrough) or amalgum (in that multiple ROI files are merged) output ROI structures.  Makes no assumptions about ROI file name conventions (requires **exact** name input as string, other than ".nii.gz", which the function appends).  Features an input parameter for inflation.  Useful for creating pipelines that are interoperable with methods that have used  ADFGAG
+
+#### MultiIntersectROIs
+
+This function finds the overlap of multiple ROIs.  If an atlas is passed in, then the **varargin** can be used to specify which label overlaps you seek (presumably after non-trivial inflation, which is also a parameter input).  Alternatively, if **varargin** is a Series of mask ROIS, simply outputs the intesection  of those ROIs.
+
+#### amalgamateROISacrossDirectories
+
+This function iterates across input ROI directories and creates an amalgum across all ROIs of the same name across input directories.  IMPORTANT NOTE: given that this is a simple amalgamation of ROIs, it is presumed that all ROIs of the same name are in the same reference space and are the same dimensions.  This would be used, for example, once a multiple subjects' atlases or ROI directories had been warped to some template space, and then some amalgamtion needed to be done.  This was [implmented here](https://github.com/DanNBullock/EcogAnalysisCode) for [Babo-Rebelo et al. 2020](https://www.biorxiv.org/content/10.1101/2020.05.22.102046v1)
+
+#### atlasROINumsFromCoords
+
+Determines the atlas label associated with the input coordinate.  Input coordinate can be either in image space or in acpc (e.g. affined) space.
+
+#### endpointAtlasCriteria
+
+This function determines which streamlines end in the spcecified labels of the input atlas.  This function is not recomended for extremely large groups of streamlines.
+
+#### intersectROIs
+
+Finds the simple intersection of two point cloud ROIs (i.e. [vistasoft](https://github.com/vistalab/vistasoft) format).  No distance compuation performed, thus point matches must be exact.
+
+#### loadAndParseROI
+
+Takes an input string or object that corresponds to either a vistasoft ROI or a NIfTI ROI and outputs a standard, [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI object
+
+#### makePlanarROI
+
+Creates a planar ROI, in [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI format, at the specified, coordinate space (i.e. **not** image space) location PROVIDED AS A SINGLE INTEGER (i.e. -20 mm).  Input parameter "dimension" indicates the "stable" dimension of the plane, i.e. the coordinate that will be shared amongst all points associated with the planar ROI.  ACPC orentation recommended in order to ensure that planes are orthogonal to standardly oriented anatomy.
+
+#### mergeROIs
+
+Merges the coordinates of two [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI objects into a single ROI output.
+
+#### midpointROISegment
+
+This function determines whether the midpoint of a set of streamlines intersects with an ROI.  Useful for performing a midpoint specific segmentation step.  Midpoints can be input directly, or can be computed from input tractogram.  In either case output is a boolean vector indicating streamline-specific intersection with the (format agnostic, i.e. NIfTI or [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI objects) input ROI.
+
+#### modifyROI
+
+This function modifies an input ROI (either as direct input of a [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI objects, or as specified by an atlas-label(sequence) pairing) by removing all ROI coordinates NOT specified by the input.  For example, relative to a particular 3-D input coordinate (i.e. x,y,z), an input instruction (in the "location" variable) of "superior" will preserve all ROI cordinates superior of the specified Z value of the input coordinate, thereby removing all coordinates inferior to the specified refCoord.  Notably the input **refCoord** can actually be an planar [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI object.  The desired coordinate will be inferred from the singleton (i.e. "stable") value of the ROI.
+
+#### planeFromROI
+
+This function creates a creates a planar ROI, in [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI format, at the specified boundary of the input ROI.  Input ROI format can be either a direct input of a [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI object, or as specified by an atlas-label(sequence) pairing.  Desired boundary of ROI is specfied by string input from the following options ("top", "superior", "bottom", "inferior", "anterior", "posterior", "medial")
+
+#### roiFromAtlasNums
+
+This function extracts an ROI, in [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI format, from the input atlas.  Desired atlas labels are specified using the **ROInums** input parameter, and can be a vector of multiple integer values (which will result in a single, merged ROI).  **smoothKernel** parameter input permits inflation of extracted ROI.
+
+#### subtractROIs
+
+This function subtracts the first input ROI, in [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI format, from the second input ROI, in [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI format.
+
+#### tractByEndpointROIs
+
+This function segments streamlines from an input fg/tractogram such that, for all surviving stramlines one streamline endpoint is in each of the input rois.  Prevents odd situations that were arising with other segmentation methods (i.e. inclusion of within-roi u fibers).  Input ROIS must be [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI format and formatted thusly:  [{ROI1} {ROI2}]
+
+#### dtiRoiFromNiftiObject
+A copy of the [vistasoft](https://github.com/vistalab/vistasoft) by the same name, however this function doesn't presume that the NIfTI being passed is a string to a saved file.  This permits rapid, iterated use without massive load times.  Overall, this function converts a standard NIfTI formatted mask to a [vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI.  Used to obviate [roiFromAtlasNums](#roifromatlasnums) with [dtiRoiFromNiftiObjectSmoothWrapper](dtiroifromniftiobjectsmoothwrapper)
+
+#### dtiRoiFromNiftiObjectSmoothWrapper
+
+Essentially, the same function as [dtiRoiFromNiftiObject](dtiroifromniftiobject), except that it removes unneeded input and incldues a parameter for inflation in order to replicate functionality of [roiFromAtlasNums](#roifromatlasnums).
+
+#### multiROIpairSeg
+
+This function segments tracts from an input wbfg by teratively applying [tractByEndpointROIs](#tractbyendpointrois), which segments tracts by their endpoints.  In theory, input ROIs can be either .mat ([vistasoft](https://github.com/vistalab/vistasoft) point cloud ROI) format or NIfTI format, either as strings or as
+ objects.  This function is essentially the base function for [SegROIfromPairStringList](#segroifrompairstringlist).
+ 
+#### SegmentFascicleFromConnectome
+
+An adapted version of [feSegmentFascicleFromConnectome](https://github.com/francopestilli/life/blob/9a169efb9219137c8b0b43fbf4261922d287fe36/utility/feSegmentFascicleFromConnectome.m) with various modifications.  Takes an input fiber group (i.e. tract, tractome, whole brain fiber group) and iteratively applies ROI based criteria (i.e. 'NOT' or 'AND') or more specific options (i.e. 'endpoints', which can have its output negated after running) to output both a new tract and a boolean vector reflecting the survivors.
+
