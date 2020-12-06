@@ -127,19 +127,18 @@ This directory contains a number of tools and functions for working with NIfTI a
 This function iterates across the unique label values (presumed integer, as would be the case for an atlas; bad things would happen for continuous float NIfTI) found in a NIfTI and computes the following statistics
 
 | Quantity label       | Description |
-|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| actualVol            | The actual, world/subjectspace volume of the ROI                                                                                                                          |
-
-| wholeBrainProportion | The proportion of the total brain  (non 0 label entries) volume occupied by the ROI                                                                                       |
-| centroidx            | x coordinate of centroid                                                                                                                                                  |
-| centroidy            | y coordinate of centroid                                                                                                                                                  |
-| centroidz            | z coordinate of centroid                                                                                                                                                  |
-| medialBorderCoord    | x coordinate of medial border                                                                                                                                             |
-| lateralBorderCoord   | x coordinate of lateral border                                                                                                                                            |
-| anteriorBorderCoord  | y coordinate of anterior border                                                                                                                                           |
-| posteriorBorderCoord | y coordinate of posterior border                                                                                                                                          |
-| superiorBorderCoord  | z coordinate of superior border                                                                                                                                           |
-| inferiorBorderCoord  | z coordinate of inferior border                                                                                                                                           |
+|----------------------|--------------------------------------------------------------------------------------------------------|
+| actualVol            | The actual, world/subjectspace volume of the ROI        |
+| wholeBrainProportion | The proportion of the total brain  (non 0 label entries) volume occupied by the ROI                          |
+| centroidx            | x coordinate of centroid        |
+| centroidy            | y coordinate of centroid      |
+| centroidz            | z coordinate of centroid     |
+| medialBorderCoord    | x coordinate of medial border       |
+| lateralBorderCoord   | x coordinate of lateral border     |
+| anteriorBorderCoord  | y coordinate of anterior border      |
+| posteriorBorderCoord | y coordinate of posterior border      |
+| superiorBorderCoord  | z coordinate of superior border       |
+| inferiorBorderCoord  | z coordinate of inferior border     |
 | boxyness             | the ratio of the actual ROI volume to the rectangular prism/cuboid formed by its borders.  A perfectly rectangular prism/cuboid ROI = 1, a perfectly spherical ROI = π/6 |
 
 This function is featured as a component of an app on [brainlife.io](https://brainlife.io/):  
