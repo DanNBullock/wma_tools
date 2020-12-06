@@ -38,14 +38,14 @@ The following table provides an overview of the types of code tools contained wi
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Analysis](#analysis)                  | Analysis tools for segmented tracts; both individual and group level                                                                              |
 | [Atlas_tools](#atlas_tools)               | Tools for working with NIfTI atlases/parcellations; both processing and analysis                                                                  |
-| BL_Wrappers               | Wrappers for interacting with brainlife.io apps                                                                                                   |
+| [BL_Wrappers](#bl_wrappers)               | Wrappers for interacting with brainlife.io apps                                                                                                   |
 | [ClassificationStruc_Tools](#classificationstruc_tools) | Tools for working with [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)                     |
-| Debug_Tools               | Tools for troubleshooting and developing segmentations; typically lightweight streamline visualizations.                                          |
-| ROI_Tools                 | Tools for obtaining, modifying, and utilizing ROIs.  Both NiFTI and [vistasoft](https://github.com/vistalab/vistasoft), point-cloud format.       |
-| Segmentations             | Implemented segmentations using wma_tools methods; contains single tract and multi-tract implementations; contains archived segmentation versions |
-| Stream_Tools              | Tools for assessing streamline characteristics, superficial modification, and criteria application                                                |
-| Utils                     | General use utility functions, externally sourced functions                                                                                       |
-| Visualization             | Functions for generating visualizations (typically publication quality)                                                                           |
+| [Debug_Tools](#debug_tools)               | Tools for troubleshooting and developing segmentations; typically lightweight streamline visualizations.                                          |
+| [ROI_Tools](#roi_tools)                 | Tools for obtaining, modifying, and utilizing ROIs.  Both NiFTI and [vistasoft](https://github.com/vistalab/vistasoft), point-cloud format.       |
+| [Segmentations](#segmentations)             | Implemented segmentations using wma_tools methods; contains single tract and multi-tract implementations; contains archived segmentation versions |
+| [Stream_Tools](#stream_Tools)              | Tools for assessing streamline characteristics, superficial modification, and criteria application                                                |
+| [Utils](#utils)                     | General use utility functions, externally sourced functions                                                                                       |
+| [Visualization](#visualization)             | Functions for generating visualizations (typically publication quality)                                                                           |
 
 ## Detailed (but summarized/non-exhaustive) directory content descriptions
 
@@ -126,7 +126,7 @@ This directory contains a number of tools and functions for working with NIfTI a
 
 This function iterates across the unique label values (presumed integer, as would be the case for an atlas; bad things would happen for continuous float NIfTI) found in a NIfTI and computes the following statistics
 
-| Quantity label       | Description
+| Quantity label       | Description |
 |----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | actualVol            | The actual, world/subjectspace volume of the ROI                                                                                                                          |
 
@@ -332,3 +332,52 @@ This function segments tracts from an input wbfg by teratively applying [tractBy
 
 An adapted version of [feSegmentFascicleFromConnectome](https://github.com/francopestilli/life/blob/9a169efb9219137c8b0b43fbf4261922d287fe36/utility/feSegmentFascicleFromConnectome.m) with various modifications.  Takes an input fiber group (i.e. tract, tractome, whole brain fiber group) and iteratively applies ROI based criteria (i.e. 'NOT' or 'AND') or more specific options (i.e. 'endpoints', which can have its output negated after running) to output both a new tract and a boolean vector reflecting the survivors.
 
+### Segmentations
+
+### Stream_Tools
+
+This directory contains functions used to modify, interact, or quantatively assess streamlines.  Primarily uses [vistasoft](https://github.com/vistalab/vistasoft) fg format for tractography
+
+#### applyEndpointCriteria
+
+This function evaluates streamlines from the input FG against a number of criteria.  These criteria are specified in a specific fashion using the **varargin** variable input.  Allows for some relatively complex and advanced requests.  Specifically:
+
+> the varargin is interpreted in **sequential triplets** of inputs such that
+-    Input (1) is a coordinate (or a planar ROI)
+-    Input (2) is a relative criteria expressed as a string (i.e. "top", "superior", "bottom", "inferior", "anterior", "posterior", or "medial")
+- Input (3) is a string input of 'both', 'one', or 'neither' indicating which endpoints this criteria should be true for.
+
+Outputs a boolean vector indicating satisfaction of all criteria.
+
+#### applyMidpointCriteria
+
+Similar to [applyEndpointCriteria](#applyendpointcriteria), except that **varargin** variable input is interpreted in **pairs**, as there is no need to specify which "endpoints" the criteria should be true of (there is only one midpoint).  As was the case for [midpointROISegment](#midpointroisegment) streamline-related inputs can either be in the form of pre-computed midpoints (for computational speedup) or an input FG structure.
+
+#### classifiedStreamEndpointCortex
+
+This is a wrapper around [endpointMapsDecay](#endpointmapsdecay) which iteratively generates (and saves) NIfTI-formatted termination maps for each structre identified in an input [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  subSelect input parameter permits sub-selection (by index) of those structure names which the user wishes to extract.  decayFunc and decayRadiusThresh parameter inputs control application of smoothing algorithms.
+
+#### investigateTract
+
+This function applies [atlasROINumsFromCoords](#atlasroinumsfromcoords) to both endpoints of each streamline from the input FG, and thereby determines which two labels from the input atlas are assocated with each streamline.
+
+#### orientFgRAS
+
+This function determines the "primary dimension of traversal" (i.e. the dimension the streamline travels the most distance in) for each streamline and reorients the streamlines in accordance with RAS-LPI conventions such that the first endpoint is the RAS endpoint and the second endpoint is the LPI endpoint.  Dimension of assesment is determined by "primary dimension of traversal".  Functionality underwritten by [endpointClusterProto](#endpointclusterproto)
+
+#### reorientStreamline
+
+Single-streamline based implementation of [orientFgRAS](#orientfgras)
+
+#### reorientFiber
+
+Predecessor function to [orientFgRAS](#orientfgras), before the implementation of [endpointClusterProto](#endpointclusterproto)
+
+#### splitTractAtPoint
+
+This function splits an input FG-formatted tract at a specified coordinate, based on the relative location of the closest node of a given streamline to a given
+plane.  As an illustration, this code is the generalized version of previous code which was used to separate the pArc and TPC from the same body at the bottom of the IPS for versions of the segmentation associated with [Bullock et al. 2019](https://doi.org/10.1007/s00429-019-01907-8).  **coordinate** parameter input is an X Y Z coordinate, while **location** parameter input is a string ('x', 'y', or 'z') indicating the dimension for assesment.
+
+#### endpointClusterProto
+
+An over-engineered function which uses something akin to the [MinimumAverageDirectFlipMetric](https://dipy.org/documentation/0.16.0./reference/dipy.segment/#minimumaveragedirectflipmetric) as implemented by [Garyfallidis et al. 2012](https://dx.doi.org/10.3389%2Ffnins.2012.00175) to classify streamline endpoints as being associated with either the RAS or LPI end of the tract.  Outputs both the endpoint identities and the coordinates.
