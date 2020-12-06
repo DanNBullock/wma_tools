@@ -39,7 +39,7 @@ The following table provides an overview of the types of code tools contained wi
 | [Analysis](#analysis)                  | Analysis tools for segmented tracts; both individual and group level                                                                              |
 | Atlas_tools               | Tools for working with NIfTI atlases/parcellations; both processing and analysis                                                                  |
 | BL_Wrappers               | Wrappers for interacting with brainlife.io apps                                                                                                   |
-| ClassificationStruc_Tools | Tools for working with [White matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)                     |
+| ClassificationStruc_Tools | Tools for working with [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)                     |
 | Debug_Tools               | Tools for troubleshooting and developing segmentations; typically lightweight streamline visualizations.                                          |
 | ROI_Tools                 | Tools for obtaining, modifying, and utilizing ROIs.  Both NiFTI and [vistasoft](https://github.com/vistalab/vistasoft), point-cloud format.       |
 | Segmentations             | Implemented segmentations using wma_tools methods; contains single tract and multi-tract implementations; contains archived segmentation versions |
@@ -64,8 +64,8 @@ A function which computes moderately obscure quantative features of streamlines 
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | [streamLengths](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L42)             | The length traversed by each streamline                                                                              |
 | [FullDisp](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L48)                  | The actual spatial [displacement](https://en.wikipedia.org/wiki/Displacement_(geometry)) of each streamline                                                                  |
-| [efficiencyRat](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L49)             | Efficiency ratio: the ratio between the displacement and the actual traversal length of each streamline.  1 = maximal efficiency, 0 = minimal efficiency (e.g. ending up exactly where it started)                                                                                                 |
-| [AsymRat](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L52)                   | The square of the difference between the the **efficiencyRat** for the two halves of the streamline.  1 = maximal asymmetry, 0 = minimal asymmetry. \n  _Example 1_ : if the first half was completely circuitous and the second half was a straight line;  (0-1)^2 =1 \n _Example 2_ : both halves are a straight line; (1-1)^2 =0 ;                  |
+| [efficiencyRat](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L49)             | Efficiency ratio: the ratio between the displacement and the actual traversal length of each streamline.  1 = maximal efficiency, 0 = minimal efficiency (e.g. ending up exactly where it started).  A perfectly semicircular streamline (i.e. u shaped) would have an efficiency ratio of 1/π.                                                                                                 |
+| [AsymRat](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L52)                   | The square of the difference between the the **efficiencyRat** for the two halves of the streamline.  1 = maximal asymmetry, 0 = minimal asymmetry. <br/>  _Example 1_ : if the first half was completely circuitous and the second half was a straight line;  (0-1)^2 =1 <br/> _Example 2_ : both halves are a straight line; (1-1)^2 =0 ;                  |
 | [costFuncVec](https://github.com/DanNBullock/wma_tools/blob/f989c66dbfcc0bb943e9f1ed0954a6d3b52ab32a/Analysis/ConnectomeTestQ_v2.m#L91)               | The inverse of 1-**AsymRat** .  As such, inf in cases of perfect asymmetry, 0 in cases of minmal asymetry (i.e. straight line).  Considered as a biological prior/cost function for efficient/sensible wiring.                                           |
 
 #### csvTables2DataStruc (csv, general data)
@@ -104,7 +104,7 @@ Workhorse function for computing averages across tables with roughly identical d
 #### endpointMapsDecay
 Relevant data domain(s):  tractography
 
-Generates [smoothed/inflated](https://www.mathworks.com/help/matlab/ref/smooth3.html) NIfTI **density** (i.e. count) masks **for the streamline endpoints** of tracts identified in the input [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  Requires a reference NIfTI (to establish mask NIfTI dimensions) and a refrence tract/tractome (to extract identified streamlines from).  Relies on **endpointClusterProto** in order to ensure streamline endpoints are associated with appropriate endpoint group/NIfTI output.
+Generates [smoothed/inflated](https://www.mathworks.com/help/matlab/ref/smooth3.html) NIfTI **density** (i.e. count) masks **for the streamline endpoints** of tracts identified in the input [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b).  Requires a reference NIfTI (to establish mask NIfTI dimensions) and a refrence tract/tractome (to extract identified streamlines from).  Relies on **endpointClusterProto** in order to ensure streamline endpoints are associated with appropriate endpoint group/NIfTI output.  Workhorse function for **[classifiedStreamEndpointCortex]**
 
 #### quantAllWMNorm
 Relevant data domain(s):  tractography
@@ -117,5 +117,55 @@ Relevant data domain(s):  tractography
 
 The standalone quantification function for a singleton (presumed whole-brain tractome) tract structure.  Quantifies more common quantative traits associated with white matter.  Associated with [quantAllWMNorm](#quantallwmnorm).  
 See [this readme](https://github.com/brainlife/app-tractographyQualityCheck/tree/1.2) for an explicit listing, description, and code linkage of each quantative feature computed.
+
+### Atlas_tools
+
+This directory contains a number of tools and functions for working with NIfTI atlases/parcellations.
+
+#### computeAtlasStats
+
+This function iterates across the unique label values (presumed integer, as would be the case for an atlas; bad things would happen for continuous float NIfTI) found in a NIfTI and computes the following statistics
+
+| Quantity label       | Description
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| actualVol            | The actual, world/subjectspace volume of the ROI                                                                                                                          |
+
+| wholeBrainProportion | The proportion of the total brain  (non 0 label entries) volume occupied by the ROI                                                                                       |
+| centroidx            | x coordinate of centroid                                                                                                                                                  |
+| centroidy            | y coordinate of centroid                                                                                                                                                  |
+| centroidz            | z coordinate of centroid                                                                                                                                                  |
+| medialBorderCoord    | x coordinate of medial border                                                                                                                                             |
+| lateralBorderCoord   | x coordinate of lateral border                                                                                                                                            |
+| anteriorBorderCoord  | y coordinate of anterior border                                                                                                                                           |
+| posteriorBorderCoord | y coordinate of posterior border                                                                                                                                          |
+| superiorBorderCoord  | z coordinate of superior border                                                                                                                                           |
+| inferiorBorderCoord  | z coordinate of inferior border                                                                                                                                           |
+| boxyness             | the ratio of the actual ROI volume to the rectangular prism/cuboid formed by its borders.  A perfectly rectangular prism/cuboid ROI = 1, a perfectly spherical ROI = π/6 |
+
+This function is featured as a component of an app on [brainlife.io](https://brainlife.io/):
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.272-blue.svg)](https://doi.org/10.25663/brainlife.app.272)  
+(although this app is specific to [freesurfer output](https://brainlife.io/datatype/58cb22c8e13a50849b25882e) this function can be run on any [atlas/parcellation](https://brainlife.io/datatype/5c1a7489f9109beac4a88a1f)
+
+#### computeFresurferStats
+
+A precursor to [computeAtlasStats](#computeatlasstats), which takes a [freesurfer directory](https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/OutputData_freeview) as input (and thereby only works on "aparc.a2009s+aseg.nii.gz", assuming it exists, which it doesn't by default, due to the default .mgz output) and computes a subset of the same quantative features (e.g. no actual volume, centroid, or boxyness).
+
+#### inflateLabels
+
+A freesurfer-specific, "aparc.a2009s+aseg.nii.gz" [grey](https://github.com/DanNBullock/wma_tools/blob/3bab47ab121c273e43e1f2fb48647c41e66bfb00/Atlas_tools/bsc_inflateLabels.m#L22)/[subcortical](https://github.com/DanNBullock/wma_tools/blob/3bab47ab121c273e43e1f2fb48647c41e66bfb00/Atlas_tools/bsc_inflateLabels.m#L23)-specific inflation function which inflates gray and subcortical labels into the white matter.  Useful for preprocessing the fs_a2009_aseg for subsequent use in segmentation, particularly in the case of tractography generation algorithms which do not guarentee termination in grey / subcortical structures (e.g. mrtrix2).  Relies on modified versions of [fnDeislandLabels](fndeislandlabels), originally written by [Brent McPherson](https://github.com/bcmcpher)
+Could theoretically be adapted to work with other pacellations assuming the provision of distinct grey and white matter mask inputs.
+
+#### inflateRelabelIslands
+
+A "user ready" (i.e. no user speficication of parameters, with an important caviot), atlas-general (i.e. not specific to freesurfer) function which detects and relabels parcellation islands (label subsections which are not connected to the largest, contiguous label component).  Important caviot is that the input parcellation cannot feature the label 999, which is used as a [trash label](https://github.com/DanNBullock/wma_tools/blob/3bab47ab121c273e43e1f2fb48647c41e66bfb00/Atlas_tools/bsc_inflateRelabelIslands.m#L32) in this function.  [Could and should be fixed in future versions (i.e. -1)](https://github.com/DanNBullock/wma_tools/issues/21).
+
+#### fnDeislandLabels
+
+A modified version of the fnDeislandLabels code originally written by [Brent McPherson](https://github.com/bcmcpher), adapted for current author's norms.  essentially the same as [inflateRelabelIslands](#inflaterelabelislands), except that it doesn't specify the [maxisleSize](https://github.com/DanNBullock/wma_tools/blob/3bab47ab121c273e43e1f2fb48647c41e66bfb00/Atlas_tools/fnDeislandLabels_v3.m#L17) and ["trash label" (replaceVal)](https://github.com/DanNBullock/wma_tools/blob/3bab47ab121c273e43e1f2fb48647c41e66bfb00/Atlas_tools/fnDeislandLabels_v3.m#L20), which must be provided by the user.
+
+#### getAsegFile
+
+A utility function which loads one of the .aseg parcellation options ('orig' or '2009') output from [freesurfer](https://surfer.nmr.mgh.harvard.edu/).  If the .nii.gz version of the parcellation isn't found, this function will attempt to use [mri_convert](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_convert).  As such, some of the adaptive functionality of this function is predicated upon freesurfer/freeview being installed on the local file structure.
+
 
 
