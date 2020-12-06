@@ -37,9 +37,9 @@ The following table provides an overview of the types of code tools contained wi
 | Directory                 | Description                                                                                                                                       |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Analysis](#analysis)                  | Analysis tools for segmented tracts; both individual and group level                                                                              |
-| Atlas_tools               | Tools for working with NIfTI atlases/parcellations; both processing and analysis                                                                  |
+| [Atlas_tools](#atlas_tools)               | Tools for working with NIfTI atlases/parcellations; both processing and analysis                                                                  |
 | BL_Wrappers               | Wrappers for interacting with brainlife.io apps                                                                                                   |
-| ClassificationStruc_Tools | Tools for working with [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)                     |
+| [ClassificationStruc_Tools](#classificationstruc_tools) | Tools for working with [white matter classification (WMC) structures](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b)                     |
 | Debug_Tools               | Tools for troubleshooting and developing segmentations; typically lightweight streamline visualizations.                                          |
 | ROI_Tools                 | Tools for obtaining, modifying, and utilizing ROIs.  Both NiFTI and [vistasoft](https://github.com/vistalab/vistasoft), point-cloud format.       |
 | Segmentations             | Implemented segmentations using wma_tools methods; contains single tract and multi-tract implementations; contains archived segmentation versions |
@@ -228,3 +228,22 @@ A [white matter classification (WMC) structure](https://brainlife.io/datatype/5c
 
 Using a pairing of a [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) and a [LiFE structure](https://brainlife.io/datatype/58d15eaee13a50849b258844) this function removes those streamlines from the classification labeling schema such that only those streamlines with evidence maintain their identity.
 
+### Debug_Tools
+
+The functions contained within the **Debug_Tools** directory are useful for interactive segmentation and segmentation diagnostics
+
+#### plotEndpointsOnFG
+
+A plotting function that plots a collection of streamlines (entered as an FG) along with their endpoints and midpoints (in separate colors)
+
+#### plotROIandFG
+
+This function plots both a fiber group and an ROI in the same reference space.  Helpful for identifying proximity of an ROI to streamlines.
+
+#### quickPlot
+
+Lightweight streamline plotting function that undelies the streamline debugging visualizations.
+
+#### quickPlotClassByName
+
+iterates across the entries in a [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) and quickly plots the associated structures.  Good for doing QC on a segmentation.  Be wary of using this on a classification structure with a large number of categories/names.
