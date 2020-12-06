@@ -334,6 +334,38 @@ An adapted version of [feSegmentFascicleFromConnectome](https://github.com/franc
 
 ### Segmentations
 
+This directory contains various instantiations of segmentations implemented with wma_tools.  Given the iterative and archival nature of the contents of this directory, only certian notable examples will be discussed.
+
+#### genericSegmentFunction
+
+This function serves as the template for the new, exhaustively documented format for wma_tools based segmentations.  It divides up any single tract segmentation into 4 primary sections, some of which have their own subsections 
+
+- 1. the establishment of a category criterion for this tract (using [streamlineCategoryPriors](#streamlinecategorypriors)), which indicates the general brain lobes involved (e.g. "posterior" , "parietal, etc.)
+- 2. the establishment of additional endpoint criteria 
+    - 1.  Extract the relevant rois from atlases into storage objects, and modify them if necessary
+    - 2.  Segment streamline candidates using the refined endpoint ROI criteria
+    - 3.  Apply additional endpoint, related criteria if necessary.
+- 3. application of generic, anatomically informed criteria
+    - 1.  Generation and application of anatomically informed planes
+    - 2.  Generation and application of anatomically informed volumetric ROIs
+    - 3.  Generation and application of other anatomically informed criteria (i.e. midpoint criteria)
+- 4.  The compilation of the various criteria in to a single omnibus criteria which is used to generate this tract's [white matter classification (WMC) structure](https://brainlife.io/datatype/5cc1d64c44947d8aea6b2d8b) entry.
+
+##### segmentAntPostTracts
+
+The latest version of this function (v4) is a work-in-progress look at the application of the [genericSegmentFunction](#genericsegmentfunction) template.
+
+####  segmentSuperficialFibers
+
+This function contitutes an attempt at segmenting streamlines which remain close to the grey matter-white matter border.  These are typically associated with U-fibers.  Previous research has indicated that tracts with longer traversals are deeper in the white matter
+
+#### streamlineCategoryPriors
+
+This segmentation is a workhorse function which exhaustively assigns streamlines identies in accordance with their terminations.  The possible categories are 'subcorticalROIS','spineROIS','cerebellumROIS','ventricleROIS','wmROIS','ccROIS','unknownROIS','OpticCROI','FrontalROIs','TemporalROIs','OccipitalROI','ParietalROI','pericROI','insulaROI','thalamicROI','caudateNAcROI','lenticularNROI','hippAmig'.  Because all streamlines have two terminations, all streamlines are assigned a pairing of categories.  This function is used to prefilter streamlines for most wma_tools segmentations.  Additionally this function can provide a decent quality assurance check for a tractome output, in order to assess general tractome features [as described here](https://github.com/brainlife/app-streamlineCategorySegmentation/tree/2.0)
+
+This segmentation can be run as a standalone function on brainlife.io:  
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.249-blue.svg)](https://doi.org/10.25663/brainlife.app.249)
+
 ### Stream_Tools
 
 This directory contains functions used to modify, interact, or quantatively assess streamlines.  Primarily uses [vistasoft](https://github.com/vistalab/vistasoft) fg format for tractography
@@ -345,7 +377,7 @@ This function evaluates streamlines from the input FG against a number of criter
 > the varargin is interpreted in **sequential triplets** of inputs such that
 -    Input (1) is a coordinate (or a planar ROI)
 -    Input (2) is a relative criteria expressed as a string (i.e. "top", "superior", "bottom", "inferior", "anterior", "posterior", or "medial")
-- Input (3) is a string input of 'both', 'one', or 'neither' indicating which endpoints this criteria should be true for.
+-    Input (3) is a string input of 'both', 'one', or 'neither' indicating which endpoints this criteria should be true for.
 
 Outputs a boolean vector indicating satisfaction of all criteria.
 
@@ -381,3 +413,31 @@ plane.  As an illustration, this code is the generalized version of previous cod
 #### endpointClusterProto
 
 An over-engineered function which uses something akin to the [MinimumAverageDirectFlipMetric](https://dipy.org/documentation/0.16.0./reference/dipy.segment/#minimumaveragedirectflipmetric) as implemented by [Garyfallidis et al. 2012](https://dx.doi.org/10.3389%2Ffnins.2012.00175) to classify streamline endpoints as being associated with either the RAS or LPI end of the tract.  Outputs both the endpoint identities and the coordinates.
+
+### Utils
+
+The **Utils** directory contains utility functions that are not specific to any of the above categories.  They will not be covered invidually in this readme.
+
+#### External
+
+Contains functions obtained from outside sources, all rights are reserved by their respective authors
+
+#### GitUtils
+
+This directory contains a number of functions that were used to manage the development of the wma_tools library, specifically as it relates to github.
+
+#### Loaders
+
+Loaders features functions that were used to load datatypes which could be stored in myriad formats.
+
+### Visualization
+
+This directory contains code related to visualization
+
+#### plotClassifiedStreamsAdaptive
+
+This function is used to generate publication quality streamline anatomy figures from an input classification structure.  The funtion plots the anatomy against a t1 cross section (of the specified view) using tools from the [Matlab Brain Anatomy](https://github.com/francopestilli/mba) toolkit.  The **subSelect** input parameter allows users to specify the indexes of those classification structure entries that they wish to plot, while the input **colors** alllows users to specify the colors for those structures.
+
+#### MBAplotTracts_BL
+
+This function is a brainlife.io wrapper for [plotClassifiedStreamsAdaptive](plotclassifiedstreamsadaptive), and was previously associated with a standalone app.
