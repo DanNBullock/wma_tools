@@ -97,7 +97,6 @@ sourceClassification.index=[];
 mergedClassification.names=[];
 mergedClassification.index=[];
 
-
 clear iInputs
 
 %% Merge input FGs, determine homology, and create classification structure
@@ -196,6 +195,9 @@ end
 %iterates for the number of tracts input, now for the purposes of creating
 %an amalgum classification structure
 for iInputs=1:length(inputFGs)
+    
+       %clearing it just in case a loop has been run before
+       clear toMergeclassification
 
     curStreamNum=length(find(sourceClassification.index==iInputs));
     

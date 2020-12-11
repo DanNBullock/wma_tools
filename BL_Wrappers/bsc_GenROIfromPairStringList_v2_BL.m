@@ -72,7 +72,9 @@ mkdir(roiDirPathOut)
 %was a _ which immediately followed the roi stem (such that ROI_xxx vs
 %ROIxxx.  This led to incompatabilities between my and brad's
 %functions/appps.
-roiStem='ROI';
+%4/21/20 update:  just delete the stem, and users can type in whatever they
+%want.
+roiStem='';
 
 %Just guessing what the right path for this for now
 textDir=pwd;

@@ -29,7 +29,7 @@ if isnumeric(nameOrIndex)
     extractName=classificationIN.names{nameOrIndex};
     %find streamline indexes
     extractIndex=classificationIN.index==nameOrIndex;
-elseif isstring(nameOrIndex)
+elseif ischar(nameOrIndex)
     %get index from names field
     foundIndex=find(ismember(classificationIN.names,nameOrIndex));
     %do basically the same thing as above

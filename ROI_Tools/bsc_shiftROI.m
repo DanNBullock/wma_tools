@@ -37,31 +37,31 @@ roiOUT=roiIN;
 
 switch lower(shiftDir)
     case 'up'
-        roiOUT.coords=roiIN.coords(:,3)+shiftMag;
+        roiOUT.coords(:,3)=roiIN.coords(:,3)+shiftMag;
     case 'superior'
-        roiOUT.coords=roiIN.coords(:,3)+shiftMag;
+        roiOUT.coords(:,3)=roiIN.coords(:,3)+shiftMag;
     case 'down'
-        roiOUT.coords=roiIN.coords(:,3)-shiftMag;
+        roiOUT.coords(:,3)=roiIN.coords(:,3)-shiftMag;
     case 'inferior'
-        roiOUT.coords=roiIN.coords(:,3)-shiftMag;
+        roiOUT.coords(:,3)=roiIN.coords(:,3)-shiftMag;
     case 'anterior'
-        roiOUT.coords=roiIN.coords(:,2)+shiftMag;
+        roiOUT.coords(:,2)=roiIN.coords(:,2)+shiftMag;
     case 'posterior'
-        roiOUT.coords=roiIN.coords(:,2)-shiftMag;
+        roiOUT.coords(:,2)=roiIN.coords(:,2)-shiftMag;
     case 'medial'
         if LRflag
-            roiOUT.coords=roiIN.coords(:,1)+shiftMag;
+            roiOUT.coords(:,1)=roiIN.coords(:,1)+shiftMag;
         else
-            roiOUT.coords=roiIN.coords(:,1)-shiftMag;
+            roiOUT.coords(:,1)=roiIN.coords(:,1)-shiftMag;
         end
     case 'lateral'
         if LRflag
-            roiOUT.coords=roiIN.coords(:,1)-shiftMag;
+            roiOUT.coords(:,1)=roiIN.coords(:,1)-shiftMag;
         else
-            roiOUT.coords=roiIN.coords(:,1)+shiftMag;
+            roiOUT.coords(:,1)=roiIN.coords(:,1)+shiftMag;
         end
 end
 
-roiOUT.name=strcat(roiIn.name,'_shift_',num2str(shiftMag),'_',shiftDir);
+roiOUT.name=strcat(roiIN.name,'_shift_',num2str(shiftMag),'_',shiftDir);
 
 end

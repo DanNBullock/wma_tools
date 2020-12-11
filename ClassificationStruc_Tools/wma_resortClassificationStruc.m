@@ -102,17 +102,19 @@ for itracts=groupOrdering
         warning('\n %s has no associated streamlines', classificationGrouping.names{itracts})
     end
     
-    classificationIn.names
+
     %find which indexes in the input classification correspond to this group
     uniqueIndexes=unique(candidateIndexes);
     %find the cooresponding names
-    upcomingNames={classificationIn.names{[group2origNameMapping]'}};
+    upcomingNames={classificationIn.names{[uniqueIndexes]'}};
     %sort the alphabetically, so that left right is consistent
     [~,sortOrder]=sort(upcomingNames);
     %loop throught the tracts of the group
+    
+  
     for iTractPairs=1:length(upcomingNames)
         %get the current name of the current sorted pair
-        curName=classificationIn.names{group2origNameMapping(sortOrder(iTractPairs))};
+        curName=classificationIn.names{uniqueIndexes(sortOrder(iTractPairs))};
         %add it to the output name vector
         outNames=horzcat(outNames,{curName});
         %find the index label in the origional that corresponds to this

@@ -46,7 +46,7 @@ for iInputs=1:length(varargin)/3
     if isstruct(varargin{iInputs*3-2})
         refCoord=[mean(varargin{iInputs*3-2}.coords(:,1)),mean(varargin{iInputs*3-2}.coords(:,2)),mean(varargin{iInputs*3-2}.coords(:,3))];
     else
-        refCoord=varargin{iInputs*3-2}
+        refCoord=varargin{iInputs*3-2};
         %no need to redfine refCoord
     end
     
@@ -100,6 +100,8 @@ for iInputs=1:length(varargin)/3
             currBool=sum(boolsOut,2)==2;
         case 'neither'
             currBool=sum(boolsOut,2)==0;
+        case 'either'
+            currBool=or(sum(boolsOut,2)==1,sum(boolsOut,2)==2);
     end
     booleanOut=currBool&booleanOut;
     

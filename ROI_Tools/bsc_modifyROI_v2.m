@@ -93,11 +93,13 @@ switch lower(location)
 end
 
 %rename ROI
-roiOUT.name=strcat(roiIN.name,'_',num2str(refCoord),'_',location);
+
+roiOUT.name=strcat(roiIN.name,'_',location,'_to_',num2str(refCoordSingle));
 
 %throw warning for empty ROI
 if isempty(roiOUT.coords)
     fprintf('bsc_modifyROI_v2: Empty roi.. %s\n', roiIN.name)
+    fprintf('no %s coords %s to %s',roiIN.name,location,num2str(refCoordSingle))
 end
 
 end

@@ -1,4 +1,4 @@
-function [classificationOut] =bsc_genericSegmentFunction(wbfg, fsDir, categoryClassification)
+function [classificationOut] =bsc_genericSegmentFunction(wbfg, atlas, categoryClassification)
 % [classificationOut] = bsc_genericSegmentFunction(wbfg, fsDir, categoryClassification)
 %
 % This is the template segmentation script for the refactored version of
@@ -8,7 +8,7 @@ function [classificationOut] =bsc_genericSegmentFunction(wbfg, fsDir, categoryCl
 
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to the freesurfer directory for the subject 
+% -atlas: path to the atlas  used in the segmentation 
 % -categoryClassification: the classification structure resulting from the
 % classification segmentation.  Done outside of this function to avoid
 % doing it repeatedly
@@ -29,10 +29,13 @@ classificationOut.names=[];
 %make sure it is the same length as the input
 classificationOut.index=zeros(length(wbfg.fibers),1);
 
-%set a path to the atlas you will be using.  In truth, you can use any
-%atlas.  The key is that a number of functions (i.e. bsc_planeFromROI_v2 or
-%bsc_roiFromAtlasNums
-atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
+%if the passed variable for atlas is the path to the atlas, load it, if
+%not, do nothing
+if ischar(atlas)
+atlas=niftiRead(atlas);
+else
+    %do nothing
+end
 
 %Set some initial rois that don't follow a good convention.  The reason we
 %are doing this is that typically, when use aparc.a2009s we can designate
@@ -62,13 +65,15 @@ for leftright= [1,2]
     
     %% Tract 1
     %begin segmentation of tract 1
+    %DOIs of reference papers:
+    %...
 %=========================================================================   
     %1.  ESTABLISH CATEGORY CRITERIA
     %usingthe category segmentation output, go ahead and establish a
     %boolean index of the streamlines meeting this criteria.  Will be used
     %as part of a later logical conjunct.  Here we use the example of
     %within frontal lobe streamlines.
-    frontoFrontalBool=  or( bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal')),   bsc_extractStreamIndByName(categoryPrior,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber')));
+    frontoFrontalBool=  or( bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_frontal')),   bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_frontal_ufiber')));
 %--------------------------------------------------------------------------  
 
 
@@ -79,8 +84,8 @@ for leftright= [1,2]
         %2.1 extract the relevant rois from the atlas
         %check function description for more details, leave final integer
         %input at 1 for no inflation
-        [someROI1] =bsc_roiFromAtlasNums(atlasPath,[ROInums],1);
-        [someROI2] =bsc_roiFromAtlasNums(atlasPath,[ROInums],1);
+        [someROI1] =bsc_roiFromAtlasNums(atlas,[ROInums],1);
+        [someROI2] =bsc_roiFromAtlasNums(atlas,[ROInums],1);
         
         %2.2  Use ROIs to find the indexes of streamlines which terminate
         %in those ROIS.  Consider also using bsc_endpointAtlasCriteria,
@@ -94,7 +99,7 @@ for leftright= [1,2]
         %endpoints to be above a particular anatomical roi.  Check the
         %documentation for these functions to see how to apply them with
         %other anatomical relations (e.g. 'medial', 'lateral', etc.)
-        superiorPlaneROI = bsc_planeFromROI_v2([ROInums], 'superior',atlasPath);
+        superiorPlaneROI = bsc_planeFromROI_v2([ROInums], 'superior',atlas);
         [relativeAnatomicalEndpointCriteriaBool]=bsc_applyEndpointCriteria(wbfg, superiorPlaneROI, 'superior','one');
 %--------------------------------------------------------------------------
 
@@ -111,8 +116,8 @@ for leftright= [1,2]
     %selecting for streamlines taking the 
 %==========================================================================    
         %3.1  Application of anatomically informed planes
-        [superiorThalPlane]= bsc_planeFromROI_v2(thalLut(leftright), 'superior',atlasPath);
-        [posteriorThalPlane] = bsc_planeFromROI_v2(thalLut(leftright), 'posterior',atlasPath);
+        [superiorThalPlane]= bsc_planeFromROI_v2(thalLut(leftright), 'superior',atlas);
+        [posteriorThalPlane] = bsc_planeFromROI_v2(thalLut(leftright), 'posterior',atlas);
         %now that we have the two planes we use the function
         %bsc_modifyROI_v2 to use the superior plane to slice the posterior
         %plane.  Note: this would result in a different output if you
@@ -141,9 +146,9 @@ for leftright= [1,2]
         %note that we are inflating the cortical rois so that they will
         %expand into the white matter.  The inflation kernel (last
         %variable) can be modified as needed.
-        [inflatedROI1] =bsc_roiFromAtlasNums(atlasPath,[ROInums],5);
-        [inflatedROI2] =bsc_roiFromAtlasNums(atlasPath,[ROInums],5);
-        [wmROI] =bsc_roiFromAtlasNums(atlasPath,wmLut{leftright},1);
+        [inflatedROI1] =bsc_roiFromAtlasNums(atlas,[ROInums],5);
+        [inflatedROI2] =bsc_roiFromAtlasNums(atlas,[ROInums],5);
+        [wmROI] =bsc_roiFromAtlasNums(atlas,wmLut{leftright},1);
         
         %here we take the intersection of the rois
         [roi1WMintersection] = bsc_intersectROIs(inflatedROI1, wmROI);

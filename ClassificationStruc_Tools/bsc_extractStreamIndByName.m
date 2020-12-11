@@ -18,8 +18,13 @@ if ~isempty(nameIndex)
     indexBool(relevantIndexes)=true;
 else
     %do nothing, index bool should remain all false
-    warning('no streamlines found for %s in classification structure\n',tractName)
+    warning('input name %s not found in classification structure\n',tractName)
 end
+
+if ~any(indexBool)
+    warning('no streamlines for %s in classification structure\n',tractName)
+end
+
 indexBool=indexBool';
 end
     

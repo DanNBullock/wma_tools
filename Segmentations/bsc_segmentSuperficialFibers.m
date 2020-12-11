@@ -64,7 +64,7 @@ for leftright= [1,2]
     end
     z = cellfun(@(x) sum(sqrt(sum((x(:, 1:end-1) - x(:, 2:end)) .^ 2))), wbfg.fibers, 'UniformOutput', true);
     
-    [superficialFibersDegrade, superficialFibersDegradeBool]=wma_SegmentFascicleFromConnectome(wbfg, [{wmROIDegrade} {OtherwmROIFull}], {'not','not'}, 'dud');
+    [~, superficialFibersDegradeBool]=wma_SegmentFascicleFromConnectome(wbfg, [{wmROIDegrade} {OtherwmROIFull}], {'not','not'}, 'dud');
     %[superficialFibersFull, superficialFibersFullBool]=wma_SegmentFascicleFromConnectome(wbfg, [{wmROIFull} {OtherwmROIFull}], {'not','not'}, 'dud');
     
     

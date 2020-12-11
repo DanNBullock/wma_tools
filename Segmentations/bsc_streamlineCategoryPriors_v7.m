@@ -1,5 +1,5 @@
 function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflateITer)
-%[classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, fsDir,inflateITer)
+%[classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflateITer)
 %
 % This function automatedly segments a whole brain tractogram into
 % antomically based categories (fronto-frontal, etc).  Provides a
@@ -10,9 +10,7 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflat
 %
 % Inputs:
 % -wbfg: a whole brain fiber group structure
-% -fsDir: path to THIS SUBJECT'S freesurfer directory
-% -inflateITer:  the number of inflation iterations to go through for the
-% rois.  This fills in islands/holes.  Recommend 2.
+% -atlas: path to THIS SUBJECT'S freesurfer directory
 %
 % Outputs:
 %  classificationOut:  standardly constructed classification structure
@@ -21,15 +19,20 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v7(wbfg, atlas,inflat
 
 %% parameter note & initialization
 
-[superficialClassification] =bsc_segmentSuperficialFibers(wbfg, atlas);
-
-
+% loads object if path passed
+if ischar(wbfg)
+wbfg = fgRead(wbfg);
+else
+    %do nothing
+end
+fprintf('\n NOTE: All label numbers cited are from DK2009 \n')
+[superficialClassification] =bsc_segmentSuperficialFibers_v3(wbfg, atlas);
 
 greyMatterROIS=[[101:1:175]+12000 [101:1:175]+11000];
 leftROIS=[[101:1:175]+11000 26  17 18 7 8 10:13];
 rightROIS=[[101:1:175]+12000 46 47 49:54 58];
 
-subcorticalROIS=[10:13 17:20 26 58 27 49:56 59 ];
+subcorticalROIS=[ 20   27 56 59 ];
 spineROIS=[16 28 60];
 cerebellumROIS=[8 47 7 46 ];
 ventricleROIS=[31 63 11 50 4 43 14 24 15 44 5 62 30 80 72 ];
@@ -38,8 +41,8 @@ ccROIS=[251:255];
 unknownROIS=[0 2000 1000 77:82 24 42 3];
 OpticCROI=[85];
 
-FrontalROIs=[[124 148 118 165 101 154 105 115 154 155 115 170 129 146 153 ...
-    164 106 116 108 131 171 112 150 104 169 114 113 116 107 163 139 132 140]+11000 [124 148 118 165 101 154 105 115 154 155 115 170 129 146 153 ...
+FrontalROIs=[[124 148 165 101 154 105 115 154 155 115 170 129 146 153 ...
+    164 106 116 108 131 171 112 150 104 169 114 113 116 107 163 139 132 140]+11000 [124 148 165 101 154 105 115 154 155 115 170 129 146 153 ...
     164 106 116 108 131 171 112 150 104 169 114 113 116 107 163 139 132 140]+12000] ;
 
 TemporalROIs=[[144 134 138 137 173 174 135 175 121 151 123 162 133]+11000 [144 134 138 137 173 174 135 175 121 151 123 162 133]+12000];
@@ -50,14 +53,40 @@ ParietalROI=[[157 127 168 136 126 125 156 128 141 172 147 109 103 130 110]+11000
 
 pericROI=[[167]+11000 [167]+12000];
 
-insulaROI=[[117 149]+11000 [117 149]+12000];
+insulaROI=[ 19 [117 118 149]+11000 55 [117 118 149]+12000];
+
+thalamicROI=[10 ; 49];
+
+caudateNAcROI=[26 11; 50 58];
+
+lenticularNROI=[12 13 ; 51 52];
+
+hippAmig=[17 18; 53 54 ];
+
+roiGroupNames={'subcorticalROIS','spineROIS','cerebellumROIS','ventricleROIS','wmROIS','ccROIS','unknownROIS','OpticCROI','FrontalROIs','TemporalROIs','OccipitalROI','ParietalROI','pericROI','insulaROI','thalamicROI','caudateNAcROI','lenticularNROI','hippAmig' };
+roiGroups={subcorticalROIS,spineROIS,cerebellumROIS,ventricleROIS,wmROIS,ccROIS,unknownROIS,OpticCROI,FrontalROIs,TemporalROIs,OccipitalROI,ParietalROI,pericROI,insulaROI,thalamicROI,caudateNAcROI,lenticularNROI,hippAmig};
+labelsPresent=unique(atlas.data);
+
+%do a one time warning about which rois are missing
+fprintf('\n freesurfer ROI report for:')
+fprintf('\n %s \n',atlas.fname)
+for iRoiGroups=1:length(roiGroups)
+    currentRoiNums=roiGroups{iRoiGroups};
+    currentMissing=~ismember(currentRoiNums,labelsPresent);
+    if any(currentMissing)
+        fprintf('\n labels %s missing for roi group %s',num2str(currentRoiNums(currentMissing)),roiGroupNames{iRoiGroups})
+    else
+        %do nothing, they are all there
+    end
+end
+fprintf('\n')
 
 fprintf('\n rois set')
 
 %atlasPath=fullfile(fsDir,'/mri/','aparc.a2009s+aseg.nii.gz');
 
 if inflateITer>0
-    [inflatedAtlas] =bsc_inflateLabels(atlas,inflateITer);
+    [inflatedAtlas] =bsc_inflateLabels_v3(atlas,inflateITer);
 else
     inflatedAtlas=atlas;
 end
@@ -65,7 +94,7 @@ end
 
 %to account for streamlines that cross and then come back
 leftROI=bsc_roiFromAtlasNums(inflatedAtlas,leftROIS,1);
-rightROI=bsc_roiFromAtlasNums(inflatedAtlas,leftROIS,1);
+rightROI=bsc_roiFromAtlasNums(inflatedAtlas,rightROIS,1);
 [~, leftStreamsBool]=wma_SegmentFascicleFromConnectome(wbfg, {leftROI}, {'and'}, 'dud');
 [~, rightStreamsBool]=wma_SegmentFascicleFromConnectome(wbfg, {rightROI}, {'and'}, 'dud');
 
@@ -94,7 +123,28 @@ fprintf('\n endpoints extracted')
 
 
 [endpoints1Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints1,'acpc');
+[counts1, groups1]=groupcounts(endpoints1Identity);
+for iUnknownRois=1:length(unknownROIS)
+    fprintf('\n %i endpoints for label %i in RAS group',counts1(iUnknownRois),groups1(iUnknownRois))
+end
+unknownSum1= sum(counts1(ismember(groups1,unknownROIS)));
+fprintf('\n')
+if unknownSum1/length(allStreams)>.05
+    warning('Proportion of unknown streamlines exceeds 5% for RAS endpoints')
+end
+
 [endpoints2Identity] =bsc_atlasROINumsFromCoords_v3(inflatedAtlas,endpoints2,'acpc');
+[counts2, groups2]=groupcounts(endpoints2Identity);
+for iUnknownRois=1:length(unknownROIS)
+    fprintf('\n %i endpoints for label %i in LPI group',counts2(iUnknownRois),groups2(iUnknownRois))
+end
+unknownSum2= sum(counts2(ismember(groups2,unknownROIS)));
+fprintf('\n')
+if unknownSum2/length(allStreams)>.05
+    warning('Proportion of unknown streamlines exceeds 5% for LPI endpoints')
+end
+
+
 fprintf('\n endpoint identities determined')
 
 
@@ -102,7 +152,7 @@ excludeBool=zeros(1,length(allStreams));
 includeBool=excludeBool;
 LeftBool=excludeBool;
 RightBool=excludeBool;
-implausBool=excludeBool
+implausBool=excludeBool;
 interHemiBool=excludeBool;
 validUIndexes=excludeBool;
 bothSides=excludeBool;
@@ -118,7 +168,7 @@ streamName=termination1;
 fprintf('\n superficial fibers identified')
 
 validSideROI= [leftROIS rightROIS] ;
-excludeSideROI=[unknownROIS pericROI ccROIS OpticCROI wmROIS spineROIS ventricleROIS];
+excludeSideROI=[unknownROIS ccROIS OpticCROI wmROIS spineROIS ventricleROIS pericallosal];
 
 for iStreams=1:length(allStreams)
     %disagreeBool(iStreams)=or(and(rightStreamsBool(iStreams),and(ismember(endpoints2Identity(iStreams),leftROIS),ismember(endpoints1Identity(iStreams),leftROIS))),and(leftStreamsBool(iStreams),and(ismember(endpoints2Identity(iStreams),rightROIS),ismember(endpoints1Identity(iStreams),rightROIS))))  ;
@@ -135,8 +185,6 @@ for iStreams=1:length(allStreams)
     singleRightBoolproto(iStreams)=xor(ismember(endpoints2Identity(iStreams),rightROIS),ismember(endpoints1Identity(iStreams),rightROIS));
     
     
-    
-    
     if     ~isempty(find(endpoints1Identity(iStreams)==FrontalROIs, 1))
         termination1{iStreams}='frontal';
     elseif ~isempty(find(endpoints1Identity(iStreams)==TemporalROIs, 1))
@@ -147,6 +195,14 @@ for iStreams=1:length(allStreams)
         termination1{iStreams}='parietal';
     elseif ~isempty(find(endpoints1Identity(iStreams)==subcorticalROIS, 1))
         termination1{iStreams}='subcortical';
+    elseif ~isempty(find(endpoints1Identity(iStreams)==thalamicROI, 1))
+        termination1{iStreams}='thalamic';
+    elseif ~isempty(find(endpoints1Identity(iStreams)==caudateNAcROI, 1))
+        termination1{iStreams}='caudateNAc';
+    elseif ~isempty(find(endpoints1Identity(iStreams)==lenticularNROI, 1))
+        termination1{iStreams}='lenticularN';
+    elseif ~isempty(find(endpoints1Identity(iStreams)==hippAmig, 1))
+        termination1{iStreams}='hippAmig';
     elseif ~isempty(find(endpoints1Identity(iStreams)==spineROIS, 1))
         termination1{iStreams}='spinal';
     elseif ~isempty(find(endpoints1Identity(iStreams)==insulaROI, 1))
@@ -178,6 +234,14 @@ for iStreams=1:length(allStreams)
         termination2{iStreams}='parietal';
     elseif ~isempty(find(endpoints2Identity(iStreams)==subcorticalROIS, 1))
         termination2{iStreams}='subcortical';
+    elseif ~isempty(find(endpoints2Identity(iStreams)==thalamicROI, 1))
+        termination2{iStreams}='thalamic';
+    elseif ~isempty(find(endpoints2Identity(iStreams)==caudateNAcROI, 1))
+        termination2{iStreams}='caudateNAc';
+    elseif ~isempty(find(endpoints2Identity(iStreams)==lenticularNROI, 1))
+        termination2{iStreams}='lenticularN';
+    elseif ~isempty(find(endpoints2Identity(iStreams)==hippAmig, 1))
+        termination2{iStreams}='hippAmig';
     elseif ~isempty(find(endpoints2Identity(iStreams)==spineROIS, 1))
         termination2{iStreams}='spinal';
     elseif ~isempty(find(endpoints2Identity(iStreams)==insulaROI, 1))
@@ -224,9 +288,9 @@ for iStreams=1:length(allStreams)
     end
     
     if or(LeftBool(iStreams),singleLeftBoolproto(iStreams))&includeBool(iStreams)&~interhemiFlag(iStreams)
-        streamName{iStreams}=strcat('left',streamName{iStreams});
+        streamName{iStreams}=strcat('left_',streamName{iStreams});
     elseif or(RightBool(iStreams),singleRightBoolproto(iStreams))&includeBool(iStreams)&~interhemiFlag(iStreams)
-        streamName{iStreams}=strcat('right',streamName{iStreams});
+        streamName{iStreams}=strcat('right_',streamName{iStreams});
     end
     
     if interhemiFlag(iStreams)&validUIndexes(iStreams)&~superficialClassification.index(iStreams)==0
