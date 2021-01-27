@@ -183,11 +183,17 @@ if ~notDefined('fe') & ~notDefined('classification')
     bottomPlot1=subplot(2,5,[4,5]);
     hold on
     bar(100*countPlotInput')
-    title({' proportion of connectome',' streamlines in tract'})
+    title({' Percentage of connectome',' streamlines in tract'})
     legend('Left','Right')
     xlabel('Tract')
     ylabel('% classificaiton input streamlines in tract (%)')
-    ylim([-0 max(max(countPlotInput))*133])
+    ylim([-0 100])
+    set(gca, 'YScale', 'log')
+    yticks([[1:9]*.1, [1:9]*1, [1:9]*10, 100])
+    allYlabels= cellstr(num2str([[1:9]*.1, [1:9]*1, [1:9]*10, 100]'));
+    yLabelHold=num2cell(NaN(1,length(allYlabels)))
+    yLabelHold(1:9:end)=allYlabels(1:9:end);
+    yticklabels(yLabelHold)
     set(gca,'xtick',[1:1:length(classificationGrouping.names)])
     set(gca,'XTickLabel',classificationGrouping.names, 'FontSize',8,'FontName','Times')
     bottomPlot1.XTickLabelRotation=-45;
@@ -195,11 +201,17 @@ if ~notDefined('fe') & ~notDefined('classification')
     bottomPlot2=subplot(2,5,[9,10]);
     hold on
     bar((volPlotInput')*100)
-    title({'Proportion of wm volume','occupied by tract'})
+    title({'Percentage of wm volume','occupied by tract'})
     legend('Left','Right')
     xlabel('Tract')
     ylabel('% wm volume proportion occupied by tract (%)')
-    ylim([-0 max(max(volPlotInput))*133])
+    ylim([-0 100])
+    set(gca, 'YScale', 'log')
+    yticks([[1:9]*.1, [1:9]*1, [1:9]*10, 100])
+    allYlabels= cellstr(num2str([[1:9]*.1, [1:9]*1, [1:9]*10, 100]'));
+    yLabelHold=num2cell(NaN(1,length(allYlabels)))
+    yLabelHold(1:9:end)=allYlabels(1:9:end);
+    yticklabels(yLabelHold)
     set(gca,'xtick',[1:1:length(classificationGrouping.names)])
     set(gca,'XTickLabel',classificationGrouping.names, 'FontSize',8,'FontName','Times')
     bottomPlot2.XTickLabelRotation=-45;
@@ -384,11 +396,17 @@ elseif notDefined('fe') & ~notDefined('classification')
     bottomPlot1=subplot(3,4,[6 7 8]);
     hold on
     bar(100*countPlotInput')
-    title({'log10 of proportion of connectome',' streamlines in tract'})
+    title({'percentage of connectome',' streamlines in tract'})
     legend('Left','Right')
     xlabel('Tract')
     ylabel('% classificaiton input streamlines in tract (%)')
-    ylim([-0 max(max(countPlotInput))*133])
+    ylim([-0 100])
+    set(gca, 'YScale', 'log')
+    yticks([[1:9]*.1, [1:9]*1, [1:9]*10, 100])
+    allYlabels= cellstr(num2str([[1:9]*.1, [1:9]*1, [1:9]*10, 100]'));
+    yLabelHold=num2cell(NaN(1,length(allYlabels)));
+    yLabelHold(1:9:end)=allYlabels(1:9:end);
+    yticklabels(yLabelHold)
     set(gca,'xtick',[1:1:length(classificationGrouping.names)])
     set(gca,'XTickLabel',classificationGrouping.names, 'FontSize',8,'FontName','Times')
     bottomPlot1.XTickLabelRotation=-45;
@@ -396,11 +414,17 @@ elseif notDefined('fe') & ~notDefined('classification')
     bottomPlot2=subplot(3,4,[10 11 12]);
     hold on
     bar((volPlotInput')*100)
-    title({'Proportion of wm volume','occupied by tract'})
+    title({'Percentage of wm volume','occupied by tract'})
     legend('Left','Right')
     xlabel('Tract')
     ylabel('% wm volume proportion occupied by tract (%)')
-    ylim([-0 max(max(volPlotInput))*133])
+    ylim([-0 100])
+    set(gca, 'YScale', 'log')
+    yticks([[1:9]*.1, [1:9]*1, [1:9]*10, 100])
+    allYlabels= cellstr(num2str([[1:9]*.1, [1:9]*1, [1:9]*10, 100]'));
+    yLabelHold=num2cell(NaN(1,length(allYlabels)));
+    yLabelHold(1:9:end)=allYlabels(1:9:end);
+    yticklabels(yLabelHold);
     set(gca,'xtick',[1:1:length(classificationGrouping.names)])
     set(gca,'XTickLabel',classificationGrouping.names, 'FontSize',8,'FontName','Times')
     bottomPlot2.XTickLabelRotation=-45;
