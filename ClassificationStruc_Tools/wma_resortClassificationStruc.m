@@ -18,7 +18,7 @@ outIndex=zeros(1,length(classificationIn.index));
 classificationOut=classificationIn;
 
 %get the pairing information
-classificationGrouping = wma_classificationStrucGrouping(classificationIn);
+classificationGrouping = wma_classificationStrucGrouping_v2(classificationIn);
 
 %establish exclusion bool for left/right tracts which do not have a
 %partner, for whatever reason
