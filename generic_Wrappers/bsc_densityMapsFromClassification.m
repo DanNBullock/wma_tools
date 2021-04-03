@@ -63,7 +63,7 @@ for iTracts=1:length(tractStruc)
     densityMask = bsc_makeTractDensityMask(tractStruc{iTracts}, referenceNifti, voxelResize, threshold, smoothParam, normalizeBool);
     
     %save it down
-    niftiWrite(densityMask,fullfile(strcat(tract.name),'_densityMask.nii.gz'))
+    niftiWrite(densityMask,fullfile(outdir,strcat(tract.name),'_densityMask.nii.gz'))
     
 end
     
