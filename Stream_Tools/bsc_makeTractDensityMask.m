@@ -41,6 +41,9 @@ function densityMask = bsc_makeTractDensityMask(tract, referenceNifti, voxelResi
 %
 %% begin code
 
+%extract the name
+tractName=tract.name;
+
 %perform resizing, if varible exists
 if exist('voxelResize')
         if and(~isempty(voxelResize), ~voxelResize==0)
@@ -53,7 +56,7 @@ else
 end
 
 %create new blank strcute for data
-blankData=zeros(referenceNifti.dim);
+blankData=zeros(resizeNifti.dim);
 
 fprintf('\n nifti resample complete, computing new streamline coorespondances')
 
@@ -78,13 +81,24 @@ fprintf('\n streamline conversion complete, computing voxel traversal totals')
 
 %can't think of elegant way to sum across streamlines
 %loop across tract's streamlines
-for ifibers=1:length(roundedStreams)
-    ifibers
-    %extract current stream
-    currentFiber=roundedStreams{ifibers};
-    
-    %use the nodes to index into the blank mask and iterate by 1
-    blankData(currentFiber(:,1),currentFiber(:,2),currentFiber(:,3))=blankData(currentFiber(:,1),currentFiber(:,2),currentFiber(:,3))+1;
+% for ifibers=1:length(roundedStreams)
+%     ifibers
+%     %extract current stream
+%     currentFiber=roundedStreams{ifibers};
+%     
+%     %use the nodes to index into the blank mask and iterate by 1
+%     blankData(currentFiber(:,1),currentFiber(:,2),currentFiber(:,3))=blankData(currentFiber(:,1),currentFiber(:,2),currentFiber(:,3))+1;
+% end
+
+%soichi's vastly faster version
+for s = 1:length(roundedStreams)
+    stream = roundedStreams{s};
+    for p = 1:length(stream)
+        x = stream(p,1);
+        y = stream(p,2);
+        z = stream(p,3);
+        blankData(x, y, z) = blankData(x, y, z) + 1;
+    end
 end
 
 fprintf('\n density masking operation complete')
@@ -133,8 +147,9 @@ densityMask=resizeNifti;
 
 %set the data in the output NIfTI structure;
 densityMask.data=blankData;
+densityMask.fname=tractName;
 
-fprintf('\n density mask creation for %s complete',tract.name)
+fprintf('\n density mask creation for %s complete',tractName)
 
 %function complete
 end
