@@ -78,7 +78,7 @@ for leftright= [1,2]
 %--------------------------------------------------------------------------  
 % we can extract the indexes for the relevant streamlines from the
 % actegory segmentation
-    frontoTemporalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_temporal'));
+    frontoTemporalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_temporal'));
 %=========================================================================     
 
 % 2. UNCINATE - ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA
@@ -327,15 +327,22 @@ for leftright= [1,2]
 %1.  IFOF - ESTABLISH CATEGORY CRITERIA
 % The IFOF is the paradigmatic (and perhaps only) example of a
 % fronto-occipital track
+% NOTE: be sure to check that category segmentation is formatted correctly
 %--------------------------------------------------------------------------
 
-frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'_frontal_to_occipital'));
+frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(sideLabel{leftright},'frontal_to_occipital'));
 %=========================================================================  
 
 %2.  IFOF - ESTABLISH MORE SPECIFIC ENDPOINT CRITERIA
-% Given the lack of other major structures which exibit similar
-% morphologies or trajectories to the IFOF, we do not need to specify any
-% more specific endpoint criteria
+% In order to ensure that the anterior frontal lobes (and not, for example,
+% posterior ventral frontal structures) are being connected, we can require
+% that both endpoints NOT be posterior to the anterior border of the
+% globus palidus
+antPalPlane=bsc_planeFromROI_v2(palLut(leftright),'anterior',atlas);
+
+% now we find those streamlines that have one endpoint anterior to this
+% plane
+oneAntPalBool=bsc_applyEndpointCriteria(wbfg,antPalPlane,'anterior','one');
 %=========================================================================  
 
 %3. IFOF - APPLY GENERIC, ANATOMICALLY INFORMED CRITERIA
@@ -351,15 +358,14 @@ frontoOccipitalBool=  bsc_extractStreamIndByName(categoryClassification,strcat(s
 % to do this.  The dip is near to its lowest takes place around the middle
 % (in the anterior-posterior axis) of the lenticular nucleus, which, as it
 % turns out, is about the anterior border of the thalamus. .
-posteriorLentiPlane=bsc_planeFromROI_v2(thalLut(leftright),'anterior',atlas);
+antThalPlane=bsc_planeFromROI_v2(thalLut(leftright),'anterior',atlas);
 
-% We can reuse the plane generated earlier for the top of the globus paladus to
-% specifiy the height we'd like to apply this plane at
-% palTopPlane
+%create a plane at the inferior boder of the anterior CC
+ccAntBottom=bsc_planeFromROI_v2(255,'inferior',atlas);
 
 % Now we cut the anterior-posterior plane (posteriorLentiPlane), such that we only take the part
 % that is superior to the top of the globus paladus (palTopPlane)
-superiorExclusionCutPlane=bsc_modifyROI_v2(atlas,posteriorLentiPlane, palTopPlane, 'superior');
+superiorExclusionCutPlane=bsc_modifyROI_v2(atlas,antThalPlane, ccAntBottom, 'superior');
 
 % Now we can apply the exclusion plane
 [~, superiorExclusionBool] = wma_SegmentFascicleFromConnectome(wbfg, {superiorExclusionCutPlane}, {'not'}, 'arbitraryName');
@@ -370,6 +376,36 @@ superiorExclusionCutPlane=bsc_modifyROI_v2(atlas,posteriorLentiPlane, palTopPlan
 % midpoint that is lower in the brain (as is appropriate for the IFOF)
 % midpointSupOfPalBool
 
+%--------------------------------------------------------------------------
+% "Neck" passage requirement
+%  The IFOF is famous for its narrowed component as it passes from the
+%  white matter adjacent to the temporal lobe and insula into the frontal
+%  lobe.  Here we attempt to capture this region by intersecting several
+%  inflated ROIs
+
+%here we find the intersection of the inflated pal and the inflated insula 
+[palInsIntersection] = bsc_MultiIntersectROIs(atlas,19,palLut(leftright),[117+sidenum,118+sidenum]);
+
+%now we intersect that ROI with the WM itself, to ensure we are
+%constraining our consideration to the white matter
+[palInsIntersctionWM] = bsc_MultiIntersectROIs(atlas,1,palInsIntersection,wmLut(leftright));
+
+%now we'll use this to create two parallel planes to constrain streamline
+%traversal.  We'll need its rostro-caudal and dorso-ventral borders
+antNeckPlane=bsc_planeFromROI_v2(palInsIntersctionWM,'anterior',atlas);
+postNeckPlane=bsc_planeFromROI_v2(palInsIntersctionWM,'posterior',atlas);
+supNeckPlane=bsc_planeFromROI_v2(palInsIntersctionWM,'superior',atlas);
+infNeckPlane=bsc_planeFromROI_v2(palInsIntersctionWM,'inferior',atlas);
+
+%now we cut them
+supNeck1=bsc_modifyROI_v2(atlas,supNeckPlane, antNeckPlane, 'posterior');
+supNeckBorder=bsc_modifyROI_v2(atlas,supNeck1, postNeckPlane, 'anterior');
+
+infNeck1=bsc_modifyROI_v2(atlas,infNeckPlane, antNeckPlane, 'posterior');
+infNeckBorder=bsc_modifyROI_v2(atlas,infNeck1, postNeckPlane, 'anterior');
+
+%now we use this as a segmentation criterion
+[~, neckTraversalBool] = wma_SegmentFascicleFromConnectome(wbfg, {supNeckBorder,infNeckBorder}, {'not','not'}, 'arbitraryName');
 %=========================================================================  
 %4.  IFOF - APPLY ALL BOOLEAN CRITERIA
 % Now that we have obtained all of our desired criteria, in the form
@@ -381,7 +417,7 @@ superiorExclusionCutPlane=bsc_modifyROI_v2(atlas,posteriorLentiPlane, palTopPlan
 % midpointSupOfPalBool - ventral traversal criteria
 
    tractNameVar=strcat(sideLabel{leftright},'_IFOF');
-   classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,superiorExclusionBool,~midpointSupOfPalBool);
+   classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,frontoOccipitalBool,neckTraversalBool,superiorExclusionBool,~midpointSupOfPalBool,oneAntPalBool);
 %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
 
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      
@@ -500,7 +536,10 @@ classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVa
 %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
  %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 %%  SLF
-   
+%The SLF is an exceedingly difficult track to segment due to the ill
+%defined devisions between the sub components.  Practically speaking there
+%is no hard and fast rule to delineate SLF 2 from the either subcomponents
+%(which are quite distinguishable from one another
 %=========================================================================  
 %1.  SLF - ESTABLISH CATEGORY CRITERIA
 %--------------------------------------------------------------------------
@@ -565,17 +604,13 @@ thirdVentPosterior=bsc_planeFromROI_v2(14,'posterior',atlas)
 
 coronalExclusion=bsc_modifyROI_v2(atlas,thirdVentPosterior,inferiorBorderPosteriorFrontalGyrus,'superior')
 transverseExclusion=bsc_modifyROI_v2(atlas,inferiorBorderPosteriorFrontalGyrus,thirdVentPosterior,'anterior')
-superiorToCingExclusionROI=bsc_mergeROIs(coronalExclusion,transverseExclusion)
 
-[~, noSuperiortraversalBool] = wma_SegmentFascicleFromConnectome(wbfg, {superiorToCingExclusionROI}, {'not'}, 'arbitraryName');
-
-cingAnteriorMidpoints=bsc_applyMidpointCriteria(wbfg,thirdVentPosterior,'anterior')
 
 periCTop=bsc_planeFromROI_v2(167+sidenum,'superior',atlas);
-periClatBorder=bsc_planeFromROI_v2(167+sidenum,'lateral',atlas)
 
 
-anteriorSubParBorder=bsc_planeFromROI_v2(172+sidenum,'anterior',atlas);
+
+
 
 
 lowMidpointsBool=bsc_applyMidpointCriteria(wbfg,periCTop,'inferior');
@@ -585,19 +620,15 @@ tractNameVar=strcat(sideLabel{leftright},'_SLF1');
 slf1bool=all([frontoParietalBool,~superiorExclusionBool,cingulumExclusionBool,eitherLatThalBool,anteriorSLF3Requirement,anteriorSLF3Requirement],2);
 classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,slf1bool);
 %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
-%slf3starbool=all([frontoParietalBool,~superiorExclusionBool,medialEndpointsExclusion,~infCurveExclude,~lowMidpointsBool,anteriorSLF3Requirement,~posteriorSLF3Requirement],2);
 
 tractNameVar=strcat(sideLabel{leftright},'_SLF2');
 slf2bool=all([frontoParietalBool,~superiorExclusionBool,medialEndpointsExclusion,~infCurveExclude,slf2MidpointCriteria],2);
 classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,slf2bool);
+%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
 
-%bothLatThalBool
 tractNameVar=strcat(sideLabel{leftright},'_SLF3');
 slf3bool=all([frontoParietalBool,bothLatThalBool,lowMidpointsBool,anteriorSLF3Requirement,posteriorSLF3Requirement],2);
-%slf3bool=all([frontoParietalBool,bothLatThalBool,infLatFrontGyrusBool,anteriorSLF3Requirement,posteriorSLF3Requirement],2);
-
 classificationOut=bsc_concatClassificationCriteria(classificationOut,tractNameVar,slf3bool);
-%bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
 %bsc_quickPlotClassByName(wbfg,classificationOut,tractNameVar)
 
 tractNameVar=strcat(sideLabel{leftright},'_SLFConflcit');
