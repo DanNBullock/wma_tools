@@ -51,7 +51,7 @@ blankLabelNifti(1:atlasDataSize(1),1:atlasDataSize(2),1:atlasDataSize(3))=false;
 ROImask=blankLabelNifti;
 roiNameString=[];
 for iRois = ROInums
-    ROImask=or(ROImask,atlas.data==iRois);
+    ROImask=or(ROImask,ismember(atlas.data,iRois));
     %warn the user if that index isn't found in this nifti
     %don't do this, its too noisy
 %     if ~any(atlas.data==iRois)
