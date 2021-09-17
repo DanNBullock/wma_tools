@@ -209,7 +209,7 @@ for iview = 1:length(fig.views)
 
     fprintf('Saving as %s', strcat(fig.names{1},num2str(iview))) 
     
-    saveas ( fh,strrep(strcat(saveDir,'/',fig.names{1},num2str(iview)),'  ', '_'),'jpg')
+    saveas ( fh,strrep(strcat(saveDir,'/',fig.names{1},num2str(iview)),'  ', '_'),'png')
 end
 
 close all
