@@ -6,6 +6,11 @@
 
 This repository contains a number of matlab code tools which can be used to perform anatomically informed segmentations and analyze the outputs.  Additionally, it includes several examples of _actually_ implemented segmentations for established white matter tracts.
 
+#### Pythonic alternative availability
+**March 9, 2020 notice**: Comperable pythonic implementations of most **wma_tools** functionalities can be found in the [wma_pyTools
+](https://github.com/DanNBullock/wma_pyTools/tree/packageVers) repository.  The [wma_pyTools
+](https://github.com/DanNBullock/wma_pyTools/tree/packageVers) repository also includes a host of [visualization](https://github.com/DanNBullock/wma_pyTools/blob/packageVers/wmaPyTools/visTools.py) and [analysis](https://github.com/DanNBullock/wma_pyTools/blob/packageVers/wmaPyTools/analysisTools.py) capabilties not inculded in the Matlab-based **wma_tools** toolkit.
+
 ## Author, funding sources, references
 
 ### Authors
