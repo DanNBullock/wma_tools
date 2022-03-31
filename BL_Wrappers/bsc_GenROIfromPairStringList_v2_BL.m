@@ -128,7 +128,7 @@ for iROIs=1:length(stringCells)
     if ~notDefined('atlas')&&atlasFlag
         mergedROI =bsc_roiFromAtlasNums(atlas,ROInums, smoothKernel);
         %operating under presumption that roi.name is a thing...
-        currROIName=fullfile(pwd,strcat('/',roiDirPathOut,'/',roiStem,mergedROI.name,'.nii.gz'));
+        currROIName=fullfile(roiDirPathOut,roiStem,mergedROI.name,'.nii.gz'));
         %write file name to text file
         nameToWrite=erase(currROIName,'.nii.gz');
         fprintf(fileID, strcat(nameToWrite,'\n'))
