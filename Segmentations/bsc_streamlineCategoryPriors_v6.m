@@ -18,7 +18,7 @@ function [classificationOut] =bsc_streamlineCategoryPriors_v6(wbfg,atlas,inflate
 [superficialClassification] =bsc_segmentSuperficialFibers(wbfg, atlas);
 
 allStreams=wbfg.fibers;
-clear wbfg
+
 %initialize classification structure
 classificationOut=[];
 classificationOut.names=[];
